@@ -42,3 +42,24 @@ Use:
 ## Current repository baseline
 
 This repo is now initialized with high-level metadata for workshop use (description, discussions enabled, and starter topics), and this README serves as the initial scaffold.
+
+## Regenerating the slide deck
+
+To regenerate the workshop PowerPoint locally:
+
+- (Optional) Create and activate a virtual environment:
+
+  python -m venv .venv
+  .\.venv\Scripts\activate  # Windows
+
+- Install dependencies:
+
+  pip install python-pptx
+
+- Run the generator:
+
+  python generate_agentic_ai_101_workshop.py
+
+The script writes Agentic_AI_101_Workshop.pptx to the repository root. If PowerPoint has the file open, the script will instead write Agentic_AI_101_Workshop_updated.pptx. Close PowerPoint before regenerating to overwrite the primary file.
+
+Recommendation: add "*.pptx" and "~$*" to .gitignore to avoid committing generated binaries.
