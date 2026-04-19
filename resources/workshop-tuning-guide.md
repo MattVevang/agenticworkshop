@@ -25,9 +25,9 @@ These environment variables are **already set** as persistent env vars on the ho
 
 Set these **additional** variables before the workshop begins:
 
-### `OLLAMA_KEEP_ALIVE=2m`
+### `OLLAMA_KEEP_ALIVE=30s`
 
-Models unload from VRAM **2 minutes** after the last request (default: 5m).
+Models unload from VRAM **30 seconds** after the last request (default: 5m).
 
 - Gen5 NVMe cold-loads take only 1.0–1.5 s, so aggressive unloading is fine.
 - Prevents VRAM contention when students switch between models.
@@ -50,7 +50,7 @@ Keep at most **2 models** in VRAM simultaneously (default: auto, which can fill 
 - Worst-case combo: `mistral:7b` (8.3 GB) + `llama3.1:8b` (4.8 GB) = ~13.1 GB — leaves plenty of headroom on 32 GB.
 - Prevents the scenario where four different students load four different models and exhaust VRAM.
 
-> ✅ With `OLLAMA_KEEP_ALIVE=2m`, idle models unload quickly, so the 2-model cap rarely blocks requests in practice.
+> ✅ With `OLLAMA_KEEP_ALIVE=30s`, idle models unload quickly, so the 2-model cap rarely blocks requests in practice.
 
 ### `OLLAMA_CONTEXT_LENGTH=8192`
 
@@ -71,7 +71,7 @@ Reduce context window from **128k → 8k** for the workshop.
 ### Step 2 — Set each env var at User level
 
 ```powershell
-[System.Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", "2m", "User")
+[System.Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", "30s", "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_NUM_PARALLEL", "4", "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_MAX_LOADED_MODELS", "2", "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_CONTEXT_LENGTH", "8192", "User")
@@ -151,7 +151,7 @@ All benchmarks taken on the workshop host: **RTX 5090 (32 GB) · Gen5 NVMe · Ol
 | `llama3.1:8b` | ~1.5 s |
 | `mistral:7b` | ~1.5 s |
 
-> 💡 These times are why `OLLAMA_KEEP_ALIVE=2m` is safe — a 1–1.5 s reload is imperceptible compared to generation time.
+> 💡 These times are why `OLLAMA_KEEP_ALIVE=30s` is safe — a 1–1.5 s reload is imperceptible compared to generation time.
 
 ### Single-User Response Times (Model Warm)
 
