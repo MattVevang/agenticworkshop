@@ -99,11 +99,15 @@ The model has no code to fix! Notice what it does — it might make something up
 New chat:
 
 ```
-Review this Python function for bugs. The function should take a list of numbers and return the average, but it crashes on empty lists. Suggest a fix with explanation.
+Review this Java method for bugs. The method should take an array of doubles and return the average, but it crashes on empty arrays. Suggest a fix with explanation.
 
-def average(numbers):
-    total = sum(numbers)
-    return total / len(numbers)
+public static double average(double[] numbers) {
+    double total = 0;
+    for (double num : numbers) {
+        total += num;
+    }
+    return total / numbers.length;
+}
 ```
 
 ### ✏️ Compare
@@ -121,7 +125,7 @@ def average(numbers):
 
 The good prompt used:
 - **Task:** Review for bugs, suggest a fix
-- **Context:** Python function, should return the average, crashes on empty lists
+- **Context:** Java method, should return the average, crashes on empty arrays
 - **Format:** Fix with explanation
 - **Constraints:** Included the actual code
 

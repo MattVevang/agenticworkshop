@@ -75,7 +75,7 @@ This exercise tests how well models can write actual working code.
 **Prompt** (same for all models):
 
 ```
-Write a Python function called is_prime that takes a number and returns True if it's prime, False otherwise. Include comments explaining each step.
+Write a Java method called isPrime that takes an integer and returns true if it's prime, false otherwise. Include comments explaining each step.
 ```
 
 **Run it through these models:**

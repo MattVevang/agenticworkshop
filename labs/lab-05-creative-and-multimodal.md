@@ -187,7 +187,7 @@ AI models can generate functional code — let's test the limits.
 
 ### Exercise 6: Interactive Web Page
 
-**Use `phi4:14b` or `qwen3.5:9b`** (better at code).
+**Use `mistral:7b` for this section** (handles code well and responds quickly).
 
 New chat:
 
@@ -230,12 +230,12 @@ Run the same code prompt through a smaller model to see the difference:
 
 ### ✏️ Compare
 
-| Dimension | tinyllama:1.1b | mistral:7b | phi4:14b (or qwen3.5:9b) |
-|---|---|---|---|
-| **Code runs without errors?** | | | |
-| **All features present?** | | | |
-| **Code is clean/readable?** | | | |
-| **Used modern best practices?** | | | |
+| Dimension | tinyllama:1.1b | mistral:7b |
+|---|---|---|
+| **Code runs without errors?** | | |
+| **All features present?** | | |
+| **Code is clean/readable?** | | |
+| **Used modern best practices?** | | |
 
 ---
 

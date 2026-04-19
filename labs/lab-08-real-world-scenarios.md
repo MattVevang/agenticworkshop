@@ -138,21 +138,30 @@ If you've ever written code — in a class, for a project, or just messing aroun
 Start a **new chat** and paste this:
 
 ```
-I'm a high school student learning Python. This code is supposed to ask the user for 5 test scores, then print the average. But it always prints 0.0 as the average. Can you find the bug and explain what's wrong?
+I'm a high school student on an FRC robotics team and I code in Java. This code is supposed to ask the user for 5 test scores, then print the average. But it always prints 0 as the average. Can you find the bug and explain what's wrong?
 
-total = 0
-count = 0
+import java.util.Scanner;
 
-for i in range(5):
-    score = input("Enter score: ")
-    total = total + score
-    count = count + 1
+public class ScoreAverage {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int total = 0;
+        int count = 0;
 
-average = total / count
-print("Your average is: " + str(average))
+        for (int i = 0; i < 5; i++) {
+            System.out.print("Enter score: ");
+            int score = scanner.nextInt();
+            total = total + score;
+            count = count + 1;
+        }
+
+        int average = total / count;
+        System.out.println("Your average is: " + average);
+    }
+}
 ```
 
-Read the explanation. Did the AI correctly identify the issue? (Hint: `input()` returns a string, not a number.)
+Read the explanation. Did the AI correctly identify the issue? (Hint: integer division in Java truncates the decimal — `total / count` does integer math when both are `int`.)
 
 ### Step 2: Try It With Your Own Code
 
