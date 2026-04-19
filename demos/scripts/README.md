@@ -31,6 +31,16 @@ python model-speed-comparison.py --models llama3.2:1b llama3.1:8b
 python model-speed-comparison.py --show-responses
 ```
 
+### 🔒 `openwebui-hide-models.py`
+
+Hides non-workshop models from the Open WebUI dropdown so students only see the 5 workshop models. Run after starting the container.
+
+```bash
+python openwebui-hide-models.py
+python openwebui-hide-models.py --unhide              # Revert: show all models
+python openwebui-hide-models.py --webui-url http://biglittle.local:3000
+```
+
 ## Tips
 
 - Run `ollama-health-check.py` **before** the workshop to catch setup issues

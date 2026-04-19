@@ -276,45 +276,39 @@ With `OLLAMA_MAX_LOADED_MODELS=2`, this should self-correct once the model is ev
 
 ---
 
-## 7. Restricting Model Visibility (Optional)
+## 7. Restricting Model Visibility
 
-By default, Open WebUI shows **all** models from Ollama in the dropdown (25+ on this machine). Workshop models are pinned to the top, but students can still scroll and select a 14B+ model that bogs down the server.
+By default, Open WebUI shows **all** models from Ollama in the dropdown (25+ on this machine). Students could scroll down and select a 14B+ model that bogs down the server.
 
-To **hide non-workshop models entirely**, use Open WebUI's model access controls:
+Use the provided script to hide non-workshop models:
 
-### Step 1: Configure model visibility (one-time setup)
+### Hide non-workshop models (run before workshop)
 
-1. Open `http://<server-ip>:3000` in your browser
-2. Click your avatar → **Admin Panel** → **Workspace** → **Models**
-3. For each workshop model (`llama3.2:1b`, `llama3.2:3b`, `llama3.1:8b`, `mistral:7b`, `llava:7b`):
-   - Click the model
-   - Set its access to **Public** (visible to all users)
-4. Leave all other models as their default (Private/Hidden)
-
-### Step 2: Enable the access control bypass
-
-In `docker/docker-compose.yml`, uncomment this line:
-
-```yaml
-- BYPASS_ADMIN_ACCESS_CONTROL=false
+```powershell
+cd demos/scripts
+python openwebui-hide-models.py
 ```
 
-Then restart:
+This creates model entries with `hidden=True` in the Open WebUI database for every Ollama model that isn't in the workshop set. The dropdown will only show:
+`llama3.2:1b` · `llama3.2:3b` · `llama3.1:8b` · `mistral:7b` · `llava:7b`
+
+Students need to **hard-refresh** (Ctrl+Shift+R) after running the script.
+
+### Revert (run after workshop)
+
+```powershell
+python openwebui-hide-models.py --unhide
+```
+
+Or simply nuke the volume for a completely clean slate:
 
 ```powershell
 cd docker
+docker compose down -v
 docker compose up -d
 ```
 
-With `BYPASS_ADMIN_ACCESS_CONTROL=false`, the kiosk admin user respects model access controls and only sees models explicitly set to Public.
-
-### How to revert
-
-1. Comment out or remove `BYPASS_ADMIN_ACCESS_CONTROL=false` from docker-compose.yml
-2. Restart: `docker compose up -d`
-3. All models reappear in the dropdown
-
-> ⚠️ **Important:** Do Step 1 (configure model visibility) **before** Step 2 (enable the bypass). If you enable the bypass without setting any models to Public, the dropdown will be empty.
+> 💡 The `DEFAULT_PINNED_MODELS` env var in docker-compose.yml also adds sidebar shortcuts for workshop models — a nice secondary indicator even with hiding enabled.
 
 ---
 
