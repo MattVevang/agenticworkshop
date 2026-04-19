@@ -36,6 +36,12 @@ def add_notes(slide, text):
     slide.notes_slide.notes_text_frame.text = text
 
 
+def override_last_slide_notes(prs, text):
+    """Replace notes on the most recently added slide."""
+    slide = prs.slides[len(prs.slides) - 1]
+    slide.notes_slide.notes_text_frame.text = text
+
+
 def add_background(slide, width, height):
     bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, width, height)
     bg.fill.solid()
@@ -156,8 +162,13 @@ def add_title_slide(prs, blank):
     add_footer(slide, "Agentic Workshop Lab")
     add_notes(
         slide,
-        "Visual idea: A futuristic classroom cockpit with holographic UI and students collaborating.\n"
-        "Prompt seed: 'cinematic neon classroom mission control, teenagers learning AI, high contrast, wide shot'",
+        "SPEAKER NOTES — Title Slide\n"
+        "• Welcome students. Introduce yourself and any co-presenters.\n"
+        "• Set expectations: this is hands-on, interactive, and fun — not a lecture.\n"
+        "• Mention: 'By the end of today you'll have chatted with real AI models running on hardware in this room.'\n"
+        "• Transition: 'Let's start with what we're going to cover today.'\n"
+        "• Timing: ~2 min\n\n"
+        "Image seed: 'cinematic neon classroom mission control, teenagers learning AI, high contrast, wide shot'",
     )
 
 
@@ -188,7 +199,7 @@ def add_bullets_slide(prs, blank, title, bullets, image_hint):
                 add_bullet(tf, item, size=Pt(18), color=TEXT)
 
     add_footer(slide, "AI 101 Workshop")
-    add_notes(slide, f"Suggested image concept: {image_hint}")
+    add_notes(slide, f"Image concept: {image_hint}")
 
 
 def add_two_column_slide(prs, blank, title, left_title, left_points, right_title, right_points, image_hint):
@@ -216,7 +227,7 @@ def add_two_column_slide(prs, blank, title, left_title, left_points, right_title
         add_bullet(tf_r, point, size=Pt(14), color=TEXT)
 
     add_footer(slide, "AI 101 Workshop")
-    add_notes(slide, f"Suggested image concept: {image_hint}")
+    add_notes(slide, f"Image concept: {image_hint}\n(Add speaker talking points for this slide in the generator's build_deck() function.)")
 
 
 def add_model_size_metaphor_slide(prs, blank):
@@ -256,8 +267,14 @@ def add_model_size_metaphor_slide(prs, blank):
     add_footer(slide, "AI 101 Workshop")
     add_notes(
         slide,
-        "Visual concept to search/generate: side-by-side desk with a thick reference textbook vs slim cheat-sheet notebook.\n"
-        "Message: both contain knowledge, but depth and reliability differ under pressure.",
+        "SPEAKER NOTES — Model Scale, Parameters, and Tradeoffs\n"
+        "• Key point: bigger isn't always better — it depends on the task.\n"
+        "• Ask the audience: 'Would you use a sledgehammer to hang a picture frame?'\n"
+        "• Explain: a 1B model is like cliff notes — fast but shallow. A 70B model is like a reference textbook.\n"
+        "• Connect to their experience: 'The models you'll use today range from 1B to 14B parameters.'\n"
+        "• Transition: 'Let's see what hardware actually runs these models.'\n"
+        "• Timing: ~3 min\n\n"
+        "Image concept: side-by-side desk with a thick reference textbook vs slim cheat-sheet notebook.",
     )
 
 
@@ -304,8 +321,15 @@ def add_tools_landscape_slide(prs, blank):
     add_footer(slide, "AI 101 Workshop")
     add_notes(
         slide,
-        "Image idea: toolbelt metaphor with 3 labeled tools (integrated, reasoning-focused, customizable).\n"
-        "Avoid framing as winner/loser; focus on use-case fit.",
+        "SPEAKER NOTES — Tool Landscape\n"
+        "• This is NOT a 'which is best' slide — emphasize workflow fit.\n"
+        "• Ask: 'How many of you have heard of GitHub Copilot? ChatGPT? Any others?'\n"
+        "• Key point: different tools solve different problems. A hammer vs screwdriver vs wrench.\n"
+        "• Copilot = best inside code. Claude = best for long thinking. Open tools = full control.\n"
+        "• Mention: 'Blended stacks often win — you might use multiple tools in a day.'\n"
+        "• Transition: 'Now let's look at how agents connect to the real world...'\n"
+        "• Timing: ~3 min\n\n"
+        "Image concept: toolbelt metaphor with 3 labeled tools (integrated, reasoning-focused, customizable).",
     )
 
 
@@ -357,7 +381,15 @@ def add_mcp_slide(prs, blank):
     add_footer(slide, "AI 101 Workshop")
     add_notes(
         slide,
-        "Image idea: hub-and-spoke system diagram with AI agent in center and tool systems around it.",
+        "SPEAKER NOTES — MCP (Model Context Protocol)\n"
+        "• Start with the problem: 'AI can chat, but what if you want it to actually DO things?'\n"
+        "• Explain: MCP is like USB-C for AI — one standard plug for many tools.\n"
+        "• Walk through the diagram: the agent in the center can talk to files, browsers, APIs, monitoring.\n"
+        "• Real example: 'An AI agent could search your codebase, run tests, and create a pull request.'\n"
+        "• Ask: 'What tools would YOU want to give an AI agent access to?'\n"
+        "• Transition: 'Let's talk about the currency of AI — tokens.'\n"
+        "• Timing: ~3 min\n\n"
+        "Image concept: hub-and-spoke system diagram with AI agent in center and tool systems around it.",
     )
 
 
@@ -391,7 +423,15 @@ def add_tokens_slide(prs, blank):
     add_footer(slide, "AI 101 Workshop")
     add_notes(
         slide,
-        "Image idea: backpack with finite capacity; adding more items forces throwing old ones out.",
+        "SPEAKER NOTES — Tokens, Context Windows, and Limits\n"
+        "• Explain: tokens are the 'currency' of AI. Every word costs tokens. There's a budget.\n"
+        "• Analogy: 'Imagine a desk that can only hold 10 pages. Add page 11, page 1 falls off.'\n"
+        "• Left panel: how tokens work. Right panel: what happens when you run out.\n"
+        "• Practical tip: 'This is why long chats get weird — the model literally forgets the beginning.'\n"
+        "• Ask: 'Has anyone had a chatbot seem to forget what you told it earlier?'\n"
+        "• Transition: 'Let's compare parameters vs tokens — they sound similar but are very different.'\n"
+        "• Timing: ~3 min\n\n"
+        "Image concept: backpack with finite capacity; adding more items forces throwing old ones out.",
     )
 
 
@@ -443,7 +483,14 @@ def add_storyboard_slide(prs, blank):
         p1.runs[0].font.color.rgb = TEXT
 
     add_footer(slide, "AI 101 Workshop")
-    add_notes(slide, "You can use these seeds in Midjourney, DALL-E, Stable Diffusion, or stock search queries.")
+    add_notes(
+        slide,
+        "SPEAKER NOTES — Imagery Storyboard\n"
+        "• This slide is a reference for the presenter — skip in live presentation if time is tight.\n"
+        "• Use these prompt seeds to generate custom images for the deck in Midjourney, DALL-E, or Stable Diffusion.\n"
+        "• Alternatively, search stock photo sites using the slide idea as a keyword.\n"
+        "• Timing: skip or ~1 min",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -611,7 +658,18 @@ def add_hardware_slide(prs, blank):
         size=Pt(14), bold=True, color=SUCCESS)
 
     add_footer(slide, "AI 101 Workshop")
-    add_notes(slide, "Visual concept: GPU card with glowing VRAM chips, size comparison chart.")
+    add_notes(
+        slide,
+        "SPEAKER NOTES — What Hardware Runs a Model?\n"
+        "• Key message: AI needs special hardware — GPUs, not just CPUs.\n"
+        "• Walk through the table: 'The tiny 1B model fits anywhere. The 70B model needs serious hardware.'\n"
+        "• Point to the callout: 'Our server has an RTX 5090 with 32GB VRAM — that's why we can run 14B models.'\n"
+        "• Ask: 'How many of you have a gaming GPU at home? You might be able to run AI on it!'\n"
+        "• Fun fact: 'The GPU in a PS5 could run a small AI model.'\n"
+        "• Transition: 'Now that you know the hardware, let's understand the difference between parameters and tokens.'\n"
+        "• Timing: ~3 min\n\n"
+        "Image concept: GPU card with glowing VRAM chips, size comparison chart.",
+    )
 
 
 def add_params_vs_tokens_slide(prs, blank):
@@ -688,7 +746,19 @@ def add_privacy_slide(prs, blank):
         size=Pt(14), bold=True, color=WARN)
 
     add_footer(slide, "AI 101 Workshop")
-    add_notes(slide, "Visual concept: shield split between cloud data flow and locked local vault.")
+    add_notes(
+        slide,
+        "SPEAKER NOTES — Privacy and Your Data\n"
+        "• This is one of the most important slides — students need to hear this.\n"
+        "• Ask: 'How many of you have used ChatGPT? Did you think about where your words go?'\n"
+        "• Walk through both panels: cloud = your data travels, local = your data stays.\n"
+        "• Emphasize the callout: some services USE your prompts for training by default.\n"
+        "• Real scenario: 'If you paste your diary entry into ChatGPT, OpenAI employees might read it.'\n"
+        "• Balance: 'Cloud AI isn't evil — but you should understand the tradeoff before using it.'\n"
+        "• Transition: 'This connects directly to Lab 6 where you'll explore these tradeoffs in depth.'\n"
+        "• Timing: ~3 min\n\n"
+        "Image concept: shield split between cloud data flow and locked local vault.",
+    )
 
 
 def add_lab_intro_slide(prs, blank):
@@ -743,6 +813,14 @@ def build_deck():
         ],
         "clean mission board agenda visual with neon accents",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Agenda\n"
+        "• Walk through the agenda quickly — don't linger on each item.\n"
+        "• Highlight: 'The best part is the hands-on lab where YOU get to talk to AI.'\n"
+        "• Set pacing expectations: 'We have a lot to cover, but we'll keep it interactive.'\n"
+        "• Ask: 'Has anyone here used an AI chatbot before? Raise your hand.'\n"
+        "• Transition: 'Let's start with the big picture — what even IS AI?'\n"
+        "• Timing: ~2 min")
 
     # 3
     add_bullets_slide(
@@ -756,6 +834,13 @@ def build_deck():
         ],
         "stacked architecture diagram with five labeled layers and arrows",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — AI in Layers\n"
+        "• This slide gives the 30,000-foot view. Don't go deep — just set the mental model.\n"
+        "• Walk bottom to top: 'Models are the brain, runtime is where they run, tools let them act.'\n"
+        "• Relate to students: 'Today you interact at Layer 4 (the chat UI), but we'll peek under the hood.'\n"
+        "• Transition: 'Let's zoom into Layer 1 — what IS a model?'\n"
+        "• Timing: ~2 min")
 
     # 4
     add_bullets_slide(
@@ -769,6 +854,14 @@ def build_deck():
         ],
         "glass brain made of text fragments and vectors, educational infographic style",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — What is a Model?\n"
+        "• Key misconception to address: 'AI is NOT a search engine or database.'\n"
+        "• Analogy: 'It's like someone who read the whole internet — they absorbed patterns, not facts.'\n"
+        "• Ask: 'If I asked you to write a Shakespeare-sounding sentence, you could do it. That's what models do.'\n"
+        "• Emphasize 'probabilistic assistant' — it gives you its best GUESS, not the truth.\n"
+        "• Transition: 'So how do you actually build one of these pattern engines?'\n"
+        "• Timing: ~2 min")
 
     # 5
     add_bullets_slide(
@@ -781,18 +874,61 @@ def build_deck():
         ],
         "factory pipeline from data to trained model to deployment",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — How Models are Built\n"
+        "• Keep it high-level — students don't need to understand backpropagation.\n"
+        "• Factory analogy: 'Raw materials (data) → manufacturing (training) → quality check (eval) → shipping (serving).'\n"
+        "• Key insight: 'The model learns patterns from examples — like learning a language by immersion.'\n"
+        "• Transition: 'Let's go one level deeper into how training actually works.'\n"
+        "• Timing: ~2 min")
 
     # 6 — How Training Really Works
     add_training_deep_dive_slide(prs, blank)
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — How Training Really Works\n"
+        "• Three phases: data collection → pretraining → RLHF. Walk through each.\n"
+        "• Data: 'Imagine downloading the entire internet — books, Wikipedia, code, forums.'\n"
+        "• Pretraining: 'The model reads all of it and learns to predict the next word. That's basically it.'\n"
+        "• RLHF: 'Humans grade the AI's answers: thumbs up or thumbs down. It learns from that feedback.'\n"
+        "• Key insight: 'It learns PATTERNS, not FACTS. It might get things right because the pattern is common, not because it knows it's true.'\n"
+        "• Transition: 'So how does prediction actually work, token by token?'\n"
+        "• Timing: ~3 min")
 
     # 7 — How Does Prediction Actually Work?
     add_prediction_slide(prs, blank)
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Prediction\n"
+        "• This is the 'aha moment' for most students.\n"
+        "• Demo opportunity: 'I have a live token prediction demo — let me show you.'\n"
+        "• Explain: 'The model picks the most likely next word, feeds it back, and repeats. Like autocomplete on steroids.'\n"
+        "• Temperature: 'Low = boring but accurate. High = creative but risky. Like a spice dial.'\n"
+        "• If running the token-prediction demo, pause and switch to it here.\n"
+        "• Transition: 'What happens when this prediction engine gets it wrong?'\n"
+        "• Timing: ~3 min (+ demo time)")
 
     # 8 — Hallucinations
     add_hallucinations_slide(prs, blank)
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Hallucinations\n"
+        "• Start with: 'Raise your hand if you've ever seen AI confidently say something wrong.'\n"
+        "• Key point: 'The model doesn't KNOW when it's wrong — it has no fact-checker inside.'\n"
+        "• Share an example: fake book summaries, invented citations, wrong math.\n"
+        "• Practical advice: 'Always fact-check important claims. Treat AI output like a first draft.'\n"
+        "• Connect to Lab 4 where they'll catch hallucinations themselves.\n"
+        "• Transition: 'Not all models just handle text — some can see images too.'\n"
+        "• Timing: ~2 min")
 
     # 9 — Why Can Some Models Generate Images?
     add_multimodal_slide(prs, blank)
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Multimodal Models\n"
+        "• Clarify the confusion: text models ≠ image generators. Different architectures.\n"
+        "• Text model = trained on text. Multimodal = trained on text + images together.\n"
+        "• Image generation (DALL-E, Stable Diffusion) = totally different process (diffusion).\n"
+        "• Connect: 'In Lab 5, you'll use LLaVA — a model that can look at photos you upload.'\n"
+        "• Fun fact: 'Some models can now understand video, audio, and even 3D objects.'\n"
+        "• Transition: 'So where do these models actually run?'\n"
+        "• Timing: ~2 min")
 
     # 10
     add_two_column_slide(
@@ -813,6 +949,14 @@ def build_deck():
         ],
         "split scene laptop edge device vs cloud datacenter pipeline",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Local vs Cloud\n"
+        "• Point to the server: 'Everything today runs RIGHT HERE — nothing leaves this room.'\n"
+        "• Walk through pros/cons of each side. Let students weigh in.\n"
+        "• Ask: 'Would you rather have more privacy or more power? You'll explore this in Lab 6.'\n"
+        "• Key insight: 'The gap is shrinking — local models are getting much better.'\n"
+        "• Transition: 'Speaking of local models — size matters. Let's talk about that.'\n"
+        "• Timing: ~3 min")
 
     # 7
     add_model_size_metaphor_slide(prs, blank)
@@ -839,6 +983,15 @@ def build_deck():
         ],
         "task-routing board with lightweight and heavyweight lanes",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Choose the Right Model\n"
+        "• Key message: 'Match the tool to the job. Don't use a sledgehammer for a nail.'\n"
+        "• Left side: small models are FAST and CHEAP. Perfect for simple tasks.\n"
+        "• Right side: big models THINK DEEPER. Needed for complex work.\n"
+        "• Ask: 'If you're writing a quick text, do you need the smartest AI? Probably not.'\n"
+        "• Connect to Lab 2 where they'll compare models head-to-head.\n"
+        "• Transition: 'Let's compare coding work vs other kinds of content.'\n"
+        "• Timing: ~2 min")
 
     # 9
     add_two_column_slide(
@@ -857,6 +1010,13 @@ def build_deck():
         ],
         "split keyboard-and-code panel versus notebook-and-editor panel",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Coding vs Docs\n"
+        "• Quick comparison: coding has strict correctness requirements. Docs are more forgiving.\n"
+        "• For students who code: 'AI is amazing for debugging, but ALWAYS run the code to verify.'\n"
+        "• For everyone: 'Even for writing, fact-check important claims.'\n"
+        "• Transition: 'Now let's look at the tools available in the AI landscape.'\n"
+        "• Timing: ~2 min")
 
     # 10
     add_tools_landscape_slide(prs, blank)
@@ -869,6 +1029,14 @@ def build_deck():
 
     # 18 — Parameters vs Tokens
     add_params_vs_tokens_slide(prs, blank)
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Parameters vs Tokens\n"
+        "• Students often confuse these. This slide makes it crystal clear.\n"
+        "• Parameters = the engine (fixed after training). Tokens = the fuel (flowing at runtime).\n"
+        "• Car analogy: 'A V8 engine (big model) is more powerful, but uses more fuel (tokens cost more).'\n"
+        "• Ask: 'If parameters are the engine size, what's the token limit?' (Answer: gas tank / context window)\n"
+        "• Transition: 'Now let's talk about HOW to use these tools effectively — prompting.'\n"
+        "• Timing: ~2 min")
 
     # 19
     add_bullets_slide(
@@ -889,9 +1057,28 @@ def build_deck():
         ],
         "teacher and students at whiteboard refining prompts together",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Prompting Patterns\n"
+        "• This is the 'practical skills' slide. Students will USE these in the labs.\n"
+        "• Pattern 1: 'Give the AI a job title and clear instructions. Like hiring a specialist.'\n"
+        "• Pattern 2: 'Don't accept the first answer. Ask for alternatives and tradeoffs.'\n"
+        "• Pattern 3: 'Make the AI show its work — ask it to cite sources or explain reasoning.'\n"
+        "• Pattern 4: 'In long chats, periodically ask the AI to summarize what you've discussed.'\n"
+        "• Connect directly to Lab 3 where they'll practice prompt engineering.\n"
+        "• Transition: 'Time to put all of this into practice — welcome to the lab!'\n"
+        "• Timing: ~3 min")
 
     # 20 — Welcome to the Lab!
     add_lab_intro_slide(prs, blank)
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Welcome to the Lab!\n"
+        "• This is the transition to hands-on time. Energy should be high.\n"
+        "• Share the server IP address now: write it on the board or project it.\n"
+        "• Walk through: 'Open your browser, go to this URL, and you should see the chat interface.'\n"
+        "• Troubleshoot: give students 2 minutes to connect. Help anyone having issues.\n"
+        "• Point out the model dropdown and New Chat button.\n"
+        "• Transition: 'Let's do a quick guided demo before you explore on your own.'\n"
+        "• Timing: ~3 min")
 
     # 21
     add_bullets_slide(
@@ -905,6 +1092,14 @@ def build_deck():
         ],
         "classroom lab with students observing terminal and PR diff screens",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Live Lab Plan\n"
+        "• Do Demo A live: pick a small model, show a simple rewrite. Fast and impressive.\n"
+        "• Do Demo B live: pick a larger model, show a more complex task. Compare quality.\n"
+        "• Ask the class: 'Which response was better? Was the extra wait time worth it?'\n"
+        "• Then release students to work through the lab exercises at their own pace.\n"
+        "• Circulate the room. Help students who get stuck. Celebrate cool discoveries.\n"
+        "• Timing: ~5 min for demos, then student lab time")
 
     # 15
     add_bullets_slide(
@@ -918,6 +1113,14 @@ def build_deck():
         ],
         "seatbelt-on-rocket metaphor for safe acceleration",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Safety and Reality Check\n"
+        "• Tone: serious but not scary. 'AI is powerful, and with power comes responsibility.'\n"
+        "• Key message: 'Never blindly trust AI output. Always verify.'\n"
+        "• Ask: 'What's the worst that could happen if AI gives wrong medical advice? Wrong code?'\n"
+        "• Practical: 'Treat AI like a smart intern — great ideas, but needs supervision.'\n"
+        "• Transition: 'Let's talk specifically about your data and privacy.'\n"
+        "• Timing: ~2 min")
 
     # 23 — Privacy and Your Data
     add_privacy_slide(prs, blank)
@@ -936,6 +1139,15 @@ def build_deck():
         ],
         "open mic classroom discussion circle, collaborative energy",
     )
+    override_last_slide_notes(prs,
+        "SPEAKER NOTES — Discussion and Q&A\n"
+        "• Open it up: 'What was the most surprising thing you learned today?'\n"
+        "• Encourage honest answers. 'There are no wrong answers here.'\n"
+        "• If the room is quiet, start with: 'I'll share mine — [your own takeaway].'\n"
+        "• Good follow-ups: 'Would you use AI for homework? What about exams?'\n"
+        "• Mention the feedback form if you set one up (QR code on screen).\n"
+        "• Close with: 'AI is the most powerful tool you'll have in your careers. Learn it well.'\n"
+        "• Timing: ~5-10 min")
 
     out_path = Path(__file__).parent / "Agentic_AI_101_Workshop.pptx"
     try:

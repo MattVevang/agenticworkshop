@@ -245,21 +245,4 @@ Based on everything you've learned, fill in this framework for making local vs. 
 
 ---
 
-## 🏁 Workshop Complete!
-
-Congratulations — you've made it through all six labs! Here's a quick recap of what you've learned:
-
-| Lab | Key Insight |
-|---|---|
-| **Lab 1** | AI is non-deterministic — same prompt, different results |
-| **Lab 2** | Different models have different strengths — match the model to the job |
-| **Lab 3** | How you prompt dramatically affects what you get back |
-| **Lab 4** | AI confidently makes things up — always fact-check |
-| **Lab 5** | AI can be creative and even "see" images — but verify everything |
-| **Lab 6** | Where AI runs matters — local vs. cloud is a real tradeoff |
-
-### 🌟 The Biggest Takeaway
-
-AI is an incredibly powerful tool, but it's **just a tool**. It doesn't think, it doesn't understand, and it doesn't know when it's wrong. **You** are the critical thinker, the fact-checker, and the decision-maker. The students who learn to use AI effectively — while understanding its limitations — will have a massive advantage in whatever field they pursue.
-
-Go build something awesome. 🚀
+**Next up: [Lab 7: Bias and Fairness in AI →](lab-07-bias-and-fairness.md)**

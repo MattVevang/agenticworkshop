@@ -21,6 +21,16 @@ services:
       - SCARF_NO_ANALYTICS=true
       - DO_NOT_TRACK=true
 
+      # NOTE: The following Ollama environment variables should be set on the
+      # HOST machine before running 'ollama serve' (not in this Docker file):
+      #
+      #   OLLAMA_HOST=0.0.0.0:11434          # Accept connections from Docker & network
+      #   OLLAMA_NUM_PARALLEL=4              # Handle concurrent student requests
+      #   OLLAMA_MAX_LOADED_MODELS=3         # Keep multiple models in VRAM (32GB GPU)
+      #   OLLAMA_KEEP_ALIVE=2h               # Don't unload models during the workshop
+      #
+      # See demos/scripts/ollama-warmup.py for the pre-workshop model preloader.
+
     volumes:
       # Persistent data so config survives container restarts
       - open-webui-data:/app/backend/data

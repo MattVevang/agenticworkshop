@@ -50,6 +50,9 @@ These are the models loaded on the server that you can use:
 | [Lab 4](lab-04-hallucination-detection.md) | Catching AI Lies | 20 min | Hands-on |
 | [Lab 5](lab-05-creative-and-multimodal.md) | Creative & Multimodal AI | 20 min | Hands-on |
 | [Lab 6](lab-06-local-vs-cloud-discussion.md) | Local vs. Cloud AI | 15 min | Discussion |
+| [Lab 7](lab-07-bias-and-fairness.md) | Bias and Fairness in AI | 20 min | Hands-on |
+| [Lab 8](lab-08-real-world-scenarios.md) | Real-World AI Scenarios | 20 min | Hands-on |
+| [Lab 9](lab-09-custom-modelfile.md) | Build Your Own AI Personality (Bonus) | 15–20 min | Instructor-led demo |
 
 ---
 

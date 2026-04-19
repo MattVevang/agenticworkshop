@@ -4,6 +4,19 @@ A no-nonsense guide to the buzzwords you'll hear in the world of AI. Each term g
 
 ---
 
+## 📇 Quick Jump
+
+| | | | |
+|---|---|---|---|
+| [Agent / Agentic](#agent--agentic) | [AI / Artificial Intelligence](#ai--artificial-intelligence) | [Context Window](#context-window) | [Embedding](#embedding) |
+| [GPU / VRAM](#gpu--vram) | [Hallucination](#hallucination) | [Inference](#inference) | [LLM / Large Language Model](#llm--large-language-model) |
+| [MCP](#mcp-model-context-protocol) | [Model](#model) | [Multimodal](#multimodal) | [Open Source vs. Proprietary Models](#open-source-vs-proprietary-models) |
+| [Parameter](#parameter) | [Prompt](#prompt) | [Quantization](#quantization) | [RAG](#rag-retrieval-augmented-generation) |
+| [RLHF](#rlhf-reinforcement-learning-from-human-feedback) | [Temperature](#temperature) | [Token](#token) | [Top-K / Top-P Sampling](#top-k--top-p-sampling) |
+| [Training / Fine-tuning](#training--fine-tuning) | | | |
+
+---
+
 ## AI / Artificial Intelligence
 
 **Definition:** Software that can perform tasks that normally require human intelligence — like understanding language, recognizing images, or making decisions.
