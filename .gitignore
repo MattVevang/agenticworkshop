@@ -1,0 +1,24 @@
+# Generated slide decks
+*.pptx
+~$*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Docker volumes (managed by Docker, not committed)
+docker/data/

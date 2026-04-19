@@ -446,6 +446,275 @@ def add_storyboard_slide(prs, blank):
     add_notes(slide, "You can use these seeds in Midjourney, DALL-E, Stable Diffusion, or stock search queries.")
 
 
+# ---------------------------------------------------------------------------
+# New topic slides
+# ---------------------------------------------------------------------------
+
+
+def add_training_deep_dive_slide(prs, blank):
+    """Slide: How Training Really Works (deeper dive)."""
+    add_bullets_slide(
+        prs, blank, "How Training Really Works",
+        [
+            ("Data Collection", [
+                "Internet text, books, code repos \u2014 trillions of words scraped and cleaned."
+            ]),
+            ("Pretraining", [
+                "Model learns to predict the next token across massive datasets.",
+                "Like reading millions of books \u2014 you absorb grammar and style."
+            ]),
+            ("Fine-Tuning with Human Feedback (RLHF)", [
+                "Humans rate outputs to steer the model toward helpful, safe responses."
+            ]),
+            ("Key Insight", [
+                "Models learn patterns, not facts \u2014 they are pattern engines.",
+                "You might misremember specific facts, but you \"get\" the language."
+            ]),
+        ],
+        "data pipeline: books and code flowing through neural network into a glowing brain",
+    )
+
+
+def add_prediction_slide(prs, blank):
+    """Slide: How Does Prediction Actually Work?"""
+    add_bullets_slide(
+        prs, blank, "How Does Prediction Actually Work?",
+        [
+            ("Token-by-Token Generation", [
+                "Model picks the most likely next token, feeds it back, repeats.",
+                "Like autocomplete on steroids \u2014 instead of one word, it keeps going."
+            ]),
+            ("Temperature Controls Randomness", [
+                "Low temperature = focused, predictable output.",
+                "High temperature = more creative, surprising results."
+            ]),
+            ("Top-K and Top-P Sampling", [
+                "Only consider the top candidates for the next token.",
+                "Balances quality and variety in responses."
+            ]),
+            "Live Demo: We have a token prediction demo that shows this in action!",
+        ],
+        "autocomplete cascade showing probability bars for next-token candidates",
+    )
+
+
+def add_hallucinations_slide(prs, blank):
+    """Slide: Hallucinations \u2014 When AI Makes Stuff Up."""
+    add_bullets_slide(
+        prs, blank, "Hallucinations: When AI Makes Stuff Up",
+        [
+            ("What Happens", [
+                "Model generates confident-sounding but factually wrong output."
+            ]),
+            ("Why It Happens", [
+                "It predicts likely tokens, not verified facts \u2014 no fact-checker inside."
+            ]),
+            ("Examples You Might See", [
+                "Fake book summaries, invented citations, wrong math steps."
+            ]),
+            ("How to Minimize", [
+                "Be specific, ask for sources, fact-check, use smaller-scope questions."
+            ]),
+            "Trust but verify \u2014 treat AI like a smart but unreliable first draft.",
+        ],
+        "magnifying glass revealing cracks in a confident-looking AI-generated document",
+    )
+
+
+def add_multimodal_slide(prs, blank):
+    """Slide: Why Can Some Models Generate Images?"""
+    add_bullets_slide(
+        prs, blank, "Why Can Some Models Generate Images?",
+        [
+            ("Text Models", [
+                "Trained on text data only \u2014 read and write text, nothing else."
+            ]),
+            ("Multimodal Models (GPT-4o, Gemini)", [
+                "Trained on text + image pairs \u2014 can understand photos you upload."
+            ]),
+            ("Image Generation (Stable Diffusion, DALL-E)", [
+                "Totally different architecture \u2014 uses a diffusion process.",
+                "Starts from noise, gradually refines into an image."
+            ]),
+            ("Key Insight", [
+                "A model can only do what it was trained to do.",
+                "Text model \u2260 image model \u2014 different tools for different jobs."
+            ]),
+        ],
+        "split view: text tokens flowing through one model, pixel grids through another",
+    )
+
+
+def add_hardware_slide(prs, blank):
+    """Slide: What Hardware Runs a Model?"""
+    slide = prs.slides.add_slide(blank)
+    add_background(slide, prs.slide_width, prs.slide_height)
+    add_header(slide, prs.slide_width, "What Hardware Runs a Model?")
+
+    explainer = add_panel(slide, Inches(0.6), Inches(1.2), Inches(12.1), Inches(1.35),
+                          fill=SURFACE, line=PRIMARY)
+    tf = explainer.text_frame
+    tf.word_wrap = True
+    tf.margin_left = Inches(0.2)
+    tf.margin_top = Inches(0.07)
+    set_first_bullet(tf, "GPUs power AI because they do massive parallel math. VRAM is the bottleneck.",
+                     size=Pt(17), bold=True, color=WHITE)
+    add_bullet(tf, "CPU = general-purpose brain.  GPU = thousands of simple cores doing math at once.",
+               size=Pt(13), color=TEXT)
+
+    rows_data = [
+        ("1B params", "~2 GB", "Tiny tasks, mobile devices"),
+        ("7B params", "~6 GB", "Good starter, fits most gaming GPUs"),
+        ("14B params", "~10 GB", "Solid quality, needs mid-range GPU"),
+        ("30B params", "~20 GB", "Near-cloud quality, high-end GPU"),
+        ("70B+ params", "~48 GB+", "Top tier \u2014 multiple GPUs needed"),
+    ]
+
+    table_shape = slide.shapes.add_table(
+        1 + len(rows_data), 3, Inches(0.8), Inches(2.85), Inches(11.7), Inches(3.0))
+    table = table_shape.table
+    table.columns[0].width = Inches(3.0)
+    table.columns[1].width = Inches(3.0)
+    table.columns[2].width = Inches(5.7)
+
+    for c, text in enumerate(["Model Size", "VRAM Needed", "What That Means"]):
+        cell = table.cell(0, c)
+        cell.fill.solid()
+        cell.fill.fore_color.rgb = SURFACE
+        cell.text = text
+        p = cell.text_frame.paragraphs[0]
+        p.runs[0].font.size = Pt(13)
+        p.runs[0].font.bold = True
+        p.runs[0].font.color.rgb = WHITE
+
+    for r, (size, vram, note) in enumerate(rows_data, start=1):
+        for c, val in enumerate([size, vram, note]):
+            cell = table.cell(r, c)
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = BG
+            cell.text = val
+            p = cell.text_frame.paragraphs[0]
+            p.runs[0].font.size = Pt(12)
+            p.runs[0].font.color.rgb = TEXT
+            if c == 0:
+                p.runs[0].font.bold = True
+                p.runs[0].font.color.rgb = PRIMARY
+
+    callout = add_panel(slide, Inches(0.6), Inches(6.05), Inches(12.1), Inches(0.7),
+                        fill=SURFACE, line=SUCCESS)
+    tfc = callout.text_frame
+    tfc.margin_left = Inches(0.2)
+    tfc.margin_top = Inches(0.06)
+    set_first_bullet(
+        tfc,
+        "Our workshop server: RTX 5090 with 32 GB VRAM \u2014 runs up to ~30B models comfortably.",
+        size=Pt(14), bold=True, color=SUCCESS)
+
+    add_footer(slide, "AI 101 Workshop")
+    add_notes(slide, "Visual concept: GPU card with glowing VRAM chips, size comparison chart.")
+
+
+def add_params_vs_tokens_slide(prs, blank):
+    """Slide: Parameters vs Tokens \u2014 What's the Difference?"""
+    add_two_column_slide(
+        prs, blank, "Parameters vs Tokens: What's the Difference?",
+        "Parameters (The Engine)",
+        [
+            "The model's learned knowledge \u2014 its neural weights.",
+            "Fixed after training. Like the brain's connections.",
+            "Parameter count = model size and capability.",
+            "More parameters = deeper reasoning potential.",
+            "Analogy: the size of the engine under the hood.",
+        ],
+        "Tokens (The Fuel)",
+        [
+            "Chunks of text flowing through at runtime.",
+            "Like the words in a conversation \u2014 always changing.",
+            "Token count = conversation length and cost.",
+            "More tokens = longer context, higher price tag.",
+            "Analogy: the fuel going through the engine.",
+        ],
+        "engine-vs-fuel metaphor: car engine cutaway on left, fuel gauge on right",
+    )
+
+
+def add_privacy_slide(prs, blank):
+    """Slide: Privacy and Your Data \u2014 two columns with warning callout."""
+    slide = prs.slides.add_slide(blank)
+    add_background(slide, prs.slide_width, prs.slide_height)
+    add_header(slide, prs.slide_width, "Privacy and Your Data")
+
+    left = add_panel(slide, Inches(0.6), Inches(1.25), Inches(5.85), Inches(4.6),
+                     fill=SURFACE, line=PRIMARY)
+    right = add_panel(slide, Inches(6.85), Inches(1.25), Inches(5.85), Inches(4.6),
+                      fill=SURFACE, line=SECONDARY)
+
+    tf_l = left.text_frame
+    tf_l.word_wrap = True
+    tf_l.margin_left = Inches(0.2)
+    tf_l.margin_top = Inches(0.1)
+    set_first_bullet(tf_l, "Cloud AI Services", size=Pt(21), bold=True, color=PRIMARY)
+    for pt in [
+        "Your prompts may be logged by the provider.",
+        "Some services use your data for training (check!).",
+        "Subject to the provider's data policies.",
+        "Consider carefully what you share.",
+        "Great capability, but read the fine print.",
+    ]:
+        add_bullet(tf_l, pt, size=Pt(14), color=TEXT)
+
+    tf_r = right.text_frame
+    tf_r.word_wrap = True
+    tf_r.margin_left = Inches(0.2)
+    tf_r.margin_top = Inches(0.1)
+    set_first_bullet(tf_r, "Local AI (Like Our Lab)", size=Pt(21), bold=True, color=SECONDARY)
+    for pt in [
+        "Data stays on this machine \u2014 nowhere else.",
+        "No internet connection needed to run.",
+        "Full control over your data and models.",
+        "You manage everything (updates, security).",
+        "Privacy by design, but more responsibility.",
+    ]:
+        add_bullet(tf_r, pt, size=Pt(14), color=TEXT)
+
+    callout = add_panel(slide, Inches(0.6), Inches(6.05), Inches(12.1), Inches(0.7),
+                        fill=SURFACE, line=WARN)
+    tfc = callout.text_frame
+    tfc.margin_left = Inches(0.2)
+    tfc.margin_top = Inches(0.06)
+    set_first_bullet(
+        tfc,
+        "Always read the privacy policy. Some services opt you INTO training by default.",
+        size=Pt(14), bold=True, color=WARN)
+
+    add_footer(slide, "AI 101 Workshop")
+    add_notes(slide, "Visual concept: shield split between cloud data flow and locked local vault.")
+
+
+def add_lab_intro_slide(prs, blank):
+    """Slide: Welcome to the Lab!"""
+    add_bullets_slide(
+        prs, blank, "Welcome to the Lab!",
+        [
+            ("How to Connect", [
+                "Open your browser \u2192 navigate to http://[server-ip]:3000",
+                "No login required \u2014 just start chatting!"
+            ]),
+            ("Using the Interface", [
+                "Model selector: pick different models from the dropdown.",
+                "New chat: start fresh sessions for each exercise.",
+                "Available models listed with descriptions in the sidebar."
+            ]),
+            ("What We'll Do", [
+                "Hands-on exercises exploring different models and prompts.",
+                "Compare outputs, speed, and quality across model sizes.",
+                "Lab exercise guide available \u2014 follow along or explore!"
+            ]),
+        ],
+        "students opening laptops and connecting to a glowing local server hub",
+    )
+
+
 def build_deck():
     prs = Presentation()
     prs.slide_width = Inches(13.333)
@@ -460,12 +729,17 @@ def build_deck():
         prs, blank, "Agenda",
         [
             "1. What AI is (and is not)",
-            "2. How models are trained and deployed",
-            "3. Model sizes, cost, latency, and quality tradeoffs",
-            "4. Choosing the right model for the job",
-            "5. Agentic workflows, MCP, and tools",
-            "6. Tokens, context windows, and failure modes",
-            "7. Hands-on lab flow and discussion",
+            "2. How models are trained \u2014 from data to deployment",
+            "3. How training and prediction really work",
+            "4. Hallucinations \u2014 when AI makes stuff up",
+            "5. Model types: text, multimodal, and image generation",
+            "6. Model sizes, hardware, and choosing the right one",
+            "7. Tokens, parameters, and context windows",
+            "8. Agentic workflows, MCP, and tools",
+            "9. Prompting patterns that work",
+            "10. Hands-on lab \u2014 connect and experiment",
+            "11. Safety, privacy, and responsible use",
+            "12. Discussion and Q&A",
         ],
         "clean mission board agenda visual with neon accents",
     )
@@ -508,7 +782,19 @@ def build_deck():
         "factory pipeline from data to trained model to deployment",
     )
 
-    # 6
+    # 6 — How Training Really Works
+    add_training_deep_dive_slide(prs, blank)
+
+    # 7 — How Does Prediction Actually Work?
+    add_prediction_slide(prs, blank)
+
+    # 8 — Hallucinations
+    add_hallucinations_slide(prs, blank)
+
+    # 9 — Why Can Some Models Generate Images?
+    add_multimodal_slide(prs, blank)
+
+    # 10
     add_two_column_slide(
         prs, blank, "How Models Run: Local vs Cloud",
         "Local Model",
@@ -531,7 +817,10 @@ def build_deck():
     # 7
     add_model_size_metaphor_slide(prs, blank)
 
-    # 8
+    # 12 — What Hardware Runs a Model?
+    add_hardware_slide(prs, blank)
+
+    # 13
     add_two_column_slide(
         prs, blank, "Choose the Right Model for the Task",
         "Use Small/Fast Models For",
@@ -578,7 +867,10 @@ def build_deck():
     # 12
     add_tokens_slide(prs, blank)
 
-    # 13
+    # 18 — Parameters vs Tokens
+    add_params_vs_tokens_slide(prs, blank)
+
+    # 19
     add_bullets_slide(
         prs, blank, "Prompting Patterns That Work in Class",
         [
@@ -598,7 +890,10 @@ def build_deck():
         "teacher and students at whiteboard refining prompts together",
     )
 
-    # 14
+    # 20 — Welcome to the Lab!
+    add_lab_intro_slide(prs, blank)
+
+    # 21
     add_bullets_slide(
         prs, blank, "Live Lab Plan (Student-Friendly)",
         [
@@ -624,7 +919,10 @@ def build_deck():
         "seatbelt-on-rocket metaphor for safe acceleration",
     )
 
-    # 16
+    # 23 — Privacy and Your Data
+    add_privacy_slide(prs, blank)
+
+    # 24
     add_storyboard_slide(prs, blank)
 
     # 17

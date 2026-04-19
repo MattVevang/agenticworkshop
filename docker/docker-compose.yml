@@ -1,0 +1,33 @@
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.8.12
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      # Connect to Ollama running on the Windows host
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+
+      # Disable authentication for frictionless workshop/lab use.
+      # This runs in shared kiosk mode — all students see the same
+      # chat history and settings. Acceptable for a single-day workshop.
+      - WEBUI_AUTH=false
+
+      # Default model students see when they first open the UI
+      - DEFAULT_MODELS=mistral:7b
+
+      # Disable telemetry for a local lab environment
+      - SCARF_NO_ANALYTICS=true
+      - DO_NOT_TRACK=true
+
+    volumes:
+      # Persistent data so config survives container restarts
+      - open-webui-data:/app/backend/data
+
+    extra_hosts:
+      # Ensure host.docker.internal resolves on all Docker versions
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  open-webui-data:
