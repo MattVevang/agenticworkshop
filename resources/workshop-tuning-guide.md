@@ -14,10 +14,10 @@ These environment variables are **already set** as persistent env vars on the ho
 |---|---|---|---|
 | `OLLAMA_HOST` | `0.0.0.0:11434` | User | Listen on all interfaces so students can connect |
 | `OLLAMA_FLASH_ATTENTION` | `1` | Machine | Enable Flash Attention for faster inference |
-| `OLLAMA_KV_CACHE_TYPE` | `q8_0` | Environment | Quantized KV cache — reduces per-model VRAM overhead |
-| `OLLAMA_CONTEXT_LENGTH` | `131072` | Environment | 128k context window (personal use — **too large for workshop**) |
+| `OLLAMA_KV_CACHE_TYPE` | `q8_0` | User | Quantized KV cache — reduces per-model VRAM overhead |
+| `OLLAMA_CONTEXT_LENGTH` | `131072` | User | 128k context window — **do not reduce** (see note below) |
 
-> ⚠️ **The 128k context length is the single biggest VRAM waste during the workshop.** Each loaded model allocates KV cache proportional to context length. Workshop prompts rarely exceed 500 tokens, so 128k is ~16× more than needed.
+> ℹ️ **Why not reduce context length?** Reducing `OLLAMA_CONTEXT_LENGTH` saves VRAM but causes **silent prompt truncation** on any large input sent through the Ollama API (including Open WebUI). The `ollama run` CLI auto-scales context, so failures only appear through API clients — making them extremely confusing to diagnose. The RTX 5090 with q8_0 KV cache handles 128k without issue.
 
 ---
 
@@ -52,15 +52,17 @@ Keep at most **2 models** in VRAM simultaneously (default: auto, which can fill 
 
 > ✅ With `OLLAMA_KEEP_ALIVE=30s`, idle models unload quickly, so the 2-model cap rarely blocks requests in practice.
 
-### `OLLAMA_CONTEXT_LENGTH=8192`
+### ~~`OLLAMA_CONTEXT_LENGTH`~~ — **Do NOT change**
 
-Reduce context window from **128k → 8k** for the workshop.
+Leave at the default **131072** (128k). Reducing this was originally considered to save VRAM,
+but it causes **silent prompt truncation** on any large input sent through the Ollama API
+(including Open WebUI). The `ollama run` CLI auto-scales context, so problems only surface
+through API clients — making failures confusing to diagnose.
 
-- Workshop prompts are short (rarely over 500 tokens).
-- Massively reduces per-model VRAM overhead from KV cache allocation.
-- The 128k default is for personal use with long documents — not needed here.
-
-> ⚠️ **This is the highest-impact change.** Restoring the original 128k value after the workshop is critical (see [Section 3](#3-how-to-revert-after-workshop)).
+- The RTX 5090 with q8_0 KV cache has plenty of VRAM headroom at 128k.
+- The other tuning vars (`KEEP_ALIVE`, `NUM_PARALLEL`, `MAX_LOADED_MODELS`) provide
+  sufficient VRAM management for concurrent workshop use.
+- Native model context lengths: llama 128k, mistral 32k, gemma4 256k.
 
 ---
 
@@ -74,7 +76,7 @@ Reduce context window from **128k → 8k** for the workshop.
 [System.Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", "30s", "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_NUM_PARALLEL", "4", "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_MAX_LOADED_MODELS", "2", "User")
-[System.Environment]::SetEnvironmentVariable("OLLAMA_CONTEXT_LENGTH", "8192", "User")
+# NOTE: Do NOT change OLLAMA_CONTEXT_LENGTH — leave at 131072 (see Section 1 notes)
 ```
 
 ### Step 3 — Restart Ollama via the scheduled task
@@ -110,9 +112,7 @@ You should see an empty `models` array (nothing loaded yet). If you get a connec
 [System.Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", $null, "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_NUM_PARALLEL", $null, "User")
 [System.Environment]::SetEnvironmentVariable("OLLAMA_MAX_LOADED_MODELS", $null, "User")
-
-# Restore original 128k context length
-[System.Environment]::SetEnvironmentVariable("OLLAMA_CONTEXT_LENGTH", "131072", "User")
+# OLLAMA_CONTEXT_LENGTH is not changed by the workshop — no action needed
 ```
 
 ### Step 2 — Restart the scheduled task
@@ -133,7 +133,7 @@ curl http://localhost:11434/api/ps
 > - [ ] `OLLAMA_KEEP_ALIVE` is removed (not present in User env vars)
 > - [ ] `OLLAMA_NUM_PARALLEL` is removed
 > - [ ] `OLLAMA_MAX_LOADED_MODELS` is removed
-> - [ ] `OLLAMA_CONTEXT_LENGTH` is back to `131072`
+> - [ ] `OLLAMA_CONTEXT_LENGTH` is still `131072` (should not have been changed)
 > - [ ] Ollama scheduled task is running
 
 ---
@@ -318,10 +318,10 @@ Copy this to a sticky note on the workshop machine:
 
 ```
 WORKSHOP START:
-  Set env vars → Restart "Ollama Serve" → Verify /api/ps
+  Set env vars (KEEP_ALIVE, NUM_PARALLEL, MAX_LOADED_MODELS) → Restart "Ollama Serve" → Verify /api/ps
 
 WORKSHOP END:
-  Remove env vars → Restore CONTEXT_LENGTH=131072 → Restart "Ollama Serve"
+  Remove 3 workshop env vars → Restart "Ollama Serve"
 
 EMERGENCY:
   nvidia-smi                          # check VRAM
