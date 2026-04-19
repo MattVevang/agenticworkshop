@@ -124,55 +124,32 @@ Imagine the model is writing a story and needs the next word after "The cat sat 
 
 ---
 
-## Exercise 4: Temperature Experiment 🔥
+## Exercise 4: Temperature in Action 🔥 *(Instructor Demo)*
 
-Let's actually test this! We'll change the temperature setting and see what happens.
+> ⚠️ **Important:** In our shared workshop setup, temperature settings affect **all users at once**. To avoid disrupting everyone's experience, your instructor will demonstrate this live — watch carefully!
+>
+> Want to try it yourself? See the **"Try This at Home"** section at the end of this lab.
 
-### How to Change Temperature in OpenWebUI
+### What You'll See
 
-1. Click the **⚙️ Settings/gear icon** near the model dropdown or chat area  
-2. Look for a **Temperature** slider or parameter setting  
-3. You may find it under **Advanced Parameters** or **Model Settings**
+Your instructor will run the same haiku prompt three times at **temperature 0** (fully deterministic), then three times at **default temperature** (~0.7).
 
-> 💡 Your instructor can help you find this — the exact location depends on the OpenWebUI version.
+### Watch For
 
-### Step 1: Temperature = 0
-
-1. Set temperature to **0**
-2. **Start a new chat** and type:
-
-```
-Write a haiku about pizza
-```
-
-3. Note the response
-4. **Start a new chat** (keep temperature at 0) and type the same prompt again
-5. Repeat one more time (3 attempts total)
-
-### ✏️ Record Your Results (Temperature 0)
-
-| Attempt | Haiku |
+| Temperature 0 | Default Temperature |
 |---|---|
-| 1st | |
-| 2nd | |
-| 3rd | |
+| Responses should be identical (or nearly so) | Responses should vary each time |
+| Feels robotic, repetitive | Feels natural, creative |
+| The model always picks the "safest" next word | The model explores different word choices |
 
-**❓ Were the responses identical or nearly identical this time?**
+### ✏️ Record the Instructor Demo Results
 
-### Step 2: Temperature = Default
+| Setting | Attempt 1 | Attempt 2 | Attempt 3 | Were they the same? |
+|---|---|---|---|---|
+| Temperature 0 | | | | |
+| Default temp | | | | |
 
-1. Set temperature back to the **default** (typically 0.7 or 0.8 — or just remove your override)
-2. Repeat the same process: **3 new chats, same haiku prompt**
-
-### ✏️ Record Your Results (Default Temperature)
-
-| Attempt | Haiku |
-|---|---|
-| 1st | |
-| 2nd | |
-| 3rd | |
-
-**❓ How do the temperature-0 results compare to the default results?**
+**❓ Can you see how temperature is the "dial" that controls the randomness you observed in Exercises 1–3?**
 
 ---
 
@@ -199,6 +176,28 @@ Take a few minutes to think about these (or discuss with a partner):
 - 🔢 **Temperature 0 makes AI nearly deterministic** — but the responses might feel robotic
 - 🧠 **AI predicts words probabilistically** — it doesn't "know" things the way a database does
 - ⚖️ **This is a feature, not a bug** — non-determinism is what makes AI creative and flexible
+
+---
+
+## 🏠 Try This at Home: Temperature Experiment
+
+> Want to try the temperature experiment yourself? Here's how — on your own machine or personal account (not during the workshop, since our shared setup means settings changes affect everyone).
+
+### What You'll Need
+
+- Ollama or Open WebUI running locally, or any AI chat interface with parameter controls
+
+### The Experiment
+
+1. **Set temperature to 0** (look for a Settings/gear icon → Advanced Parameters → Temperature slider)
+2. Run the haiku prompt 3 times in 3 new chats — you should see nearly identical responses
+3. **Set temperature back to default** (~0.7–0.8)
+4. Run the haiku prompt 3 more times — you should see variety again
+5. **Crank temperature to 1.5 or 2.0** — watch things get weird and creative!
+
+### Why This Is Worth Trying
+
+This is one of the most powerful ways to intuitively understand how AI generates text. Temperature is the single setting that most affects whether AI output feels robotic, natural, or chaotic — and it's something you can control in most AI tools.
 
 ---
 
