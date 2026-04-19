@@ -9,7 +9,7 @@ is ready.
 Usage:
     python ollama-health-check.py
     python ollama-health-check.py --base-url http://192.168.1.100:11434
-    python ollama-health-check.py --test-model tinyllama:1.1b
+    python ollama-health-check.py --test-model llama3.2:3b
 """
 
 import argparse
@@ -81,7 +81,7 @@ def check_models_available(base_url):
         models = resp.json().get("models", [])
 
         if not models:
-            check_fail("No models found", "pull a model with: ollama pull tinyllama:1.1b")
+            check_fail("No models found", "pull a model with: ollama pull llama3.2:3b")
             return []
 
         check_pass(f"Found {len(models)} model(s)")

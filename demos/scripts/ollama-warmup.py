@@ -8,7 +8,7 @@ ensuring fast first responses when students begin their labs.
 Usage:
     python ollama-warmup.py
     python ollama-warmup.py --base-url http://192.168.1.100:11434
-    python ollama-warmup.py --models tinyllama:1.1b mistral:7b llava:7b
+    python ollama-warmup.py --models llama3.2:3b mistral:7b llava:7b
 """
 
 import argparse
@@ -27,9 +27,9 @@ DEFAULT_BASE_URL = "http://localhost:11434"
 
 # Models to preload in priority order (most-used first)
 DEFAULT_MODELS = [
-    "mistral:7b",
     "llama3.2:3b",
-    "tinyllama:1.1b",
+    "llama3.1:8b",
+    "mistral:7b",
     "llava:7b",
 ]
 

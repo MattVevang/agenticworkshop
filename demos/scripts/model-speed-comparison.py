@@ -8,7 +8,7 @@ printing a formatted comparison table.
 Usage:
     python model-speed-comparison.py
     python model-speed-comparison.py --prompt "Write a haiku about coding"
-    python model-speed-comparison.py --models tinyllama:1.1b mistral:7b
+    python model-speed-comparison.py --models llama3.2:1b llama3.1:8b
     python model-speed-comparison.py --base-url http://192.168.1.100:11434
 """
 
@@ -25,11 +25,10 @@ except ImportError:
     sys.exit(1)
 
 DEFAULT_MODELS = [
-    "tinyllama:1.1b",
+    "llama3.2:1b",
     "llama3.2:3b",
+    "llama3.1:8b",
     "mistral:7b",
-    "qwen3:8b",
-    "deepseek-r1:14b",
 ]
 
 DEFAULT_PROMPT = "Explain what artificial intelligence is in exactly 3 sentences."
@@ -165,7 +164,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Compare response speed across multiple Ollama models.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="Example:\n  python model-speed-comparison.py --models tinyllama:1.1b mistral:7b",
+        epilog="Example:\n  python model-speed-comparison.py --models llama3.2:1b llama3.1:8b",
     )
     parser.add_argument(
         "--prompt",
@@ -176,7 +175,7 @@ def main():
         "--models",
         nargs="+",
         default=None,
-        help="Models to test (default: tinyllama:1.1b llama3.2:3b mistral:7b qwen3:8b deepseek-r1:14b)",
+        help="Models to test (default: llama3.2:1b llama3.2:3b llama3.1:8b mistral:7b)",
     )
     parser.add_argument(
         "--base-url",

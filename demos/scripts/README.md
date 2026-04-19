@@ -27,7 +27,7 @@ Live demo script that benchmarks multiple models side by side. Sends the same pr
 ```bash
 python model-speed-comparison.py
 python model-speed-comparison.py --prompt "Write a haiku about coding"
-python model-speed-comparison.py --models tinyllama:1.1b mistral:7b
+python model-speed-comparison.py --models llama3.2:1b llama3.1:8b
 python model-speed-comparison.py --show-responses
 ```
 

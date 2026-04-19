@@ -6,15 +6,15 @@
 
 ---
 
-## 🏎️ TinyLlama 1.1B — *"The Speedster"*
+## 🦙 Llama 3.2 1B — *"The Speedster"*
 
 > *"I'm not the smartest, but I'll be done before you finish reading this."*
 
 | | |
 |---|---|
-| **Creator** | TinyLlama Project |
-| **Parameters** | 1.1 billion |
-| **Disk Size** | 637 MB |
+| **Creator** | Meta |
+| **Parameters** | 1.3 billion |
+| **Disk Size** | 1.2 GB |
 | **Personality** | The scrappy underdog — tiny but lightning fast |
 
 ### Stat Line
@@ -25,8 +25,8 @@
 
 ### 💪 Strengths
 
-- **Blazing fast** — responses appear almost instantly
-- **Tiny footprint** — barely uses any GPU memory, leaving room for bigger models
+- **Blazing fast** — ~741 tok/s, responses appear almost instantly
+- **Tiny footprint** — only 1.6 GB VRAM, leaves room for other models
 - **Great for demos** — perfect for showing what a "small brain" looks like
 
 ### 😅 Weaknesses
@@ -36,16 +36,16 @@
 
 ### 🎯 Best Workshop Use
 
-Use TinyLlama when you want to see what happens when an AI has very few parameters. It's the "control group" — compare its answers to bigger models to see how much size matters.
+Use Llama 3.2 1B in the **drag race** (Lab 2) to see what happens when an AI has very few parameters. Compare its answers to the 3B and 8B siblings to see how much size matters — all from the same Llama family.
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 1, 2, 3, 4)
+- **Lab 2** — Model Showdown: Llama Drag Race (Exercises 1, 2, 3, 4)
 - **Lab 5** — Creative & Multimodal AI (Exercise 7: code quality comparison)
 
 ---
 
-## 🦙 Llama 3.2 3B — *"The Balanced Rookie"*
+## 🦙 Llama 3.2 3B — *"The Workshop Default"*
 
 > *"Small enough to be fast, big enough to be useful."*
 
@@ -64,9 +64,10 @@ Use TinyLlama when you want to see what happens when an AI has very few paramete
 
 ### 💪 Strengths
 
-- **Fast and capable** — a sweet spot between speed and smarts
+- **Fast and capable** — ~424 tok/s, sweet spot between speed and smarts
 - **Meta's latest small model** — benefits from cutting-edge training techniques
-- **Low resource usage** — leaves plenty of VRAM headroom
+- **Low resource usage** — only 2.3 GB VRAM, leaves plenty of headroom
+- **Great concurrent performance** — 5 simultaneous users under 1.4s
 
 ### 😅 Weaknesses
 
@@ -75,24 +76,30 @@ Use TinyLlama when you want to see what happens when an AI has very few paramete
 
 ### 🎯 Best Workshop Use
 
-A great step up from TinyLlama — use this when you want quick answers that are noticeably better without waiting around. Perfect for rapid experimentation.
+This is the workshop's **default model**. When a lab says "pick a model" and you're not sure, llama3.2:3b is the go-to. It's fast, reliable, and handles everything from creative writing to code generation well enough for classroom use.
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 1, 2, 3, 4)
+- **Lab 1** — Non-Determinism (primary model)
+- **Lab 2** — Model Showdown: Llama Drag Race (Exercises 1, 2, 3, 4)
+- **Lab 3** — Prompt Engineering (suggested model)
+- **Lab 5** — Creative & Multimodal AI (Parts 1 & Exercise 7)
+- **Lab 7** — Bias and Fairness (suggested model)
+- **Lab 8** — Real-World Scenarios (suggested model)
+- **Lab 9** — Custom Modelfile (base model)
 
 ---
 
-## 🌪️ Mistral 7B — *"The All-Star"*
+## 🦙 Llama 3.1 8B — *"The Big Sibling"*
 
-> *"Need something done? I'm your model."*
+> *"Same family, bigger brain. You'll see the difference."*
 
 | | |
 |---|---|
-| **Creator** | Mistral AI |
-| **Parameters** | 7 billion |
-| **Disk Size** | 4.4 GB |
-| **Personality** | The reliable veteran — solid at everything, star at nothing specific |
+| **Creator** | Meta |
+| **Parameters** | 8 billion |
+| **Disk Size** | 4.7 GB |
+| **Personality** | The honors student — noticeably sharper than the younger siblings |
 
 ### Stat Line
 
@@ -102,29 +109,63 @@ A great step up from TinyLlama — use this when you want quick answers that are
 
 ### 💪 Strengths
 
+- **Best quality in the Llama family lineup** — handles nuance, edge cases, and complex prompts
+- **Still fast** — ~254 tok/s, plenty responsive for interactive use
+- **Moderate VRAM** — 4.8 GB, easily fits alongside other models
+- **Fair comparison** — same Llama family as the 1B and 3B
+
+### 😅 Weaknesses
+
+- Noticeably slower than the smaller siblings (the point of the drag race!)
+- Not the best at deep math or multi-step logic puzzles
+
+### 🎯 Best Workshop Use
+
+Use Llama 3.1 8B as the "big" model in the **drag race** (Lab 2). It's the same family as the 1B and 3B, so when you compare quality, you know size is the main variable — not different training data or architecture.
+
+### 📋 Used In
+
+- **Lab 2** — Model Showdown: Llama Drag Race (Exercises 1, 2, 3, 4)
+
+---
+
+## 🌪️ Mistral 7B — *"The Hallucinator"*
+
+> *"I'll confidently tell you things that never happened."*
+
+| | |
+|---|---|
+| **Creator** | Mistral AI |
+| **Parameters** | 7 billion |
+| **Disk Size** | 4.4 GB |
+| **Personality** | The confident storyteller — always has an answer, even when it shouldn't |
+
+### Stat Line
+
+| ⚡ Speed | 🎯 Quality | 🎨 Creativity | 🧠 Reasoning |
+|:---------:|:----------:|:--------------:|:------------:|
+| ★★★☆☆ | ★★★★☆ | ★★★★☆ | ★★★☆☆ |
+
+**🌟 Bonus Stat:** 🤥 Hallucination — ★★★★★ (reliably makes things up when asked about fake topics)
+
+### 💪 Strengths
+
 - **Jack of all trades** — handles writing, questions, analysis, and more
-- **Great quality-to-size ratio** — punches above its weight class
+- **Reliably hallucinates** — 100% hallucination rate on our validated fake prompts
 - **Well-tested** — one of the most popular open-source models in the world
 
 ### 😅 Weaknesses
 
+- States wrong things with absolute certainty (which is actually the point in Lab 4!)
 - Not the best at deep math or multi-step logic puzzles
-- Can occasionally hallucinate confidently (states wrong things with certainty)
 
 ### 🎯 Best Workshop Use
 
-This is the workshop's **default model**. When a lab says "pick a model" and you're not sure, Mistral is a safe bet. It's the baseline we compare other models against.
+Mistral is the **hallucination lab model**. It's specifically chosen for Lab 4 because it reliably generates confident but fictional content when asked about made-up topics — the Llama models are too cautious and catch the fakes.
 
 ### 📋 Used In
 
-- **Lab 1** — Non-Determinism (primary model)
-- **Lab 2** — Model Showdown (Exercises 1, 2, 3, 4)
-- **Lab 3** — Prompt Engineering (suggested model)
 - **Lab 4** — Hallucination Detection (validated — reliably hallucinated on 100% of test prompts)
-- **Lab 5** — Creative & Multimodal AI (Parts 1 & Exercise 7)
-- **Lab 7** — Bias and Fairness (suggested model)
-- **Lab 8** — Real-World Scenarios (suggested model)
-- **Lab 9** — Custom Modelfile (base model)
 
 ---
 
@@ -155,7 +196,7 @@ This is the workshop's **default model**. When a lab says "pick a model" and you
 
 ### 😅 Weaknesses
 
-- Text-only responses are not as strong as Mistral at the same size
+- Text-only responses are not as strong as other models at the same size
 - Can misread small details or text within images
 
 ### 🎯 Best Workshop Use
@@ -168,131 +209,6 @@ Use LLaVA whenever a lab involves **images**. It's the only model that can proce
 
 ---
 
-## 🧪 Qwen 3.5 9B — *"The Brain"*
-
-> *"Let me think about that... okay, here's a thorough answer."*
-
-> ⚠️ **Workshop note:** This is a reasoning model with internal chain-of-thought. Responses take 20–40 seconds even for simple prompts. **Not recommended for student-facing labs** — use for instructor demos only if you want to show how reasoning models think differently.
-
-| | |
-|---|---|
-| **Creator** | Alibaba Cloud |
-| **Parameters** | 9 billion |
-| **Disk Size** | 6.6 GB |
-| **Personality** | The honor student — methodical, thorough, and annoyingly good |
-
-### Stat Line
-
-| ⚡ Speed | 🎯 Quality | 🎨 Creativity | 🧠 Reasoning |
-|:---------:|:----------:|:--------------:|:------------:|
-| ★★★☆☆ | ★★★★☆ | ★★★★☆ | ★★★★☆ |
-
-### 💪 Strengths
-
-- **Strong reasoning** — handles logic, analysis, and multi-step problems well
-- **High-quality writing** — produces clear, well-structured responses
-- **Versatile** — great at creative tasks AND analytical ones
-
-### 😅 Weaknesses
-
-- Slower than the smaller models — you'll notice the wait
-- Uses more VRAM, so it takes a moment to load
-
-### 🎯 Best Workshop Use
-
-Reach for Qwen when you need **quality answers** — especially for exercises that test reasoning, analysis, or structured writing. It's the model to beat in head-to-head comparisons.
-
-### 📋 Used In
-
-- **Instructor demos only** — too slow for student-facing exercises (22+ seconds per response)
-
----
-
-## 🔗 DeepSeek-R1 14B — *"The Thinker"*
-
-> *"Hold on, let me reason through this step by step..."*
-
-> ⚠️ **Workshop note:** Responses take 16–51 seconds. **Not recommended for student-facing labs** — use for instructor demos only when you want to show chain-of-thought reasoning.
-
-| | |
-|---|---|
-| **Creator** | DeepSeek |
-| **Parameters** | 14 billion |
-| **Disk Size** | 9.0 GB |
-| **Personality** | The philosopher — shows its work and thinks out loud |
-
-### Stat Line
-
-| ⚡ Speed | 🎯 Quality | 🎨 Creativity | 🧠 Reasoning |
-|:---------:|:----------:|:--------------:|:------------:|
-| ★★☆☆☆ | ★★★★☆ | ★★★☆☆ | ★★★★★ |
-
-**🌟 Bonus Stat:** 🔗 Chain-of-Thought — ★★★★★
-
-### 💪 Strengths
-
-- **Chain-of-thought reasoning** — literally shows you its thinking process in `<think>` tags
-- **Excellent at logic and math** — the best reasoner on our machine
-- **Educational gold** — students can watch *how* an AI thinks, not just what it says
-
-### 😅 Weaknesses
-
-- **Slow** — all that thinking takes time, especially for complex problems
-- Responses can be very long because it includes its reasoning steps
-- Not the best at creative or casual conversation
-
-### 🎯 Best Workshop Use
-
-Use DeepSeek-R1 when you want to **see an AI think**. Its chain-of-thought output is fascinating — you can literally watch it reason through problems step by step. Amazing for understanding *how* AI models solve problems.
-
-### 📋 Used In
-
-- **Instructor demos only** — too slow for student-facing exercises (16–51 seconds per response)
-
----
-
-## 💻 Phi-4 14B — *"The Coder"*
-
-> *"Describe what you want. I'll write the code."*
-
-> ⚠️ **Workshop note:** Usable but slower than mistral:7b (avg 2.7s) and uses 10.8 GB VRAM. Available as an optional model for students who finish labs early or want to compare code quality.
-
-| | |
-|---|---|
-| **Creator** | Microsoft |
-| **Parameters** | 14 billion |
-| **Disk Size** | 9.1 GB |
-| **Personality** | The tech nerd — happiest when writing code or solving technical problems |
-
-### Stat Line
-
-| ⚡ Speed | 🎯 Quality | 🎨 Creativity | 🧠 Reasoning |
-|:---------:|:----------:|:--------------:|:------------:|
-| ★★☆☆☆ | ★★★★☆ | ★★★☆☆ | ★★★★☆ |
-
-**🌟 Bonus Stat:** 💻 Code — ★★★★★
-
-### 💪 Strengths
-
-- **Excellent at code generation** — Python, JavaScript, HTML/CSS, and more
-- **Strong technical reasoning** — great at explaining how things work
-- **Microsoft's training data** — benefits from extensive code and STEM datasets
-
-### 😅 Weaknesses
-
-- **Slow** — 14B parameters means longer wait times
-- Can be overly technical or verbose in non-code responses
-
-### 🎯 Best Workshop Use
-
-Phi-4 is your go-to for anything **code-related**. When a lab asks you to generate, debug, or explain code, Phi-4 will give you the best results. Also great for STEM questions.
-
-### 📋 Used In
-
-- **Optional** — available for advanced students; not in core lab exercises
-
----
-
 ## 🗺️ Which Model Should I Use?
 
 Not sure which model to pick? Use this quick decision chart:
@@ -301,47 +217,46 @@ Not sure which model to pick? Use this quick decision chart:
 🤔 What do you need?
 │
 ├─ ⚡ "I need an answer RIGHT NOW"
-│   └─➤ tinyllama:1.1b
+│   └─➤ llama3.2:1b (lightning fast)
 │
 ├─ 🤷 "I'm not sure / just exploring"
-│   └─➤ mistral:7b (the safe default)
+│   └─➤ llama3.2:3b (the safe default)
 │
 ├─ 👁️ "I want to analyze an IMAGE"
 │   └─➤ llava:7b (the only one that can!)
 │
 ├─ 💻 "I need CODE or want quality + speed"
-│   └─➤ mistral:7b (fast enough, good quality)
+│   └─➤ llama3.2:3b (fast, good quality)
 │
-├─ ⚖️ "I want good quality but faster"
-│   └─➤ llama3.2:3b
+├─ 🤥 "I want to see AI HALLUCINATE"
+│   └─➤ mistral:7b (reliably makes things up)
 │
-└─ 🔬 "I want to COMPARE models"
-    └─➤ Try the same prompt on tinyllama → llama3.2 → mistral!
+├─ 🧠 "I want the BEST quality"
+│   └─➤ llama3.1:8b
+│
+└─ 🏎️ "I want to COMPARE model sizes"
+    └─➤ Try the same prompt on 1B → 3B → 8B!
 ```
 
 ### Quick Reference Table
 
 | Model | Size | Speed | Best For | Vibe |
 |-------|------|-------|----------|------|
-| `tinyllama:1.1b` | 637 MB | 🐇🐇🐇 | Speed demos, baseline comparison | The scrappy underdog |
-| `llama3.2:3b` | 2.0 GB | 🐇🐇 | Quick experiments, fast iteration | The balanced rookie |
-| `mistral:7b` | 4.4 GB | 🐇 | **Primary workshop model** — general use | The reliable all-star |
+| `llama3.2:1b` | 1.2 GB | 🐇🐇🐇 | Speed demos, drag race small | The scrappy underdog |
+| `llama3.2:3b` | 2.0 GB | 🐇🐇 | **Default workshop model** — general use | The reliable workhorse |
+| `llama3.1:8b` | 4.7 GB | 🐇 | Drag race large, quality | The big sibling |
+| `mistral:7b` | 4.4 GB | 🐇 | Hallucination lab (Lab 4 only) | The confident storyteller |
 | `llava:7b` | 4.7 GB | 🐇 | Image analysis (multimodal) | The one with eyes |
-| `qwen3.5:9b` | 6.6 GB | 🐢🐢 | Instructor demo only (too slow) | The honor student |
-| `deepseek-r1:14b` | 9.0 GB | 🐢🐢🐢 | Instructor demo only (too slow) | The philosopher |
-| `phi4:14b` | 9.1 GB | 🐢 | Optional — code generation, STEM | The tech nerd |
 
 ### ⚡ Benchmark Data (RTX 5090, 32 GB VRAM)
 
-| Model | Avg Response | 10 Users Concurrent | Tokens/sec | VRAM |
+| Model | Avg Response | 5 Users Concurrent | Tokens/sec | VRAM |
 |-------|-------------|-------------------|-----------|------|
-| `tinyllama:1.1b` | 0.4s | max 0.7s | ~840 | ~1.2 GB |
-| `llama3.2:3b` | 1.2s | max 0.6s | ~420 | ~3.5 GB |
+| `llama3.2:1b` | 0.3s | max 1.1s | ~741 | ~1.6 GB |
+| `llama3.2:3b` | 0.5s | max 1.4s | ~424 | ~2.3 GB |
+| `llama3.1:8b` | 0.8s | max 2.5s | ~254 | ~4.8 GB |
 | `mistral:7b` | 1.1s | max 1.1s | ~257 | ~8.3 GB |
 | `llava:7b` | ~1.5s | — | ~250 | ~8.4 GB |
-| `phi4:14b` | 2.7s | — | ~144 | ~10.8 GB |
-| `qwen3.5:9b` | 22s+ | — | ~165 | ~9.5 GB |
-| `deepseek-r1:14b` | 16–51s | — | ~80 | ~12 GB |
 
 > 💡 Cold-load from NVMe: **~1–1.5 seconds** for any model. VRAM persistence is NOT needed for fast responses.
 

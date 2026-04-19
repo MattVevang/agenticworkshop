@@ -99,13 +99,14 @@ Set these **before** starting `ollama serve` (as system or user environment vari
 Student-facing models (curated for the labs):
 
 ```powershell
-ollama pull tinyllama:1.1b      # Ultra-fast, shows quality tradeoffs (~1.2 GB VRAM)
-ollama pull llama3.2:3b          # Small but capable (~3.5 GB VRAM)
-ollama pull mistral:7b           # Primary workshop model — best speed/quality balance (~8.3 GB VRAM)
+ollama pull llama3.2:1b          # Drag race — small Llama (~1.6 GB VRAM)
+ollama pull llama3.2:3b          # Default workshop model — fast & capable (~2.3 GB VRAM)
+ollama pull llama3.1:8b          # Drag race — large Llama (~4.8 GB VRAM)
+ollama pull mistral:7b           # Hallucination lab — reliably hallucinates (~8.3 GB VRAM)
 ollama pull llava:7b             # Multimodal — can analyze images (~8.4 GB VRAM)
 ```
 
-> **⚡ Performance note:** These four models were benchmarked for concurrent classroom use. Even with 10 simultaneous users, mistral:7b responds in under 1.2 seconds. Larger models (9B+) are too slow for interactive use — see [`resources/workshop-tuning-guide.md`](resources/workshop-tuning-guide.md).
+> **⚡ Performance note:** The three Llama models were benchmarked for concurrent classroom use. Even with 5 simultaneous users, llama3.1:8b responds in under 2.5 seconds. The default model (llama3.2:3b) handles 5 concurrent users with a max of 1.4 seconds. See [`resources/workshop-tuning-guide.md`](resources/workshop-tuning-guide.md).
 
 Instructor demo models (larger, for live presentations):
 
@@ -170,13 +171,11 @@ No login required. See [`resources/openwebui-quickstart.md`](resources/openwebui
 
 | Model | Size | Best For | Lab Use |
 |-------|------|----------|---------|
-| `tinyllama:1.1b` | 637 MB | Speed demos, quality contrast | Labs 1, 2 |
-| `llama3.2:3b` | 2.0 GB | Balance of speed and quality | Labs 1, 2, 3 |
-| `mistral:7b` | 4.4 GB | General purpose, good default | Labs 2, 3, 4 |
+| `llama3.2:1b` | 1.2 GB | Speed demos, quality contrast | Labs 2, 5 |
+| `llama3.2:3b` | 2.0 GB | **Default model** — fast & capable | Labs 1, 2, 3, 5, 7, 8, 9 |
+| `llama3.1:8b` | 4.7 GB | Drag race large model, quality | Lab 2 |
+| `mistral:7b` | 4.4 GB | Hallucination detection (validated) | Lab 4 |
 | `llava:7b` | 4.7 GB | Image understanding | Lab 5 |
-| `qwen3.5:9b` | 6.6 GB | Strong reasoning | Labs 2, 4 |
-| `deepseek-r1:14b` | 9.0 GB | Chain-of-thought reasoning | Labs 2, 4 |
-| `phi4:14b` | 9.1 GB | Microsoft model diversity | Lab 2 |
 
 ## Labs Overview
 

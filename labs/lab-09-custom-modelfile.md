@@ -21,7 +21,7 @@ By the end of this lab, you will:
 
 You know how a **Dockerfile** tells Docker exactly how to build a container — which base image to use, what files to copy, what commands to run? Ollama has something similar called a **Modelfile**. It tells Ollama how to build a custom model.
 
-A Modelfile lets you take an existing model (like `mistral:7b`) and wrap it with:
+A Modelfile lets you take an existing model (like `llama3.2:3b`) and wrap it with:
 - A **system prompt** that defines the model's personality and behavior
 - **Parameters** that control things like temperature and context length
 - A **custom name** so you can select it from the model dropdown just like any other model
@@ -42,14 +42,14 @@ A Modelfile is a plain text file with a simple structure. Here are the key instr
 
 | Instruction | What It Does | Example |
 |---|---|---|
-| `FROM` | Which base model to build on | `FROM mistral:7b` |
+| `FROM` | Which base model to build on | `FROM llama3.2:3b` |
 | `SYSTEM` | The system prompt — personality and behavior rules | `SYSTEM "You are a helpful assistant."` |
 | `PARAMETER` | Model settings like temperature, context size, etc. | `PARAMETER temperature 0.7` |
 
 ### A Minimal Example
 
 ```dockerfile
-FROM mistral:7b
+FROM llama3.2:3b
 SYSTEM "You are a helpful assistant that always responds in exactly three bullet points."
 ```
 
@@ -73,7 +73,7 @@ That's it! Two lines and you have a custom model that always gives three-bullet-
 The instructor will create a custom model called `science-tutor`. Here's the Modelfile:
 
 ```dockerfile
-FROM mistral:7b
+FROM llama3.2:3b
 
 PARAMETER temperature 0.4
 PARAMETER num_ctx 4096
@@ -109,7 +109,7 @@ Now it's your turn! The `science-tutor` model should appear in your Open WebUI m
 
 ### Step 1: Chat with the Base Model
 
-1. Select **`mistral:7b`** from the model dropdown
+1. Select **`llama3.2:3b`** from the model dropdown
 2. **Start a new chat** and ask:
 
 ```
@@ -129,7 +129,7 @@ Why is the sky blue?
 
 ### ✏️ Compare the Responses
 
-| Aspect | `mistral:7b` (Base) | `science-tutor` (Custom) |
+| Aspect | `llama3.2:3b` (Base) | `science-tutor` (Custom) |
 |---|---|---|
 | **Tone** (formal, casual, friendly?) | | |
 | **Used analogies?** | | |
@@ -164,7 +164,7 @@ Why do we need to sleep?
 Let's create something completely different — a model that responds in Elizabethan English:
 
 ```dockerfile
-FROM mistral:7b
+FROM llama3.2:3b
 
 PARAMETER temperature 0.9
 PARAMETER repeat_penalty 1.2
@@ -220,13 +220,13 @@ Write down the most entertaining or creative thing Shakespeare Bot said:
 
 ### Compare with the Base Model
 
-Ask `mistral:7b` the same question about AI:
+Ask `llama3.2:3b` the same question about AI:
 
 ```
 What is artificial intelligence?
 ```
 
-| Aspect | `mistral:7b` (Base) | `shakespeare-bot` (Custom) |
+| Aspect | `llama3.2:3b` (Base) | `shakespeare-bot` (Custom) |
 |---|---|---|
 | **Language style** | | |
 | **Easy to understand?** | | |
@@ -247,7 +247,7 @@ Fill this out:
 
 **Model Name:** ___________________________
 
-**Base Model:** `mistral:7b` (we'll keep this the same for everyone)
+**Base Model:** `llama3.2:3b` (we'll keep this the same for everyone)
 
 **Temperature:** _______ (low = precise/consistent, high = creative/varied)
 

@@ -13,7 +13,7 @@ By the end of this lab, you will:
 
 ⏱️ **Estimated Time:** 20 minutes
 
-🤖 **Suggested Model:** `mistral:7b`
+🤖 **Suggested Model:** `llama3.2:3b`
 
 ---
 

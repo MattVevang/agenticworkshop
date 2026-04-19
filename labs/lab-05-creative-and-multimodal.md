@@ -20,7 +20,7 @@ AI isn't just for answering questions — it can be a surprisingly fun creative 
 
 Take one premise and generate story openings in completely different genres. This shows how AI adapts tone, vocabulary, and style.
 
-**Use `mistral:7b` for this section.**
+**Use `llama3.2:3b` for this section.**
 
 #### Step 1: Science Fiction
 
@@ -168,9 +168,9 @@ Let's compare what happens when you describe an image to a text-only model vs. s
 What is happening in this image? List 5 specific observations.
 ```
 
-#### Option B: Without Image (mistral:7b)
+#### Option B: Without Image (llama3.2:3b)
 
-1. Switch to `mistral:7b` (text only)
+1. Switch to `llama3.2:3b` (text only)
 2. In a new chat, try to describe the same image yourself and ask:
 
 ```
@@ -187,7 +187,7 @@ AI models can generate functional code — let's test the limits.
 
 ### Exercise 6: Interactive Web Page
 
-**Use `mistral:7b` for this section** (handles code well and responds quickly).
+**Use `llama3.2:3b` for this section** (handles code well and responds quickly).
 
 New chat:
 
@@ -224,13 +224,13 @@ Put all HTML, CSS, and JavaScript in a single file.
 
 Run the same code prompt through a smaller model to see the difference:
 
-**Switch to `tinyllama:1.1b`** and try the exact same prompt from Exercise 6.
+**Switch to `llama3.2:1b`** and try the exact same prompt from Exercise 6.
 
-**Then try `mistral:7b`.**
+**Then try `llama3.2:3b`.**
 
 ### ✏️ Compare
 
-| Dimension | tinyllama:1.1b | mistral:7b |
+| Dimension | llama3.2:1b | llama3.2:3b |
 |---|---|---|
 | **Code runs without errors?** | | |
 | **All features present?** | | |

@@ -15,7 +15,20 @@ services:
       - WEBUI_AUTH=false
 
       # Default model students see when they first open the UI
-      - DEFAULT_MODELS=mistral:7b
+      - DEFAULT_MODELS=llama3.2:3b
+
+      # Pin workshop models at the top of the model selector dropdown.
+      # Students still see other models, but these appear first.
+      - DEFAULT_PINNED_MODELS=llama3.2:3b,llama3.2:1b,llama3.1:8b,mistral:7b,llava:7b
+
+      # --- MODEL VISIBILITY RESTRICTION (Optional, 2-step setup) ---
+      # To HIDE non-workshop models from the dropdown entirely:
+      #   Step 1: Launch without this setting, open Admin Panel > Workspace > Models,
+      #           and set each workshop model's access to "Public".
+      #   Step 2: Uncomment the line below, then: docker compose up -d
+      # This makes the kiosk admin respect model access controls, hiding
+      # any model not explicitly set to Public. See workshop-tuning-guide.md.
+      # - BYPASS_ADMIN_ACCESS_CONTROL=false
 
       # Disable telemetry for a local lab environment
       - SCARF_NO_ANALYTICS=true

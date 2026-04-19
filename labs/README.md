@@ -24,19 +24,17 @@ Welcome to the hands-on lab portion of the workshop! In these labs, you'll inter
 
 ### Available Models
 
-These are the models loaded on the server that you can use:
+These are the workshop models loaded on the server — they're **pinned** to the top of the model dropdown:
 
 | Model | Size | Best For |
 |---|---|---|
-| `tinyllama:1.1b` | 🟢 Tiny (1.1B params) | Speed demos, seeing what a tiny model can do |
-| `llama3.2:3b` | 🟡 Small (3B params) | Quick general tasks |
-| `mistral:7b` | 🟠 Medium (7B params) | Solid all-around performance |
-| `qwen3.5:9b` | 🟠 Medium (9B params) | Strong general tasks |
-| `deepseek-r1:14b` | 🔴 Large (14B params) | Reasoning and analysis |
+| `llama3.2:1b` | 🟢 Tiny (1.3B params) | Speed demos, drag race comparison |
+| `llama3.2:3b` | 🟡 Small (3B params) | **Default model** — fast & capable for most labs |
+| `llama3.1:8b` | 🟠 Medium (8B params) | Drag race comparison, higher quality |
+| `mistral:7b` | 🟠 Medium (7B params) | Hallucination detection (Lab 4) |
 | `llava:7b` | 🟠 Medium (7B params) | **Multimodal** — can analyze images! |
-| `phi4:14b` | 🔴 Large (14B params) | Microsoft's model, good at code and reasoning |
 
-> **💡 Tip:** Bigger ≠ always better. Part of this workshop is learning *when* to use which model.
+> **💡 Tip:** Bigger ≠ always better. Part of this workshop is learning *when* to use which model. The first three are all from Meta's **Llama family** — same architecture, different sizes — so you can fairly compare them.
 
 ---
 

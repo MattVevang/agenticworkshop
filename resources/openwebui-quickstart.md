@@ -36,14 +36,15 @@ Everything you need to know to start chatting with AI models in the workshop.
 
 [Screenshot: Model selection dropdown showing available models]
 
-**Models you might see:**
+**Workshop models (pinned to the top of the dropdown):**
 
 | Model | Size | Good For |
 |-------|------|----------|
-| `tinyllama:1.1b` | ~640 MB | Fast responses, simple tasks — great for testing |
-| `llama3.2:3b` | ~2 GB | Good balance of speed and quality |
-| `mistral:7b` | ~4 GB | Strong general-purpose model |
-| `llava:7b` | ~5 GB | Can understand images (multimodal!) |
+| `llama3.2:1b` | ~1.6 GB | Ultra-fast responses — drag race speed demo |
+| `llama3.2:3b` | ~2.3 GB | **Default model** — good balance of speed and quality |
+| `llama3.1:8b` | ~4.8 GB | Higher quality, still fast |
+| `mistral:7b` | ~8.3 GB | Hallucination detection lab |
+| `llava:7b` | ~8.4 GB | Can understand images (multimodal!) |
 
 > **Tip:** Bigger models are smarter but slower. Start small and size up if you need better answers!
 
@@ -78,7 +79,7 @@ Some models (like `llava`) can look at images!
 
 [Screenshot: Image upload button and image attached to a message]
 
-> **Note:** Regular text-only models (like `tinyllama`, `mistral`) can't see images — they'll ignore them or give an error.
+> **Note:** Regular text-only models (like `llama3.2:3b`, `mistral`) can't see images — they'll ignore them or give an error.
 
 ---
 
@@ -107,7 +108,7 @@ Some models (like `llava`) can look at images!
 ## 🔧 Troubleshooting
 
 ### "The response is really slow..."
-- You're probably using a large model. Try switching to a smaller one (e.g., `tinyllama:1.1b`)
+- You're probably using a large model. Try switching to a smaller one (e.g., `llama3.2:1b`)
 - The server might be busy if many students are using it at once — be patient!
 - First response after switching models is often slow because the model has to load into memory
 

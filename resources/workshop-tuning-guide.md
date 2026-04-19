@@ -2,7 +2,7 @@
 
 > **Audience:** Instructor running Agentic AI 101 on the workshop host machine.
 > **Hardware:** NVIDIA RTX 5090 (32 GB VRAM) · Gen5 NVMe storage · Windows · Ollama via scheduled task "Ollama Serve"
-> **Workshop models:** `tinyllama:1.1b` · `llama3.2:3b` · `mistral:7b` · `llava:7b`
+> **Workshop models:** `llama3.2:1b` · `llama3.2:3b` · `llama3.1:8b` · `mistral:7b` · `llava:7b`
 
 ---
 
@@ -47,7 +47,7 @@ Allow **4 concurrent requests** per loaded model (default: 1, which queues every
 
 Keep at most **2 models** in VRAM simultaneously (default: auto, which can fill VRAM).
 
-- Worst-case combo: `tinyllama` (1.2 GB) + `mistral` (8.3 GB) = ~9.5 GB — leaves plenty of headroom on 32 GB.
+- Worst-case combo: `mistral:7b` (8.3 GB) + `llama3.1:8b` (4.8 GB) = ~13.1 GB — leaves plenty of headroom on 32 GB.
 - Prevents the scenario where four different students load four different models and exhaust VRAM.
 
 > ✅ With `OLLAMA_KEEP_ALIVE=2m`, idle models unload quickly, so the 2-model cap rarely blocks requests in practice.
@@ -146,8 +146,9 @@ All benchmarks taken on the workshop host: **RTX 5090 (32 GB) · Gen5 NVMe · Ol
 
 | Model | Cold-Load Time |
 |---|---|
-| `tinyllama:1.1b` | ~1.0 s |
-| `llama3.2:3b` | ~1.5 s |
+| `llama3.2:1b` | ~1.0 s |
+| `llama3.2:3b` | ~1.0 s |
+| `llama3.1:8b` | ~1.5 s |
 | `mistral:7b` | ~1.5 s |
 
 > 💡 These times are why `OLLAMA_KEEP_ALIVE=2m` is safe — a 1–1.5 s reload is imperceptible compared to generation time.
@@ -156,29 +157,40 @@ All benchmarks taken on the workshop host: **RTX 5090 (32 GB) · Gen5 NVMe · Ol
 
 | Model | Avg Response Time | Throughput |
 |---|---|---|
-| `tinyllama:1.1b` | 0.4 s | ~840 tok/s |
-| `llama3.2:3b` | 1.2 s | ~420 tok/s |
+| `llama3.2:1b` | 0.3 s | ~741 tok/s |
+| `llama3.2:3b` | 0.5 s | ~424 tok/s |
+| `llama3.1:8b` | 0.8 s | ~254 tok/s |
 | `mistral:7b` | 1.1 s | ~257 tok/s |
 
-### 10-Concurrent-User Response Times
+### 5-Concurrent-User Response Times
 
-| Model | Max Response Time |
-|---|---|
-| `tinyllama:1.1b` | 0.7 s |
-| `llama3.2:3b` | 0.6 s |
-| `mistral:7b` | 1.1 s |
+| Model | Max Response Time | Avg Response Time |
+|---|---|---|
+| `llama3.2:1b` | 1.1 s | 0.8 s |
+| `llama3.2:3b` | 1.4 s | 1.0 s |
+| `llama3.1:8b` | 2.5 s | 1.8 s |
 
-> ✅ Even under 10× concurrency, worst-case response stays at ~1 s. The RTX 5090 has headroom to spare for the workshop models.
+> ✅ Even under 5× concurrency, worst-case response stays under 2.5 s. The RTX 5090 has headroom to spare.
+
+### Cross-Model Concurrent (9 simultaneous: 3 per model)
+
+| Model | Max Response Time | Tokens/sec |
+|---|---|---|
+| `llama3.2:1b` | 1.2 s | ~227 tok/s |
+| `llama3.2:3b` | 1.8 s | ~172 tok/s |
+| `llama3.1:8b` | 5.5 s | ~221 tok/s |
+
+> ⚠️ Cross-model concurrent is the worst case (all 3 Llama models loaded at once = 8.7 GB). Still responsive!
 
 ### VRAM Footprints
 
 | Model | VRAM Usage |
 |---|---|
-| `tinyllama:1.1b` | ~1.2 GB |
-| `llama3.2:3b` | ~3.5 GB |
+| `llama3.2:1b` | ~1.6 GB |
+| `llama3.2:3b` | ~2.3 GB |
+| `llama3.1:8b` | ~4.8 GB |
 | `mistral:7b` | ~8.3 GB |
 | `llava:7b` | ~8.4 GB |
-| `phi4:14b` | ~10.8 GB |
 
 ### Models NOT Recommended for Student-Facing Use
 
@@ -186,9 +198,9 @@ All benchmarks taken on the workshop host: **RTX 5090 (32 GB) · Gen5 NVMe · Ol
 |---|---|
 | `qwen3.5:9b` | **22+ seconds per response** — reasoning model with internal chain-of-thought that generates thousands of hidden tokens before the visible answer |
 | `deepseek-r1:14b` | **16–51 seconds per response** — same reasoning overhead, plus larger footprint |
-| `phi4:14b` | 2.7 s avg response (acceptable) but **10.8 GB VRAM** footprint — loading it alongside `mistral:7b` uses 19+ GB and leaves little room for a second model |
+| `phi4:14b` | 2.7 s avg response (acceptable) but **10.8 GB VRAM** footprint — uses 10+ GB and leaves little room for a second model |
 
-> ⚠️ If a student accidentally selects one of these in Open WebUI, it will work but may appear "stuck" for 20–50 seconds. Tell students to **only use the four recommended models**.
+> ⚠️ If a student accidentally selects one of these in Open WebUI, it will work but may appear "stuck" for 20–50 seconds. Tell students to **only use the five recommended models**. See Section 7 below for how to restrict the model dropdown.
 
 ---
 
@@ -256,11 +268,53 @@ With `OLLAMA_MAX_LOADED_MODELS=2`, this should self-correct once the model is ev
 
 - **Tell students which model to select for each lab.** Write it on the board or include it in the lab instructions.
 - The model dropdown **persists between chats** — students may forget to switch when moving to a new lab.
-- Consider **pinning recommended models** in the Open WebUI admin settings so `tinyllama:1.1b`, `llama3.2:3b`, `mistral:7b`, and `llava:7b` appear at the top of the dropdown.
+- Workshop models are **pinned** to the top of the dropdown via `DEFAULT_PINNED_MODELS` in docker-compose.yml: `llama3.2:3b`, `llama3.2:1b`, `llama3.1:8b`, `mistral:7b`, `llava:7b`.
 
 > 💡 If a student's chat seems broken, the first thing to check is whether they have the **correct model selected**. The second is whether the model is actually loaded (check `curl http://localhost:11434/api/ps`).
 
 > ⚠️ Open WebUI caches the model list. If you pull or remove models in Ollama while Open WebUI is running, students may need to **refresh the browser** to see the updated list.
+
+---
+
+## 7. Restricting Model Visibility (Optional)
+
+By default, Open WebUI shows **all** models from Ollama in the dropdown (25+ on this machine). Workshop models are pinned to the top, but students can still scroll and select a 14B+ model that bogs down the server.
+
+To **hide non-workshop models entirely**, use Open WebUI's model access controls:
+
+### Step 1: Configure model visibility (one-time setup)
+
+1. Open `http://<server-ip>:3000` in your browser
+2. Click your avatar → **Admin Panel** → **Workspace** → **Models**
+3. For each workshop model (`llama3.2:1b`, `llama3.2:3b`, `llama3.1:8b`, `mistral:7b`, `llava:7b`):
+   - Click the model
+   - Set its access to **Public** (visible to all users)
+4. Leave all other models as their default (Private/Hidden)
+
+### Step 2: Enable the access control bypass
+
+In `docker/docker-compose.yml`, uncomment this line:
+
+```yaml
+- BYPASS_ADMIN_ACCESS_CONTROL=false
+```
+
+Then restart:
+
+```powershell
+cd docker
+docker compose up -d
+```
+
+With `BYPASS_ADMIN_ACCESS_CONTROL=false`, the kiosk admin user respects model access controls and only sees models explicitly set to Public.
+
+### How to revert
+
+1. Comment out or remove `BYPASS_ADMIN_ACCESS_CONTROL=false` from docker-compose.yml
+2. Restart: `docker compose up -d`
+3. All models reappear in the dropdown
+
+> ⚠️ **Important:** Do Step 1 (configure model visibility) **before** Step 2 (enable the bypass). If you enable the bypass without setting any models to Public, the dropdown will be empty.
 
 ---
 
