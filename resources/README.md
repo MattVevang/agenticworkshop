@@ -15,5 +15,6 @@ Workshop reference materials for the **Agentic AI 101** high school workshop.
 | [prompt-disasters.md](prompt-disasters.md) | Hilariously bad AI outputs and what we can learn from them |
 | [workshop-feedback.md](workshop-feedback.md) | Feedback collection templates and QR code setup guide |
 | [ai-news-template.md](ai-news-template.md) | Drop-in template for sharing current AI news at workshop start |
+| [workshop-tuning-guide.md](workshop-tuning-guide.md) | Ollama/system tuning for workshop day — benchmarks, env vars, and revert instructions |
 
 These resources are designed to be printed, projected, or shared with students as companion materials during the workshop.

@@ -31,9 +31,6 @@ DEFAULT_MODELS = [
     "llama3.2:3b",
     "tinyllama:1.1b",
     "llava:7b",
-    "qwen3.5:9b",
-    "deepseek-r1:14b",
-    "phi4:14b",
 ]
 
 WARMUP_PROMPT = "Hello"
@@ -93,8 +90,8 @@ def check_env_recommendations(base_url):
     env_vars = [
         ("OLLAMA_HOST", "0.0.0.0:11434", "Allow connections from Docker and student devices"),
         ("OLLAMA_NUM_PARALLEL", "4", "Handle up to 4 concurrent requests per model"),
-        ("OLLAMA_MAX_LOADED_MODELS", "3", "Keep up to 3 models in VRAM simultaneously"),
-        ("OLLAMA_KEEP_ALIVE", "2h", "Keep models loaded for 2 hours (prevent unloading during workshop)"),
+        ("OLLAMA_MAX_LOADED_MODELS", "2", "Keep up to 2 models in VRAM simultaneously"),
+        ("OLLAMA_KEEP_ALIVE", "2m", "Unload models 2 min after last request (cold loads are ~1s on NVMe)"),
     ]
 
     for var, value, description in env_vars:

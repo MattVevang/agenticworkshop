@@ -10,7 +10,7 @@ By the end of this lab, you will:
 
 ⏱️ **Estimated Time:** 20 minutes
 
-🤖 **Suggested Model:** `mistral:7b` or `qwen3.5:9b`
+🤖 **Suggested Model:** `mistral:7b` (validated — produces reliable hallucinations for these exercises)
 
 ---
 
@@ -29,32 +29,32 @@ This is called a **hallucination**. It's not the AI "lying" on purpose. It's the
 
 ---
 
-## Exercise 1: The Trick Question 🎭
+## Exercise 1: The Fabricated Expert 🎭
 
-This prompt asks about something that **doesn't exist**. Let's see if the AI takes the bait.
+This prompt asks about a **person who doesn't exist** doing something that never happened. Let's see if the AI plays along.
 
 ### Instructions
 
 Start a **new chat** and type:
 
 ```
-Who won the Nobel Prize in Mathematics in 2023?
+Tell me about the inventor Thomas Greenfield who created the first solar-powered airplane in 1923.
 ```
 
 ### The Catch
 
-**There is no Nobel Prize in Mathematics.** It doesn't exist. The closest thing is the Fields Medal (awarded every 4 years) or the Abel Prize.
+**Thomas Greenfield is not a real person.** No one created a solar-powered airplane in 1923 — solar cell technology didn't even exist yet. The first practical solar-powered flight wasn't until 1974 (Sunrise I).
 
 ### ✏️ Record What Happened
 
 | Question | Your Observation |
 |---|---|
-| Did the AI tell you there's no Nobel Prize in Math? | |
-| Did it make up a winner? If so, who? | |
-| Did it sound confident in its (wrong) answer? | |
-| Did it mention the Fields Medal or Abel Prize instead? | |
+| Did the AI tell you Thomas Greenfield isn't real? | |
+| Did it invent a detailed biography for him? | |
+| Did it describe the "solar-powered airplane"? | |
+| Did any details sound impressively specific but made-up? | |
 
-**❓ How would you have known this was wrong if you didn't already know the trick?**
+**❓ If you Googled "Thomas Greenfield solar airplane," would any of the AI's claims hold up?**
 
 ---
 
@@ -85,32 +85,30 @@ This book doesn't exist. James Patterson is a real author, but "The Crystal Hori
 
 ---
 
-## Exercise 3: The Ambiguous Question 🏙️
+## Exercise 3: The Fake Historical Event 📜
 
-This prompt is technically answerable but deeply ambiguous.
+This prompt asks about a **treaty that never existed** with a specific (wrong) date.
 
 New chat:
 
 ```
-What is the population of Springfield, USA?
+Summarize the key provisions of the Treaty of Portland signed in 1847.
 ```
 
 ### The Catch
 
-There are over **30 cities named Springfield** in the United States! The most well-known include:
-- Springfield, Illinois (~115,000)
-- Springfield, Missouri (~170,000)
-- Springfield, Massachusetts (~155,000)
-- Springfield, Ohio (~58,000)
+There is no "Treaty of Portland" from 1847. The AI may confidently generate fake treaty provisions, invent signatories, or even "correct" the date to make it sound more plausible. Watch for how authoritatively it presents completely fabricated history.
 
 ### ✏️ Record What Happened
 
 | Question | Your Observation |
 |---|---|
-| Which Springfield did the AI pick? | |
-| Did it acknowledge the ambiguity? | |
-| Was the population number accurate? (You can Google it) | |
-| Did it confidently present one answer as *the* answer? | |
+| Did the AI admit no such treaty exists? | |
+| Did it generate fake provisions? | |
+| Did it "correct" the date to a different year? | |
+| How many specific (but fake) details did it include? | |
+
+> 💡 **Bonus test:** Try Googling the AI's claims. You'll find that none of the specific provisions it described are real — but they'll *sound* real.
 
 ---
 
@@ -157,12 +155,12 @@ New chat:
 Does the book "The Crystal Horizon" by James Patterson exist? If it does exist, provide a brief summary. If it does not exist or you're not sure, say so clearly. Do not make up information.
 ```
 
-### Attempt 2: Ask for Sources
+### Attempt 2: Ask About the Fake Inventor, But Better
 
 New chat:
 
 ```
-Who won the Nobel Prize in Mathematics in 2023? If this prize doesn't exist, tell me that. Cite your sources.
+Is Thomas Greenfield a real historical inventor? Did anyone create a solar-powered airplane in 1923? If these claims are false, say so clearly. Cite your sources.
 ```
 
 ### ✏️ Compare to Your Earlier Results
@@ -170,7 +168,7 @@ Who won the Nobel Prize in Mathematics in 2023? If this prize doesn't exist, tel
 | Question | Did the improved prompt reduce hallucination? |
 |---|---|
 | Fake book question | |
-| Nobel Prize trick | |
+| Fake inventor question | |
 
 **❓ Did being explicit about "don't make things up" actually help?**
 

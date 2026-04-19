@@ -40,7 +40,7 @@ Use TinyLlama when you want to see what happens when an AI has very few paramete
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 1, 2, 4)
+- **Lab 2** — Model Showdown (Exercises 1, 2, 3, 4)
 - **Lab 5** — Creative & Multimodal AI (Exercise 7: code quality comparison)
 
 ---
@@ -79,7 +79,7 @@ A great step up from TinyLlama — use this when you want quick answers that are
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 1, 3)
+- **Lab 2** — Model Showdown (Exercises 1, 2, 3, 4)
 
 ---
 
@@ -118,10 +118,13 @@ This is the workshop's **default model**. When a lab says "pick a model" and you
 ### 📋 Used In
 
 - **Lab 1** — Non-Determinism (primary model)
-- **Lab 2** — Model Showdown (Exercises 1, 2, 4)
+- **Lab 2** — Model Showdown (Exercises 1, 2, 3, 4)
 - **Lab 3** — Prompt Engineering (suggested model)
-- **Lab 4** — Hallucination Detection (suggested model)
+- **Lab 4** — Hallucination Detection (validated — reliably hallucinated on 100% of test prompts)
 - **Lab 5** — Creative & Multimodal AI (Parts 1 & Exercise 7)
+- **Lab 7** — Bias and Fairness (suggested model)
+- **Lab 8** — Real-World Scenarios (suggested model)
+- **Lab 9** — Custom Modelfile (base model)
 
 ---
 
@@ -169,6 +172,8 @@ Use LLaVA whenever a lab involves **images**. It's the only model that can proce
 
 > *"Let me think about that... okay, here's a thorough answer."*
 
+> ⚠️ **Workshop note:** This is a reasoning model with internal chain-of-thought. Responses take 20–40 seconds even for simple prompts. **Not recommended for student-facing labs** — use for instructor demos only if you want to show how reasoning models think differently.
+
 | | |
 |---|---|
 | **Creator** | Alibaba Cloud |
@@ -199,16 +204,15 @@ Reach for Qwen when you need **quality answers** — especially for exercises th
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 3, 4)
-- **Lab 3** — Prompt Engineering (suggested model)
-- **Lab 4** — Hallucination Detection (suggested model)
-- **Lab 5** — Creative & Multimodal AI (Parts 1 & 3)
+- **Instructor demos only** — too slow for student-facing exercises (22+ seconds per response)
 
 ---
 
 ## 🔗 DeepSeek-R1 14B — *"The Thinker"*
 
 > *"Hold on, let me reason through this step by step..."*
+
+> ⚠️ **Workshop note:** Responses take 16–51 seconds. **Not recommended for student-facing labs** — use for instructor demos only when you want to show chain-of-thought reasoning.
 
 | | |
 |---|---|
@@ -243,13 +247,15 @@ Use DeepSeek-R1 when you want to **see an AI think**. Its chain-of-thought outpu
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 1, 3, 4)
+- **Instructor demos only** — too slow for student-facing exercises (16–51 seconds per response)
 
 ---
 
 ## 💻 Phi-4 14B — *"The Coder"*
 
 > *"Describe what you want. I'll write the code."*
+
+> ⚠️ **Workshop note:** Usable but slower than mistral:7b (avg 2.7s) and uses 10.8 GB VRAM. Available as an optional model for students who finish labs early or want to compare code quality.
 
 | | |
 |---|---|
@@ -283,8 +289,7 @@ Phi-4 is your go-to for anything **code-related**. When a lab asks you to genera
 
 ### 📋 Used In
 
-- **Lab 2** — Model Showdown (Exercises 2, 4)
-- **Lab 5** — Creative & Multimodal AI (Part 3: code generation)
+- **Optional** — available for advanced students; not in core lab exercises
 
 ---
 
@@ -304,20 +309,14 @@ Not sure which model to pick? Use this quick decision chart:
 ├─ 👁️ "I want to analyze an IMAGE"
 │   └─➤ llava:7b (the only one that can!)
 │
-├─ 💻 "I need CODE"
-│   └─➤ phi4:14b
-│
-├─ 🧠 "I have a hard LOGIC or MATH problem"
-│   └─➤ deepseek-r1:14b
-│
-├─ ✍️ "I need high-quality WRITING or ANALYSIS"
-│   └─➤ qwen3.5:9b
+├─ 💻 "I need CODE or want quality + speed"
+│   └─➤ mistral:7b (fast enough, good quality)
 │
 ├─ ⚖️ "I want good quality but faster"
 │   └─➤ llama3.2:3b
 │
 └─ 🔬 "I want to COMPARE models"
-    └─➤ Try the same prompt on 2-3 different models!
+    └─➤ Try the same prompt on tinyllama → llama3.2 → mistral!
 ```
 
 ### Quick Reference Table
@@ -326,15 +325,29 @@ Not sure which model to pick? Use this quick decision chart:
 |-------|------|-------|----------|------|
 | `tinyllama:1.1b` | 637 MB | 🐇🐇🐇 | Speed demos, baseline comparison | The scrappy underdog |
 | `llama3.2:3b` | 2.0 GB | 🐇🐇 | Quick experiments, fast iteration | The balanced rookie |
-| `mistral:7b` | 4.4 GB | 🐇 | General use, the default pick | The reliable all-star |
+| `mistral:7b` | 4.4 GB | 🐇 | **Primary workshop model** — general use | The reliable all-star |
 | `llava:7b` | 4.7 GB | 🐇 | Image analysis (multimodal) | The one with eyes |
-| `qwen3.5:9b` | 6.6 GB | 🐢 | Quality writing & reasoning | The honor student |
-| `deepseek-r1:14b` | 9.0 GB | 🐢🐢 | Chain-of-thought, logic, math | The philosopher |
-| `phi4:14b` | 9.1 GB | 🐢🐢 | Code generation, STEM | The tech nerd |
+| `qwen3.5:9b` | 6.6 GB | 🐢🐢 | Instructor demo only (too slow) | The honor student |
+| `deepseek-r1:14b` | 9.0 GB | 🐢🐢🐢 | Instructor demo only (too slow) | The philosopher |
+| `phi4:14b` | 9.1 GB | 🐢 | Optional — code generation, STEM | The tech nerd |
+
+### ⚡ Benchmark Data (RTX 5090, 32 GB VRAM)
+
+| Model | Avg Response | 10 Users Concurrent | Tokens/sec | VRAM |
+|-------|-------------|-------------------|-----------|------|
+| `tinyllama:1.1b` | 0.4s | max 0.7s | ~840 | ~1.2 GB |
+| `llama3.2:3b` | 1.2s | max 0.6s | ~420 | ~3.5 GB |
+| `mistral:7b` | 1.1s | max 1.1s | ~257 | ~8.3 GB |
+| `llava:7b` | ~1.5s | — | ~250 | ~8.4 GB |
+| `phi4:14b` | 2.7s | — | ~144 | ~10.8 GB |
+| `qwen3.5:9b` | 22s+ | — | ~165 | ~9.5 GB |
+| `deepseek-r1:14b` | 16–51s | — | ~80 | ~12 GB |
+
+> 💡 Cold-load from NVMe: **~1–1.5 seconds** for any model. VRAM persistence is NOT needed for fast responses.
 
 ### 💾 Total VRAM Budget: 32 GB
 
-Our RTX 5090 has 32 GB of VRAM. Only one model runs at a time (by default), and Ollama handles loading/unloading automatically. Bigger models use more VRAM and take a few seconds longer to load — but once they're running, they stay in memory until you switch.
+Our RTX 5090 has 32 GB of VRAM. With workshop tuning (`OLLAMA_MAX_LOADED_MODELS=2`), up to 2 models share VRAM at once — Ollama automatically unloads the oldest model when a new one is needed. Cold loads from NVMe take only ~1 second, so students won't notice the swap.
 
 ---
 

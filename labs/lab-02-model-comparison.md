@@ -22,11 +22,10 @@ You wouldn't use a Formula 1 car to get groceries, and you wouldn't take a miniv
 | `tinyllama:1.1b` | 1.1 billion | A smart calculator |
 | `llama3.2:3b` | 3 billion | A helpful intern |
 | `mistral:7b` | 7 billion | A solid generalist |
-| `qwen3.5:9b` | 9 billion | A knowledgeable assistant |
-| `deepseek-r1:14b` | 14 billion | A specialist with strong reasoning |
-| `phi4:14b` | 14 billion | A Microsoft-trained specialist |
 
 More parameters generally means: better reasoning, more knowledge, more nuance — but also **slower responses** and **more computing resources**.
+
+> 💡 **Workshop note:** These three models are fast enough for everyone to use simultaneously. Larger models (14B+) exist but are too slow for interactive classroom use.
 
 Let's see this in action.
 
@@ -36,7 +35,7 @@ Let's see this in action.
 
 ### Instructions
 
-You're going to run the **exact same prompt** through 4 different models and compare the results.
+You're going to run the **exact same prompt** through 3 different models and compare the results.
 
 **Prompt** (copy this exactly each time):
 
@@ -49,18 +48,17 @@ Explain quantum computing to a 10-year-old in about 100 words
 1. `tinyllama:1.1b`
 2. `llama3.2:3b`
 3. `mistral:7b`
-4. `deepseek-r1:14b`
 
 ### ✏️ Fill In Your Comparison Table
 
-| Dimension | tinyllama:1.1b | llama3.2:3b | mistral:7b | deepseek-r1:14b |
-|---|---|---|---|---|
-| **Response quality** (1–5) | | | | |
-| **Speed** (fast / medium / slow) | | | | |
-| **Actually understandable by a 10-year-old?** (yes / kinda / no) | | | | |
-| **Used a good analogy?** (yes / no, what was it?) | | | | |
-| **Approximately correct word count?** | | | | |
-| **Style notes** (robotic? natural? fun?) | | | | |
+| Dimension | tinyllama:1.1b | llama3.2:3b | mistral:7b |
+|---|---|---|---|
+| **Response quality** (1–5) | | | |
+| **Speed** (fast / medium / slow) | | | |
+| **Actually understandable by a 10-year-old?** (yes / kinda / no) | | | |
+| **Used a good analogy?** (yes / no, what was it?) | | | |
+| **Approximately correct word count?** | | | |
+| **Style notes** (robotic? natural? fun?) | | | |
 
 ### 🤔 Reflection
 
@@ -83,12 +81,12 @@ Write a Python function called is_prime that takes a number and returns True if 
 **Run it through these models:**
 
 1. `tinyllama:1.1b`
-2. `mistral:7b`
-3. `phi4:14b`
+2. `llama3.2:3b`
+3. `mistral:7b`
 
 ### ✏️ Fill In Your Comparison Table
 
-| Dimension | tinyllama:1.1b | mistral:7b | phi4:14b |
+| Dimension | tinyllama:1.1b | llama3.2:3b | mistral:7b |
 |---|---|---|---|
 | **Does the code look correct?** | | | |
 | **Are there helpful comments?** | | | |
@@ -117,19 +115,18 @@ What are the pros and cons of social media for teenagers? Give 3 specific pros a
 **Run it through these models:**
 
 1. `llama3.2:3b`
-2. `qwen3.5:9b`
-3. `deepseek-r1:14b`
+2. `mistral:7b`
 
 ### ✏️ Fill In Your Comparison Table
 
-| Dimension | llama3.2:3b | qwen3.5:9b | deepseek-r1:14b |
-|---|---|---|---|
-| **Followed the format?** (3 pros, 3 cons) | | | |
-| **Points are specific?** (not just vague fluff) | | | |
-| **Balanced or biased?** | | | |
-| **Quality of explanations** (1–5) | | | |
-| **Speed** | | | |
-| **Overall best response?** | | | |
+| Dimension | llama3.2:3b | mistral:7b |
+|---|---|---|
+| **Followed the format?** (3 pros, 3 cons) | | |
+| **Points are specific?** (not just vague fluff) | | |
+| **Balanced or biased?** | | |
+| **Quality of explanations** (1–5) | | |
+| **Speed** | | |
+| **Overall best response?** | | |
 
 ---
 
@@ -150,9 +147,8 @@ Write a 200-word essay about why sleep is important for teenagers
 | `tinyllama:1.1b` | |
 | `llama3.2:3b` | |
 | `mistral:7b` | |
-| `qwen3.5:9b` | |
-| `deepseek-r1:14b` | |
-| `phi4:14b` | |
+
+> 💡 **What you should see:** TinyLlama responds almost instantly, Llama 3.2 takes a second or two, and Mistral takes a few seconds. The quality difference is worth the small wait!
 
 **❓ Is there a clear correlation between model size and response time?**
 

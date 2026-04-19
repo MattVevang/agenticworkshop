@@ -88,24 +88,24 @@ Set these **before** starting `ollama serve` (as system or user environment vari
 |----------|-------------------|---------|
 | `OLLAMA_HOST` | `0.0.0.0:11434` | Accept connections from Docker and student devices |
 | `OLLAMA_NUM_PARALLEL` | `4` | Handle up to 4 concurrent requests per model |
-| `OLLAMA_MAX_LOADED_MODELS` | `3` | Keep up to 3 models resident in VRAM simultaneously |
-| `OLLAMA_KEEP_ALIVE` | `2h` | Prevent model unloading during the workshop (default is 5 min) |
+| `OLLAMA_MAX_LOADED_MODELS` | `2` | Keep up to 2 models resident in VRAM simultaneously |
+| `OLLAMA_KEEP_ALIVE` | `2m` | Unload models 2 min after last use (cold loads are ~1s on NVMe) |
+| `OLLAMA_CONTEXT_LENGTH` | `8192` | Reduce from default for workshop (short prompts don't need 128k) |
 
-> **💡 Why this matters:** With 20+ students hitting the server simultaneously, cold model loads cause long waits. These settings keep models warm and handle concurrent requests.
+> **💡 Why this matters:** With 20+ students hitting the server simultaneously, you need fast concurrent responses and clean VRAM management. Models cold-load in ~1–1.5s on NVMe, so aggressive unloading prevents VRAM contention without meaningful delays. See [`resources/workshop-tuning-guide.md`](resources/workshop-tuning-guide.md) for full benchmark data and revert instructions.
 
 ### 2. Pull Models
 
 Student-facing models (curated for the labs):
 
 ```powershell
-ollama pull tinyllama:1.1b      # Ultra-fast, shows quality tradeoffs
-ollama pull llama3.2:3b          # Small but capable
-ollama pull mistral:7b           # Solid mid-size general model
-ollama pull llava:7b             # Multimodal — can analyze images
-ollama pull qwen3.5:9b           # Strong general model
-ollama pull deepseek-r1:14b      # Reasoning-focused model
-ollama pull phi4:14b             # Microsoft's model
+ollama pull tinyllama:1.1b      # Ultra-fast, shows quality tradeoffs (~1.2 GB VRAM)
+ollama pull llama3.2:3b          # Small but capable (~3.5 GB VRAM)
+ollama pull mistral:7b           # Primary workshop model — best speed/quality balance (~8.3 GB VRAM)
+ollama pull llava:7b             # Multimodal — can analyze images (~8.4 GB VRAM)
 ```
+
+> **⚡ Performance note:** These four models were benchmarked for concurrent classroom use. Even with 10 simultaneous users, mistral:7b responds in under 1.2 seconds. Larger models (9B+) are too slow for interactive use — see [`resources/workshop-tuning-guide.md`](resources/workshop-tuning-guide.md).
 
 Instructor demo models (larger, for live presentations):
 

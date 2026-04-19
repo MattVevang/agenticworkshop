@@ -20,7 +20,7 @@ AI isn't just for answering questions — it can be a surprisingly fun creative 
 
 Take one premise and generate story openings in completely different genres. This shows how AI adapts tone, vocabulary, and style.
 
-**Use `mistral:7b` or `qwen3.5:9b` for this section.**
+**Use `mistral:7b` for this section.**
 
 #### Step 1: Science Fiction
 

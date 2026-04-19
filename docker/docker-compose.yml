@@ -26,9 +26,11 @@ services:
       #
       #   OLLAMA_HOST=0.0.0.0:11434          # Accept connections from Docker & network
       #   OLLAMA_NUM_PARALLEL=4              # Handle concurrent student requests
-      #   OLLAMA_MAX_LOADED_MODELS=3         # Keep multiple models in VRAM (32GB GPU)
-      #   OLLAMA_KEEP_ALIVE=2h               # Don't unload models during the workshop
+      #   OLLAMA_MAX_LOADED_MODELS=2         # Keep up to 2 models in VRAM (swap is ~1s on NVMe)
+      #   OLLAMA_KEEP_ALIVE=2m               # Unload idle models after 2 min (fast NVMe reload)
+      #   OLLAMA_CONTEXT_LENGTH=8192         # Reduce from 128k for workshop (saves VRAM)
       #
+      # See resources/workshop-tuning-guide.md for full details and revert instructions.
       # See demos/scripts/ollama-warmup.py for the pre-workshop model preloader.
 
     volumes:
