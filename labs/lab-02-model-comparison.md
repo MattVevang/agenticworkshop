@@ -31,19 +31,43 @@ Let's see this in action.
 
 ---
 
-## Exercise 1: Explain It to a Kid 👶
+## Exercise 1: The Context Challenge 🧩
+
+> 💡 **Why this exercise is different:** Instead of comparing writing style, we're testing something deeper — can each model **hold onto important data** when it's buried under a wall of text? This reveals a fundamental difference between model sizes that you can't see from simple prompts.
 
 ### Instructions
 
-You're going to run the **exact same prompt** through 3 different Llama models and compare the results.
+Copy the **entire prompt below** and paste it into each model. **Don't modify it** — the long middle section is intentional. It contains FRC scouting data at the top, then several paragraphs about FIRST history (filler that the model must ignore), then two questions at the bottom.
 
-**Prompt** (copy this exactly each time):
+> ⚠️ **Important:** Start a **new chat** for each model. Make sure the **Temperature** slider is set to **0** (far left) in the chat settings so results are consistent.
+
+**Prompt** (copy everything inside this block):
 
 ```
-Explain quantum computing to a 10-year-old in about 100 words
+Here are the scouting results from our FRC regional competition. Study them carefully:
+
+MATCH SCOUTING DATA:
+- Match 1: Team 4150 scored 45 auto + 82 teleop = 127 total
+- Match 2: Team 2876 scored 38 auto + 91 teleop = 129 total
+- Match 3: Team 4150 scored 52 auto + 76 teleop = 128 total
+- Match 4: Team 1234 scored 41 auto + 88 teleop = 129 total
+- Match 5: Team 2876 scored 35 auto + 95 teleop = 130 total
+
+The FIRST Robotics Competition has a rich history dating back to 1992 when it was founded by Dean Kamen. The first competition had just 28 teams competing in a relatively simple game. By 2024, FIRST has grown to include over 3,600 FRC teams worldwide, with regional events held across the United States, Canada, Australia, Israel, Turkey, and many other countries. The competition changes its game every year, with each season bringing new challenges that test teams' engineering, programming, and strategic thinking abilities. Past games have included challenges like shooting balls into goals, climbing structures, placing game pieces on scoring nodes, and balancing on platforms. The build season typically begins in early January when the new game is revealed at a worldwide kickoff event, and teams have about six weeks to design, build, and test their robots before competition season begins.
+
+FIRST teams are organized into several programs based on age group. FIRST LEGO League introduces students aged 4-16 to STEM concepts through themed challenges using LEGO elements. FIRST Tech Challenge serves students in grades 7-12 with a more accessible robotics platform that uses Android-based controllers. FIRST Robotics Competition, the flagship program, challenges high school students to build industrial-sized robots weighing up to 125 pounds. Each program emphasizes FIRST's core values of discovery, innovation, impact, inclusion, teamwork, and fun. The organization has distributed over $80 million in college scholarships to FIRST alumni, and studies show that FIRST participants are significantly more likely to pursue careers in science and technology.
+
+The strategy aspect of FRC is often what separates good teams from great ones. Alliance selection at competitions involves the top eight seeded teams choosing two alliance partners each for elimination rounds. Scouting data is crucial for making informed alliance selections. Teams use various methods to collect scouting data, from paper forms to sophisticated digital systems with tablets and real-time databases. Some teams even use computer vision to automatically track robot performance during matches. The most successful teams combine quantitative scouting data with qualitative observations about robot reliability, driver skill, and defensive capability. Strategy also extends to the matches themselves, where alliance captains must decide which robots play offense versus defense, how to allocate scoring responsibilities, and when to prioritize climbing or other endgame activities.
+
+The programming side of FRC robots has evolved significantly over the years. Early robots used simple microcontrollers with limited programming capabilities. Today's FRC robots run on the roboRIO, a National Instruments controller that supports Java, C++, and LabVIEW programming. Many teams also use coprocessors like Raspberry Pi or Jetson Nano for computer vision processing. The WPILib software library provides a comprehensive framework for robot programming, including support for PID control, trajectory following, and networked communications. Teams increasingly use advanced techniques like path planning, machine learning for game piece detection, and autonomous routines that can score multiple game pieces without human input.
+
+Now, based ONLY on the MATCH SCOUTING DATA at the very beginning:
+
+1. Which team had the highest TELEOP score, and in which match?
+2. What was Team 4150's average TOTAL score across their matches?
 ```
 
-**Run it through these models** (start a **new chat** each time and select the model from the dropdown):
+**Run it through these models** (start a **new chat** each time):
 
 1. `llama3.2:1b` (smallest)
 2. `llama3.2:3b` (medium)
@@ -53,18 +77,27 @@ Explain quantum computing to a 10-year-old in about 100 words
 
 | Dimension | llama3.2:1b | llama3.2:3b | llama3.1:8b |
 |---|---|---|---|
-| **Response quality** (1–5) | | | |
+| **Q1: Highest teleop — correct team and match?** | | | |
+| **Q2: Team 4150 average — correct answer?** | | | |
+| **Did it claim data was "not provided"?** | | | |
+| **Did it show its math/reasoning?** | | | |
 | **Speed** (fast / medium / slow) | | | |
-| **Actually understandable by a 10-year-old?** (yes / kinda / no) | | | |
-| **Used a good analogy?** (yes / no, what was it?) | | | |
-| **Approximately correct word count?** | | | |
-| **Style notes** (robotic? natural? fun?) | | | |
+
+### ✅ Answer Key (check after running all three!)
+
+The correct answers from the scouting data:
+1. **Team 2876** scored **95 teleop** points in **Match 5**
+2. Team 4150 played Matches 1 and 3: **(127 + 128) / 2 = 127.5**
+
+> 🔍 **What you'll likely see:** The smallest model may struggle to find the data at all — it might claim the information "isn't provided" even though it's right there at the top of the prompt. The largest model is more likely to dig through the filler text and calculate the correct average. This happens because larger models are better at **attending to** relevant information across longer inputs.
+>
+> This doesn't mean bigger models are always accurate — they still make mistakes! But they handle complex, information-dense prompts more robustly than smaller ones.
 
 ### 🤔 Reflection
 
-- Which model gave the best explanation? Was it the biggest one?
-- Did the smallest model manage to produce something useful at all?
-- How big was the speed difference between smallest and largest?
+- The same data was in every prompt — why might the smallest model claim it "wasn't provided"?
+- Which model showed its work (math steps)? Does showing work make you trust the answer more?
+- If you were building a scouting app that analyzed match data, which model size would you want?
 
 ---
 
@@ -161,7 +194,7 @@ Write a 200-word essay about why sleep is important for teenagers
 
 2. **If you were building an app that needed to respond instantly** (like autocomplete), would you use the 8B model? Why or why not?
 
-3. **For which task did model size matter most?** The kid explanation, the code, or the pros/cons analysis?
+3. **For which task did model size matter most?** The context challenge, the code, or the pros/cons analysis?
 
 4. **How do you think models like ChatGPT or Claude compare in size** to what you just tested? (Hint: think *hundreds of billions* of parameters, or more)
 
@@ -175,7 +208,8 @@ Write a 200-word essay about why sleep is important for teenagers
 
 - 📏 **Model size matters, but it's not everything** — the best model depends on your task
 - ⚡ **Smaller models are faster** — sometimes fast and good enough beats slow and perfect
-- 🧠 **Larger models handle nuance and complexity better** — they're stronger at reasoning, following instructions, and covering edge cases
+- 🧠 **Larger models handle context and complexity better** — they're stronger at reasoning over long inputs, following instructions, and covering edge cases
+- 🔍 **Don't trust AI answers blindly** — even big models make mistakes, so always verify important results
 - 🎯 **Match the model to the job** — you don't need an 8B-parameter model to generate a haiku
 - 🏎️ **Same family, different sizes = fair comparison** — when only size changes, you can clearly see the tradeoffs
 - 💰 **In the real world, bigger models cost more** — so choosing wisely saves money and energy
