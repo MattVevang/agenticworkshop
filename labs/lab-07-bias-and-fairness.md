@@ -319,4 +319,4 @@ This is one of the biggest unsolved questions in AI ethics. Currently, there are
 
 ---
 
-**Next up: [Lab 8 →](lab-08-placeholder.md)**
+**Next up: [Lab 8: Real-World AI Scenarios →](lab-08-real-world-scenarios.md)**

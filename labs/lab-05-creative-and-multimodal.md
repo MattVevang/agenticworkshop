@@ -222,11 +222,9 @@ Put all HTML, CSS, and JavaScript in a single file.
 
 ### Exercise 7: Code Quality Comparison
 
-Run the same code prompt through a smaller model to see the difference:
+You already have a `llama3.2:3b` result from Exercise 6. Now run the same prompt with **`llama3.2:1b`** to see how the smallest model handles code generation. Compare it against your Exercise 6 result.
 
-**Switch to `llama3.2:1b`** and try the exact same prompt from Exercise 6.
-
-**Then try `llama3.2:3b`.**
+> 💡 If you want a fresh side-by-side comparison, rerun `llama3.2:3b` as well.
 
 ### ✏️ Compare
 

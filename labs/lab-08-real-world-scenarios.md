@@ -138,7 +138,7 @@ If you've ever written code — in a class, for a project, or just messing aroun
 Start a **new chat** and paste this:
 
 ```
-I'm a high school student on an FRC robotics team and I code in Java. This code is supposed to ask the user for 5 test scores, then print the average. But it always prints 0 as the average. Can you find the bug and explain what's wrong?
+I'm a high school student on an FRC robotics team and I code in Java. This code is supposed to ask the user for 5 test scores, then print the average. But it prints a whole-number average instead of the correct decimal average — for example, scores of 85, 90, 78, 92, and 88 should average to 86.6, but it prints 86. Can you find the bug and explain what's wrong?
 
 import java.util.Scanner;
 
@@ -161,7 +161,7 @@ public class ScoreAverage {
 }
 ```
 
-Read the explanation. Did the AI correctly identify the issue? (Hint: integer division in Java truncates the decimal — `total / count` does integer math when both are `int`.)
+Read the explanation. Did the AI correctly identify the issue? (Hint: integer division in Java truncates the decimal — `total / count` does integer math when both are `int`, so 433 / 5 gives 86 instead of 86.6.)
 
 ### Step 2: Try It With Your Own Code
 
@@ -373,4 +373,4 @@ You've tried five scenarios we picked. Now it's your turn.
 
 ---
 
-**Next up: [Lab 9 →](lab-09-future-of-ai.md)**
+**Next up: [Lab 9: Build Your Own AI Personality (Bonus) →](lab-09-custom-modelfile.md)**
