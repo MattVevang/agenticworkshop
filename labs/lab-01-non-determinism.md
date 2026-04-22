@@ -27,7 +27,7 @@ This means: **Ask the same question twice, get two different answers.** Let's pr
 
 ### Instructions
 
-1. Select **`mistral:7b`** from the model dropdown
+1. Select **`llama3.2:3b`** from the model dropdown
 2. **Start a new chat** and type this prompt exactly:
 
 ```
@@ -109,47 +109,76 @@ When a model predicts the next word, it doesn't just pick the #1 most likely wor
 
 | Temperature | Behavior | Analogy |
 |---|---|---|
-| **0** | Always picks the most probable word. As deterministic as it gets. | Following the GPS exactly — no detours |
+| **0** | Always picks the most probable word. Removes the randomness. | Following the GPS exactly — no detours |
 | **0.1–0.5** | Mostly sticks to likely words, small variation | Taking the suggested route but occasionally picking a side street |
 | **0.7–1.0** (typical default) | Balanced between predictable and creative | Exploring the neighborhood — you'll get somewhere interesting |
-| **1.5–2.0** | Very random, often chaotic | Closing your eyes and pointing at the map |
+| **1.5–2.0** | Wider exploration of word choices | Wandering further from the main road |
 
-### Think of it like this:
+### The honest truth about temperature
 
-Imagine the model is writing a story and needs the next word after "The cat sat on the..."
+**Temperature 0 vs. anything else is a dramatic, visible difference** — responses go from identical every time to varied every time. But the difference between moderate temperatures (like 0.7 vs. 1.5) is often subtle and hard to spot — even experts need to compare responses carefully. What matters most:
 
-- **Temperature 0:** Always picks "mat" (most likely)
-- **Temperature 0.7:** Usually picks "mat" but sometimes "couch," "roof," or "table"
-- **Temperature 2.0:** Might pick "refrigerator," "cloud," or "existential crisis"
+- **Zero = locked.** The model picks the same path every time.
+- **Above zero = unlocked.** The model explores, and higher values allow *wider* exploration — but the effect is gradual, not dramatic.
+
+> 💡 Temperature controls **variation**, not **accuracy**. A higher temperature doesn't make the AI more wrong — it makes it more willing to try different word choices.
 
 ---
 
-## Exercise 4: Temperature in Action 🔥 *(Instructor Demo)*
+## Exercise 4: The Lock-Down Demo 🔒 *(Instructor Demo)*
 
-> ⚠️ **Important:** In our shared workshop setup, temperature settings affect **all users at once**. To avoid disrupting everyone's experience, your instructor will demonstrate this live — watch carefully!
->
-> Want to try it yourself? See the **"Try This at Home"** section at the end of this lab.
+> ⚠️ **Important:** In our shared workshop setup, parameter changes can affect all users. Your instructor will demonstrate this live — watch carefully and follow along!
 
-### What You'll See
+### Before the Demo — Make a Prediction! 🤔
 
-Your instructor will run the same haiku prompt three times at **temperature 0** (fully deterministic), then three times at **default temperature** (~0.7).
+Think back to Exercise 1: you asked for a haiku about pizza three times and got **different haiku each time**.
 
-### Watch For
+**❓ Your instructor is about to run the exact same prompt three more times, but with one change to the settings. Predict: will the responses be the same or different?**
 
-| Temperature 0 | Default Temperature |
+### What the Instructor Will Do
+
+**Part A — Temperature 0 (Locked Mode)**
+
+1. Open a **new chat** with `llama3.2:3b`
+2. Click the **⚙️ gear icon** (chat settings) → **Advanced Parameters** → set **Temperature to 0**
+3. Type the same prompt from Exercise 1:
+
+```
+Write a haiku about pizza
+```
+
+4. Start a **new chat**, keep temperature at 0, type the same prompt again
+5. Repeat one more time (3 total runs at temperature 0)
+
+### ✏️ Record the Results
+
+| Run | Haiku (Temperature 0) |
 |---|---|
-| Responses should be identical (or nearly so) | Responses should vary each time |
-| Feels robotic, repetitive | Feels natural, creative |
-| The model always picks the "safest" next word | The model explores different word choices |
+| 1st | |
+| 2nd | |
+| 3rd | |
 
-### ✏️ Record the Instructor Demo Results
+**Were they identical? Word-for-word the same?** Compare carefully!
 
-| Setting | Attempt 1 | Attempt 2 | Attempt 3 | Were they the same? |
-|---|---|---|---|---|
-| Temperature 0 | | | | |
-| Default temp | | | | |
+**Part B — Back to Default (Unlocked Mode)**
 
-**❓ Can you see how temperature is the "dial" that controls the randomness you observed in Exercises 1–3?**
+1. The instructor switches temperature **back to default** (~0.7)
+2. Runs the same haiku prompt **2 more times** in new chats
+
+| Run | Haiku (Default Temperature) |
+|---|---|
+| 4th | |
+| 5th | |
+
+**Did the variation come back?** Compare these to the three locked responses above.
+
+### 💡 What Just Happened?
+
+- At **temperature 0**, the model followed the exact same path through its word predictions every time — like a GPS that never deviates
+- At **default temperature**, the randomness came back — the same randomness you experienced in Exercises 1–3
+- **Temperature is the dial that controls the variation you've been observing this whole lab**
+
+> ℹ️ *Note: Temperature 0 produced identical responses with `llama3.2:3b` in our testing. Different models may behave slightly differently — some aren't perfectly deterministic even at zero. The core lesson holds: lower temperature = less variation.*
 
 ---
 
@@ -159,29 +188,30 @@ Take a few minutes to think about these (or discuss with a partner):
 
 1. **If AI isn't deterministic, can you trust it to give you correct answers?** What does this mean for using AI on homework or important tasks?
 
-2. **When would you *want* high randomness?** When would you want low randomness? Think of specific scenarios.
+2. **When would you *want* more variation?** When would you want less? Think of specific scenarios — like writing a poem vs. checking a math answer.
 
-3. **If you asked an AI to help with a math problem**, should temperature be high or low? What about writing a creative story?
+3. **Temperature controls variation, not accuracy.** If you set temperature to 2.0, does the AI become *wrong* more often, or just *different*? What's the difference?
 
 4. **How is this different from a Google search?** When you search "capital of France," you always get "Paris." Why can't AI do that?
 
-5. **Does this make AI more or less useful than you expected?** Why?
+5. **If you were building an AI assistant for a hospital**, would you want temperature at 0 or 0.7? What about for an AI that writes jokes?
 
 ---
 
 ## 🎯 Key Takeaways
 
 - 🎲 **AI is non-deterministic by default** — same prompt, different response every time
-- 🌡️ **Temperature controls randomness** — lower = more predictable, higher = more creative/chaotic
-- 🔢 **Temperature 0 makes AI nearly deterministic** — but the responses might feel robotic
-- 🧠 **AI predicts words probabilistically** — it doesn't "know" things the way a database does
-- ⚖️ **This is a feature, not a bug** — non-determinism is what makes AI creative and flexible
+- 🌡️ **Temperature controls variation** — zero = locked (identical every time), above zero = unlocked (responses differ)
+- 🔒 **Temperature 0 is the "off switch" for randomness** — the model picks the single most likely path
+- 💡 **Temperature affects variation, not accuracy** — higher doesn't mean more wrong, just more different
+- ⚖️ **Non-determinism is a feature, not a bug** — it's what makes AI creative and flexible
+- 📏 **The gradient is subtle** — the difference between 0 and non-zero is dramatic, but 0.7 vs. 1.5 is hard to spot
 
 ---
 
 ## 🏠 Try This at Home: Temperature Experiment
 
-> Want to try the temperature experiment yourself? Here's how — on your own machine or personal account (not during the workshop, since our shared setup means settings changes affect everyone).
+> Want to explore temperature further? Here's how — on your own machine or personal account (not during the workshop, since our shared setup means settings changes affect everyone).
 
 ### What You'll Need
 
@@ -190,14 +220,21 @@ Take a few minutes to think about these (or discuss with a partner):
 ### The Experiment
 
 1. **Set temperature to 0** (look for a Settings/gear icon → Advanced Parameters → Temperature slider)
-2. Run the haiku prompt 3 times in 3 new chats — you should see nearly identical responses
+2. Run the haiku prompt 3 times in 3 new chats — you should see identical (or near-identical) responses
 3. **Set temperature back to default** (~0.7–0.8)
 4. Run the haiku prompt 3 more times — you should see variety again
-5. **Crank temperature to 1.5 or 2.0** — watch things get weird and creative!
+5. **Try temperature 1.5 or 2.0** — the responses will still be coherent, but you may notice wider variety in word choices if you compare carefully
+
+### What to Expect
+
+The **big** visible difference is between 0 and everything else. The differences between moderate values (0.7 vs. 1.5 vs. 2.0) are **subtle** — you might need to run many trials and compare carefully to notice patterns. This is normal! Temperature is a statistical control, not a chaos switch.
 
 ### Why This Is Worth Trying
 
-This is one of the most powerful ways to intuitively understand how AI generates text. Temperature is the single setting that most affects whether AI output feels robotic, natural, or chaotic — and it's something you can control in most AI tools.
+Even if the gradient is subtle, understanding temperature helps you:
+- **Get consistent outputs** when you need them (temp=0 for code generation, data extraction)
+- **Encourage creativity** when you want it (default or slightly higher for brainstorming)
+- **Understand why AI tools behave the way they do** — most chatbots use temperature 0.7–1.0
 
 ---
 

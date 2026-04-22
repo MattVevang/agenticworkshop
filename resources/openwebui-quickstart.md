@@ -57,13 +57,13 @@ Everything you need to know to start chatting with AI models in the workshop.
 1. Click the **settings/parameters icon** (gear or sliders icon near the model dropdown)
 2. Find the **Temperature** slider
 3. Adjust it:
-   - **0.0–0.3** → Focused & factual (good for homework help, code)
-   - **0.4–0.7** → Balanced (good default)
-   - **0.8–1.5** → Creative & unpredictable (good for stories, brainstorming)
+   - **0** → Locked: same response every time (good for consistency)
+   - **0.3–0.7** → Balanced variation (good default for most tasks)
+   - **0.8–1.5** → Wider variation in word choices (good for brainstorming)
 
 [Screenshot: Temperature slider in settings panel]
 
-> **Tip:** If the AI keeps giving boring answers, turn the temperature up. If it's being too wild, turn it down.
+> **Tip:** The biggest visible difference is between 0 (identical every time) and anything above 0 (varies). The differences between moderate values are subtle.
 
 ---
 

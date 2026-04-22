@@ -531,9 +531,9 @@ def add_prediction_slide(prs, blank):
                 "Model picks the most likely next token, feeds it back, repeats.",
                 "Like autocomplete on steroids \u2014 instead of one word, it keeps going."
             ]),
-            ("Temperature Controls Randomness", [
-                "Low temperature = focused, predictable output.",
-                "High temperature = more creative, surprising results."
+            ("Temperature Controls Variation", [
+                "Temperature 0 = locked — same response every time.",
+                "Above 0 = unlocked — responses vary. Higher = wider exploration."
             ]),
             ("Top-K and Top-P Sampling", [
                 "Only consider the top candidates for the next token.",
@@ -901,7 +901,7 @@ def build_deck():
         "• This is the 'aha moment' for most students.\n"
         "• Demo opportunity: 'I have a live token prediction demo — let me show you.'\n"
         "• Explain: 'The model picks the most likely next word, feeds it back, and repeats. Like autocomplete on steroids.'\n"
-        "• Temperature: 'Low = boring but accurate. High = creative but risky. Like a spice dial.'\n"
+        "• Temperature: 'Zero = locked, same answer every time. Above zero = variation. Like a variation dial, not a chaos switch.'\n"
         "• If running the token-prediction demo, pause and switch to it here.\n"
         "• Transition: 'What happens when this prediction engine gets it wrong?'\n"
         "• Timing: ~3 min (+ demo time)")

@@ -107,9 +107,9 @@ A no-nonsense guide to the buzzwords you'll hear in the world of AI. Each term g
 
 ## Temperature
 
-**Definition:** A setting (usually 0.0 to 2.0) that controls how random or creative the AI's responses are. Low = predictable, high = wild.
+**Definition:** A setting (usually 0.0 to 2.0) that controls how much variation appears in the AI's responses. Zero = same answer every time. Above zero = responses vary.
 
-**Think of it like...** A "creativity dial." Turn it to 0 and the AI plays it super safe and boring. Crank it up and it gets creative, weird, and sometimes unhinged. For facts, keep it low. For stories, turn it up.
+**Think of it like...** A "variation dial." At 0, the AI follows the exact same path every time — like a GPS with no detours. Above 0, it explores different word choices. Higher values allow wider exploration, but the differences between moderate settings (0.7 vs. 1.5) are subtle. The big, visible difference is between zero and everything else.
 
 ---
 
