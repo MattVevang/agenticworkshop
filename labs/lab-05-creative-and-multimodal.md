@@ -114,15 +114,18 @@ Time to try something different. The **`llava:7b`** model can understand images 
 
 **Select `llava:7b` from the model dropdown** for this section.
 
+> **🖼️ Image Format Warning:** llava only supports **JPEG, PNG, GIF, and WebP** images. Newer formats like **AVIF or HEIC will crash the model** — if your image won't load, check the file extension and convert it first.
+
 ### Exercise 4: Image Analysis
 
 #### Step 1: Upload and Analyze
 
 1. Start a **new chat** with `llava:7b`
 2. Find an image to test with. Options:
+   - **Use the demo image:** Open `demos/green-formula-1-racing-car.jpg` from the workshop folder
    - Take a photo of the classroom with your phone and upload it
    - Use a screenshot of something on your screen
-   - Search for an interesting image online and save/upload it
+   - Search for an interesting image online and save/upload it (JPEG or PNG only!)
 3. Upload the image to the chat (look for a 📎 or image upload button)
 4. Type:
 
