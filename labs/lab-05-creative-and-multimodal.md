@@ -61,7 +61,7 @@ Write the opening paragraph (about 100 words) of a mystery/thriller with this pr
 | Which genre did the AI handle best? | |
 | Did the tone actually change between genres? | |
 | Which opening would you most want to keep reading? | |
-| Did any of them feel "generic" or formulaic? | |
+| Did any of them feel "generic" or authentic? | |
 
 ---
 
