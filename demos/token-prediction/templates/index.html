@@ -16,7 +16,6 @@
   --green:     #34D399;
   --red:       #F87171;
   --yellow:    #FBBF24;
-  --orange:    #FB923C;
   --text:      #E2E8F0;
   --text-dim:  #94A3B8;
   --border:    #1E293B;
@@ -26,7 +25,7 @@
 
 html, body { height: 100%; }
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-mono);
   background: var(--bg);
   color: var(--text);
   display: flex;
@@ -34,14 +33,14 @@ body {
   overflow: hidden;
 }
 
-/* Header */
+/* Header / Controls */
 header {
-  padding: 16px 24px;
+  padding: 14px 24px;
   background: linear-gradient(135deg, #0f172a 0%, #1a1040 100%);
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
@@ -52,17 +51,19 @@ header {
 }
 
 .title-row h1 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 700;
   background: linear-gradient(90deg, var(--cyan), var(--purple));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .title-row .subtitle {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--text-dim);
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .controls {
@@ -80,17 +81,14 @@ header {
   color: var(--text);
   padding: 8px 12px;
   font-size: 0.9rem;
+  font-family: var(--font-mono);
   outline: none;
-  transition: border-color 0.2s;
 }
-.controls select:focus,
-.controls input:focus {
-  border-color: var(--cyan);
-}
+.controls select:focus, .controls input:focus { border-color: var(--cyan); }
 
 #prompt { flex: 1; min-width: 0; }
-#model-select   { width: 200px; }
-#num-predict    { width: 90px; }
+#model-select { width: 200px; }
+#num-predict { width: 90px; }
 #example-select { width: 200px; }
 
 button {
@@ -100,333 +98,142 @@ button {
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-#btn-generate {
-  background: linear-gradient(135deg, var(--cyan), #06b6d4);
-  color: #0B101A;
-}
-#btn-generate:hover { filter: brightness(1.15); transform: translateY(-1px); }
-#btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+#btn-generate { background: linear-gradient(135deg, var(--cyan), #06b6d4); color: #0B101A; }
+#btn-generate:hover { filter: brightness(1.15); }
+#btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+#btn-stop { background: var(--red); color: #fff; display: none; }
+#btn-clear { background: var(--bg-input); color: var(--text-dim); border: 1px solid var(--border); }
 
-#btn-stop {
-  background: var(--red);
-  color: #fff;
-  display: none;
-}
-#btn-stop:hover { filter: brightness(1.15); }
-
-#btn-clear {
-  background: var(--bg-input);
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-}
-#btn-clear:hover { border-color: var(--text-dim); color: var(--text); }
-
-/* Main layout */
-main {
-  flex: 1;
-  display: flex;
-  gap: 0;
-  overflow: hidden;
-  min-height: 0;
-}
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.panel-header {
-  padding: 12px 18px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-dim);
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-header .dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-/* Left panel – generated text */
-#panel-text {
-  flex: 1;
-  border-right: 1px solid var(--border);
-}
-
-#output-area {
+/* Main content area — single scrollable pane like a terminal */
+#main-output {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
-  font-family: var(--font-mono);
-  font-size: 1.05rem;
-  line-height: 1.7;
+  padding: 20px 24px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* Response text section */
+#response-text {
+  color: var(--green);
   white-space: pre-wrap;
   word-break: break-word;
-}
-
-.token-span {
-  transition: background 0.3s;
-  border-radius: 3px;
-  padding: 1px 0;
-}
-
-.token-span.latest {
-  background: rgba(34, 211, 238, 0.18);
+  margin-bottom: 16px;
+  min-height: 1.5em;
 }
 
 .cursor-blink {
   display: inline-block;
   width: 2px;
-  height: 1.1em;
+  height: 1em;
   background: var(--cyan);
   vertical-align: text-bottom;
   animation: blink 0.8s step-end infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-.prompt-echo {
-  color: var(--purple);
-  opacity: 0.7;
-  border-bottom: 1px dashed var(--purple);
-  margin-bottom: 4px;
-  display: block;
-  padding-bottom: 6px;
-}
-
-/* Right panel */
-#panel-probs {
-  flex: 0 0 480px;
-  min-width: 360px;
-}
-
-#prob-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* Current decision card (large) */
-.decision-card {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-}
-
-.decision-card.active {
-  border-color: var(--cyan);
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
-}
-
-.decision-card .label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+/* Prompt echo */
+.prompt-line {
   color: var(--cyan);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+}
+.prompt-line .prompt-marker {
+  color: var(--text-dim);
+}
+
+/* Token probability grid */
+#token-grid {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-top: 12px;
 }
 
-.decision-card .label .token-num {
-  color: var(--text-dim);
+.token-col {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 4px 8px 12px 0;
+  vertical-align: top;
 }
 
-.decision-card .context-line {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  margin-bottom: 12px;
+/* Token header: "0: I" */
+.token-col-header {
+  color: var(--cyan);
+  font-weight: 700;
+  margin-bottom: 2px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.token-col-sep {
+  color: var(--border);
+  margin-bottom: 2px;
+  user-select: none;
+}
+
+/* Candidate line */
+.cand-line {
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.45;
 }
 
-.decision-card .context-line .ctx-trail {
-  color: var(--purple);
+.cand-line .cand-token {
+  display: inline-block;
+  min-width: 100px;
+  text-align: right;
+  margin-right: 2px;
 }
 
-.decision-card .context-line .ctx-chosen {
+.cand-line .cand-sep {
+  color: var(--text-dim);
+}
+
+.cand-line .cand-prob {
+  color: var(--text-dim);
+}
+
+/* Chosen candidate highlighted */
+.cand-line.chosen .cand-token {
+  color: var(--green);
+}
+.cand-line.chosen .cand-sep {
+  color: var(--green);
+}
+.cand-line.chosen .cand-prob {
   color: var(--green);
   font-weight: 700;
 }
 
-/* Bar rows */
-.bar-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 5px;
-}
-
-.bar-row.chosen .bar-label { color: var(--green); font-weight: 700; }
-.bar-row.chosen .bar-fill { box-shadow: 0 0 8px rgba(52, 211, 153, 0.3); }
-
-.bar-row.other .bar-label { color: var(--text-dim); font-style: italic; }
-
-.bar-label {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  width: 110px;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--text);
-  flex-shrink: 0;
-}
-
-.bar-track {
-  flex: 1;
-  height: 22px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.3s cubic-bezier(.4,0,.2,1);
-  min-width: 2px;
-}
-
-.bar-pct {
-  font-size: 0.75rem;
-  width: 58px;
-  text-align: right;
+/* Stats line */
+#stats-line {
   color: var(--text-dim);
-  font-family: var(--font-mono);
-  flex-shrink: 0;
-}
-
-/* History strip */
-.history-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.history-chip {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: default;
-}
-
-.history-chip .chip-token {
-  color: var(--green);
-  font-weight: 600;
-}
-
-.history-chip .chip-prob {
-  color: var(--cyan);
-  font-size: 0.68rem;
-}
-
-.history-chip .chip-runner {
-  color: var(--text-dim);
-  font-size: 0.65rem;
-}
-
-/* Section labels */
-.section-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-dim);
-  margin-top: 4px;
-}
-
-/* Speed chart */
-#speed-chart-container {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px;
-}
-
-#speed-chart-container .label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--green);
-  margin-bottom: 8px;
-}
-
-#speed-canvas {
-  width: 100%;
-  height: 80px;
-  display: block;
+  margin-top: 12px;
+  font-size: 0.82rem;
 }
 
 /* Placeholder */
 .placeholder-msg {
   color: var(--text-dim);
   font-size: 0.9rem;
-  text-align: center;
-  padding: 40px 20px;
-  line-height: 1.6;
-}
-
-/* Info card */
-.info-card {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px;
-}
-
-.info-card .label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 8px;
-}
-
-.info-card .detail {
-  font-size: 0.78rem;
-  color: var(--text-dim);
+  padding: 40px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 /* Error */
 .error-banner {
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid var(--red);
   color: var(--red);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  font-size: 0.85rem;
-  margin: 12px;
+  margin: 8px 0;
 }
 
 /* Footer */
 footer {
-  padding: 10px 24px;
+  padding: 8px 24px;
   background: var(--bg-card);
   border-top: 1px solid var(--border);
   display: flex;
@@ -437,17 +244,8 @@ footer {
   flex-shrink: 0;
 }
 
-footer .stat {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-footer .stat-value {
-  color: var(--cyan);
-  font-family: var(--font-mono);
-  font-weight: 600;
-}
+footer .stat { display: flex; align-items: center; gap: 6px; }
+footer .stat-value { color: var(--cyan); font-weight: 600; }
 
 .status-dot {
   width: 8px; height: 8px;
@@ -458,13 +256,8 @@ footer .stat-value {
 .status-dot.connected { background: var(--green); }
 .status-dot.generating { background: var(--cyan); animation: pulse 1s infinite; }
 .status-dot.error { background: var(--red); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -476,58 +269,34 @@ footer .stat-value {
 <header>
   <div class="title-row">
     <h1>🔮 Token Prediction Visualizer</h1>
-    <span class="subtitle">Watch the model choose each word — see what it considered and why</span>
+    <span class="subtitle">Watch the model choose each token — see every candidate it considered</span>
   </div>
   <div class="controls">
     <select id="example-select" title="Load an example prompt">
-      <option value="">💡 Example prompts…</option>
+      <option value="">💡 Examples…</option>
+      <option value="what is your name?">what is your name?</option>
       <option value="The capital of France is">The capital of France is</option>
       <option value="Once upon a time in a land far away,">Once upon a time…</option>
       <option value="The three laws of robotics are:">Three laws of robotics…</option>
       <option value="def fibonacci(n):">def fibonacci(n):</option>
-      <option value="Write a haiku about artificial intelligence:">Haiku about AI…</option>
       <option value="In the year 2050, robots">In the year 2050…</option>
     </select>
-    <input type="text" id="prompt" placeholder="Enter a prompt and watch the model think…" autocomplete="off" />
+    <input type="text" id="prompt" placeholder="Enter a prompt…" autocomplete="off" />
     <select id="model-select" title="Choose a model"></select>
-    <input type="number" id="num-predict" value="60" min="1" max="500" title="Max tokens to generate" />
+    <input type="number" id="num-predict" value="40" min="1" max="500" title="Max tokens" />
     <button id="btn-generate">▶ Generate</button>
     <button id="btn-stop">⏹ Stop</button>
     <button id="btn-clear">Clear</button>
   </div>
 </header>
 
-<main>
-  <div id="panel-text" class="panel">
-    <div class="panel-header">
-      <span class="dot" style="background:var(--cyan)"></span>
-      Generated Output
-    </div>
-    <div id="output-area">
-      <div class="placeholder-msg">
-        Enter a prompt above and press <strong>Generate</strong> to watch the model
-        produce text token by token.<br><br>
-        Each token will appear here in real time, just as the LLM generates it.
-      </div>
-    </div>
+<div id="main-output">
+  <div class="placeholder-msg">
+    Enter a prompt above and press <strong>Generate</strong>.<br><br>
+    The model's response will appear first, followed by a grid showing<br>
+    the top 5 token candidates the model considered at every position.
   </div>
-
-  <div id="panel-probs" class="panel">
-    <div class="panel-header">
-      <span class="dot" style="background:var(--purple)"></span>
-      Model's Decision — Top 5 Candidates
-    </div>
-    <div id="prob-area">
-      <div class="placeholder-msg">
-        When generation starts, this panel shows the <strong>real probabilities</strong>
-        the model assigned to its top token candidates for each position.<br><br>
-        🔹 For every token, see the top 5 options it considered<br>
-        🔹 The chosen token is highlighted in green<br>
-        🔹 Watch probabilities shift as context builds
-      </div>
-    </div>
-  </div>
-</main>
+</div>
 
 <footer>
   <div class="stat">
@@ -541,8 +310,6 @@ footer .stat-value {
 </footer>
 
 <script>
-const BAR_COLORS = ['#34D399', '#A78BFA', '#22D3EE', '#FBBF24', '#FB923C', '#94A3B8'];
-
 const promptInput   = document.getElementById('prompt');
 const modelSelect   = document.getElementById('model-select');
 const numPredict    = document.getElementById('num-predict');
@@ -550,8 +317,7 @@ const exampleSelect = document.getElementById('example-select');
 const btnGenerate   = document.getElementById('btn-generate');
 const btnStop       = document.getElementById('btn-stop');
 const btnClear      = document.getElementById('btn-clear');
-const outputArea    = document.getElementById('output-area');
-const probArea      = document.getElementById('prob-area');
+const mainOutput    = document.getElementById('main-output');
 const statusDot     = document.getElementById('status-dot');
 const statusText    = document.getElementById('status-text');
 const statTokens    = document.getElementById('stat-tokens');
@@ -560,11 +326,9 @@ const statElapsed   = document.getElementById('stat-elapsed');
 const statModel     = document.getElementById('stat-model');
 
 let abortController = null;
-let speedHistory    = [];
-let historyEntries  = [];   // {token, prob, candidates}
-let generatedText   = '';   // running context of generated tokens
+let allDecisions    = [];  // {token, candidates}
 
-// -- Load models --
+// -- Models --
 async function loadModels() {
   try {
     const resp = await fetch('/api/models');
@@ -573,30 +337,22 @@ async function loadModels() {
     if (data.models && data.models.length > 0) {
       data.models.forEach(m => {
         const opt = document.createElement('option');
-        opt.value = m;
-        opt.textContent = m;
+        opt.value = m; opt.textContent = m;
         if (m === '{{ default_model }}') opt.selected = true;
         modelSelect.appendChild(opt);
       });
       setStatus('connected', 'Ollama connected');
     } else {
-      addFallbackModel();
-      setStatus('error', 'No models found');
+      addFallback(); setStatus('error', 'No models found');
     }
-  } catch {
-    addFallbackModel();
-    setStatus('error', 'Ollama unreachable');
-  }
+  } catch { addFallback(); setStatus('error', 'Ollama unreachable'); }
 }
-
-function addFallbackModel() {
+function addFallback() {
   const opt = document.createElement('option');
-  opt.value = '{{ default_model }}';
-  opt.textContent = '{{ default_model }} (offline)';
+  opt.value = '{{ default_model }}'; opt.textContent = '{{ default_model }} (offline)';
   modelSelect.appendChild(opt);
 }
 
-// -- Helpers --
 function setStatus(state, text) {
   statusDot.className = 'status-dot ' + state;
   statusText.textContent = text;
@@ -606,196 +362,68 @@ function formatMs(ms) {
   return ms < 1000 ? ms.toFixed(0) + ' ms' : (ms / 1000).toFixed(1) + ' s';
 }
 
-function escapeHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
+// Display token text with underscore prefix for leading spaces (like the screenshot)
 function displayToken(t) {
-  // Make whitespace visible in labels
-  return JSON.stringify(t).slice(1, -1) || '""';
+  if (!t) return '""';
+  // Show leading space as underscore prefix like the reference demo
+  if (t.startsWith(' ')) return '_' + t.slice(1);
+  return t;
 }
 
-// -- Build the current decision card --
-function buildDecisionCard(tokenIdx, chosenToken, candidates) {
-  const card = document.createElement('div');
-  card.className = 'decision-card active';
-  card.id = 'current-decision';
+// -- Build the column grid after all tokens are collected --
+function renderGrid() {
+  const grid = document.getElementById('token-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
 
-  // Header
-  const label = document.createElement('div');
-  label.className = 'label';
-  label.innerHTML = '<span>🎯 Current Token Decision</span><span class="token-num">Token #' + tokenIdx + '</span>';
-  card.appendChild(label);
+  allDecisions.forEach((d, idx) => {
+    const col = document.createElement('div');
+    col.className = 'token-col';
 
-  // Context line: show trailing context + chosen token
-  const ctxLine = document.createElement('div');
-  ctxLine.className = 'context-line';
-  const trailLen = 40;
-  const trail = generatedText.length > trailLen
-    ? '…' + generatedText.slice(-trailLen)
-    : generatedText;
-  ctxLine.innerHTML = '<span class="ctx-trail">' + escapeHtml(trail) + '</span><span class="ctx-chosen">' + escapeHtml(chosenToken) + '</span>';
-  card.appendChild(ctxLine);
+    // Header: "0: I"
+    const header = document.createElement('div');
+    header.className = 'token-col-header';
+    header.textContent = idx + ': ' + displayToken(d.token);
+    col.appendChild(header);
 
-  // Candidate bars
-  if (candidates && candidates.length > 0) {
-    candidates.forEach((c, i) => {
-      const row = document.createElement('div');
-      row.className = 'bar-row';
-      if (c.token === chosenToken) row.classList.add('chosen');
-      if (c.token === '…other') row.classList.add('other');
+    // Separator
+    const sep = document.createElement('div');
+    sep.className = 'token-col-sep';
+    sep.textContent = '──────────────────────';
+    col.appendChild(sep);
 
-      const lbl = document.createElement('span');
-      lbl.className = 'bar-label';
-      lbl.textContent = c.token === '…other' ? '…other' : displayToken(c.token);
-      lbl.title = c.token;
-      row.appendChild(lbl);
+    // Candidate lines
+    if (d.candidates && d.candidates.length > 0) {
+      d.candidates.forEach(c => {
+        if (c.token === '…other') return; // skip the "other" bucket in grid view
+        const line = document.createElement('div');
+        line.className = 'cand-line';
+        const isChosen = c.token === d.token;
+        if (isChosen) line.classList.add('chosen');
 
-      const track = document.createElement('div');
-      track.className = 'bar-track';
-      const fill = document.createElement('div');
-      fill.className = 'bar-fill';
-      const colorIdx = c.token === chosenToken ? 0 : (c.token === '…other' ? 5 : (i % BAR_COLORS.length));
-      fill.style.background = BAR_COLORS[colorIdx];
-      fill.style.width = '0%';
-      track.appendChild(fill);
-      row.appendChild(track);
+        const tokSpan = document.createElement('span');
+        tokSpan.className = 'cand-token';
+        tokSpan.textContent = displayToken(c.token);
 
-      const pct = document.createElement('span');
-      pct.className = 'bar-pct';
-      pct.textContent = c.prob.toFixed(1) + '%';
-      row.appendChild(pct);
+        const sepSpan = document.createElement('span');
+        sepSpan.className = 'cand-sep';
+        sepSpan.textContent = isChosen ? '= ' : ': ';
 
-      card.appendChild(row);
+        const probSpan = document.createElement('span');
+        probSpan.className = 'cand-prob';
+        probSpan.textContent = c.prob.toFixed(5);
 
-      // Animate bar
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => { fill.style.width = Math.min(c.prob, 100) + '%'; });
+        line.appendChild(tokSpan);
+        line.appendChild(sepSpan);
+        line.appendChild(probSpan);
+        col.appendChild(line);
       });
-    });
-  }
+    }
 
-  return card;
-}
-
-// -- History strip --
-function buildHistoryStrip() {
-  const container = document.createElement('div');
-  container.id = 'history-strip-container';
-
-  const label = document.createElement('div');
-  label.className = 'section-label';
-  label.textContent = '📜 Recent Token Decisions';
-  container.appendChild(label);
-
-  const strip = document.createElement('div');
-  strip.className = 'history-strip';
-  strip.id = 'history-strip';
-  container.appendChild(strip);
-
-  return container;
-}
-
-function updateHistoryStrip(tokenIdx, chosenToken, topProb) {
-  historyEntries.push({ idx: tokenIdx, token: chosenToken, prob: topProb });
-  // Keep last 20
-  if (historyEntries.length > 20) historyEntries.shift();
-
-  let strip = document.getElementById('history-strip');
-  if (!strip) return;
-
-  strip.innerHTML = '';
-  historyEntries.forEach(e => {
-    const chip = document.createElement('span');
-    chip.className = 'history-chip';
-    chip.innerHTML =
-      '<span class="chip-runner">#' + e.idx + '</span>' +
-      '<span class="chip-token">' + escapeHtml(displayToken(e.token)) + '</span>' +
-      '<span class="chip-prob">' + e.prob.toFixed(1) + '%</span>';
-    strip.appendChild(chip);
+    grid.appendChild(col);
   });
-}
 
-// -- Speed chart --
-function buildSpeedChart() {
-  let container = document.getElementById('speed-chart-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'speed-chart-container';
-    const label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = '📈 Generation Speed (tokens/s)';
-    container.appendChild(label);
-    const canvas = document.createElement('canvas');
-    canvas.id = 'speed-canvas';
-    container.appendChild(canvas);
-  }
-  return container;
-}
-
-function updateSpeedChart() {
-  const canvas = document.getElementById('speed-canvas');
-  if (!canvas || speedHistory.length < 2) return;
-
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width  = rect.width  * dpr;
-  canvas.height = rect.height * dpr;
-
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, rect.width, rect.height);
-
-  const maxVal = Math.max(...speedHistory, 1);
-  const pad = { top: 4, bottom: 14, left: 0, right: 0 };
-  const plotW = rect.width  - pad.left - pad.right;
-  const plotH = rect.height - pad.top  - pad.bottom;
-
-  ctx.beginPath();
-  speedHistory.forEach((v, i) => {
-    const x = pad.left + (i / (speedHistory.length - 1)) * plotW;
-    const y = pad.top + plotH - (v / maxVal) * plotH;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  ctx.lineTo(pad.left + plotW, pad.top + plotH);
-  ctx.lineTo(pad.left, pad.top + plotH);
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(34, 211, 238, 0.12)';
-  ctx.fill();
-
-  ctx.beginPath();
-  speedHistory.forEach((v, i) => {
-    const x = pad.left + (i / (speedHistory.length - 1)) * plotW;
-    const y = pad.top + plotH - (v / maxVal) * plotH;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  ctx.strokeStyle = '#22D3EE';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  const latest = speedHistory[speedHistory.length - 1];
-  ctx.fillStyle = '#94A3B8';
-  ctx.font = '11px system-ui';
-  ctx.textAlign = 'right';
-  ctx.fillText(latest.toFixed(1) + ' tok/s', rect.width - 4, rect.height - 2);
-}
-
-// -- Throttled UI update for probability panel --
-let pendingUpdate = null;
-let rafScheduled = false;
-
-function scheduleUpdate(fn) {
-  pendingUpdate = fn;
-  if (!rafScheduled) {
-    rafScheduled = true;
-    requestAnimationFrame(() => {
-      rafScheduled = false;
-      if (pendingUpdate) {
-        pendingUpdate();
-        pendingUpdate = null;
-      }
-    });
-  }
+  mainOutput.scrollTop = mainOutput.scrollHeight;
 }
 
 // -- Main generation --
@@ -804,41 +432,42 @@ async function startGeneration() {
   if (!prompt) { promptInput.focus(); return; }
 
   const model  = modelSelect.value;
-  const maxTok = parseInt(numPredict.value, 10) || 60;
+  const maxTok = parseInt(numPredict.value, 10) || 40;
 
   // Reset
-  outputArea.innerHTML = '';
-  probArea.innerHTML = '';
-  speedHistory = [];
-  historyEntries = [];
-  generatedText = '';
+  allDecisions = [];
+  mainOutput.innerHTML = '';
   statTokens.textContent = '0';
   statSpeed.textContent = '–';
   statElapsed.textContent = '–';
   statModel.textContent = model;
 
-  // Prompt echo
-  const promptEcho = document.createElement('span');
-  promptEcho.className = 'prompt-echo';
-  promptEcho.textContent = prompt;
-  outputArea.appendChild(promptEcho);
+  // Prompt line
+  const promptLine = document.createElement('div');
+  promptLine.className = 'prompt-line';
+  promptLine.innerHTML = '<span class="prompt-marker">[' + model.split(':')[0] + ']&gt; </span>' + escapeHtml(prompt);
+  mainOutput.appendChild(promptLine);
+
+  // Response area
+  const responseText = document.createElement('div');
+  responseText.id = 'response-text';
+  mainOutput.appendChild(responseText);
 
   // Cursor
   const cursor = document.createElement('span');
   cursor.className = 'cursor-blink';
   cursor.innerHTML = '&nbsp;';
-  outputArea.appendChild(cursor);
+  responseText.appendChild(cursor);
 
-  // Build right panel structure
-  probArea.appendChild(buildSpeedChart());
+  // Grid container (will be populated as tokens arrive)
+  const grid = document.createElement('div');
+  grid.id = 'token-grid';
+  mainOutput.appendChild(grid);
 
-  // Placeholder for current decision
-  const decisionSlot = document.createElement('div');
-  decisionSlot.id = 'decision-slot';
-  probArea.appendChild(decisionSlot);
-
-  // History strip
-  probArea.appendChild(buildHistoryStrip());
+  // Stats line
+  const statsLine = document.createElement('div');
+  statsLine.id = 'stats-line';
+  mainOutput.appendChild(statsLine);
 
   // UI state
   btnGenerate.disabled = true;
@@ -846,7 +475,7 @@ async function startGeneration() {
   setStatus('generating', 'Generating…');
 
   abortController = new AbortController();
-  let lastTokenSpan = null;
+  let pendingRender = false;
 
   try {
     const resp = await fetch('/api/generate', {
@@ -860,6 +489,7 @@ async function startGeneration() {
     const decoder = new TextDecoder();
     let buffer = '';
     let tokenIdx = 0;
+    let fullText = '';
 
     while (true) {
       const { done, value } = await reader.read();
@@ -881,80 +511,56 @@ async function startGeneration() {
           const banner = document.createElement('div');
           banner.className = 'error-banner';
           banner.textContent = '⚠ ' + event.error;
-          probArea.prepend(banner);
+          mainOutput.insertBefore(banner, grid);
           setStatus('error', 'Error');
           break;
         }
 
-        // Append token
         if (event.token) {
           tokenIdx++;
-          generatedText += event.token;
+          fullText += event.token;
 
-          if (lastTokenSpan) lastTokenSpan.classList.remove('latest');
-          const span = document.createElement('span');
-          span.className = 'token-span latest';
-          span.textContent = event.token;
-          span.title = 'Token #' + tokenIdx + '  •  ' + event.elapsed_ms + ' ms';
-          outputArea.insertBefore(span, cursor);
-          lastTokenSpan = span;
-          outputArea.scrollTop = outputArea.scrollHeight;
+          // Update response text (streaming)
+          responseText.textContent = fullText;
+          responseText.appendChild(cursor);
+          mainOutput.scrollTop = mainOutput.scrollHeight;
+
+          // Collect decision
+          allDecisions.push({
+            token: event.token,
+            candidates: event.candidates || [],
+          });
+
+          // Throttle grid rendering to avoid jank
+          if (!pendingRender) {
+            pendingRender = true;
+            requestAnimationFrame(() => {
+              renderGrid();
+              pendingRender = false;
+            });
+          }
 
           // Stats
           statTokens.textContent = event.token_count;
           statSpeed.textContent  = event.tokens_per_second;
           statElapsed.textContent = formatMs(event.total_elapsed_ms);
-
-          speedHistory.push(event.tokens_per_second);
-          if (speedHistory.length > 200) speedHistory.shift();
-
-          // Update probability panel (throttled via rAF)
-          const _tokenIdx = tokenIdx;
-          const _token = event.token;
-          const _candidates = event.candidates;
-          const _topProb = _candidates && _candidates.length > 0
-            ? _candidates.find(c => c.token === _token)?.prob ?? _candidates[0].prob
-            : 0;
-
-          scheduleUpdate(() => {
-            updateSpeedChart();
-
-            // Replace current decision card
-            const slot = document.getElementById('decision-slot');
-            if (slot && _candidates) {
-              slot.innerHTML = '';
-              slot.appendChild(buildDecisionCard(_tokenIdx, _token, _candidates));
-            }
-
-            updateHistoryStrip(_tokenIdx, _token, _topProb);
-            probArea.scrollTop = probArea.scrollHeight;
-          });
         }
 
-        // Done
         if (event.done) {
           cursor.remove();
-          if (lastTokenSpan) lastTokenSpan.classList.remove('latest');
 
-          // Remove active glow from decision card
-          const activeCard = document.querySelector('.decision-card.active');
-          if (activeCard) activeCard.classList.remove('active');
+          // Final render
+          renderGrid();
 
-          let summaryParts = [];
-          if (event.eval_count) summaryParts.push(event.eval_count + ' tokens generated');
+          // Summary stats
+          let parts = [];
+          if (event.eval_count) parts.push(event.eval_count + ' tokens');
           if (event.eval_duration) {
-            const evalSec = event.eval_duration / 1e9;
-            summaryParts.push((event.eval_count / evalSec).toFixed(1) + ' tok/s (Ollama reported)');
+            const sec = event.eval_duration / 1e9;
+            parts.push((event.eval_count / sec).toFixed(1) + ' tok/s');
           }
-          if (summaryParts.length) {
-            const summary = document.createElement('div');
-            summary.className = 'info-card';
-            summary.innerHTML =
-              '<div class="label" style="color:var(--green)">✅ Generation Complete</div>' +
-              '<div class="detail">' + summaryParts.join(' · ') + '</div>';
-            probArea.appendChild(summary);
-            probArea.scrollTop = probArea.scrollHeight;
-          }
+          if (event.total_elapsed_ms) parts.push(formatMs(event.total_elapsed_ms));
+          statsLine.textContent = parts.length ? '── ' + parts.join(' · ') + ' ──' : '';
 
           setStatus('connected', 'Complete');
         }
@@ -963,7 +569,8 @@ async function startGeneration() {
   } catch (err) {
     if (err.name === 'AbortError') {
       setStatus('connected', 'Stopped');
-      cursor.remove();
+      try { document.querySelector('.cursor-blink').remove(); } catch {}
+      renderGrid(); // show what we have so far
     } else {
       setStatus('error', 'Error: ' + err.message);
     }
@@ -974,26 +581,24 @@ async function startGeneration() {
   }
 }
 
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 // -- Events --
 btnGenerate.addEventListener('click', startGeneration);
 btnStop.addEventListener('click', () => { if (abortController) abortController.abort(); });
 
 btnClear.addEventListener('click', () => {
-  outputArea.innerHTML = '<div class="placeholder-msg">Enter a prompt above and press <strong>Generate</strong> to watch the model produce text token by token.</div>';
-  probArea.innerHTML = '<div class="placeholder-msg">When generation starts, this panel shows the <strong>real probabilities</strong> the model assigned to its top token candidates for each position.<br><br>🔹 For every token, see the top 5 options it considered<br>🔹 The chosen token is highlighted in green<br>🔹 Watch probabilities shift as context builds</div>';
+  mainOutput.innerHTML = '<div class="placeholder-msg" style="font-family:\'Segoe UI\',system-ui,sans-serif">Enter a prompt above and press <strong>Generate</strong>.<br><br>The model\'s response will appear first, followed by a grid showing<br>the top 5 token candidates the model considered at every position.</div>';
+  allDecisions = [];
   statTokens.textContent = '0';
   statSpeed.textContent = '–';
   statElapsed.textContent = '–';
-  speedHistory = [];
-  historyEntries = [];
-  generatedText = '';
 });
 
 exampleSelect.addEventListener('change', () => {
-  if (exampleSelect.value) {
-    promptInput.value = exampleSelect.value;
-    promptInput.focus();
-  }
+  if (exampleSelect.value) { promptInput.value = exampleSelect.value; promptInput.focus(); }
   exampleSelect.selectedIndex = 0;
 });
 
