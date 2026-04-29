@@ -65,6 +65,8 @@ def generate():
     if not prompt.strip():
         return jsonify({"error": "prompt is required"}), 400
 
+    temperature = body.get("temperature")
+
     ollama_payload = {
         "model": model,
         "prompt": prompt,
@@ -75,6 +77,9 @@ def generate():
             "num_predict": num_predict,
         },
     }
+
+    if temperature is not None:
+        ollama_payload["options"]["temperature"] = float(temperature)
 
     def event_stream():
         token_count = 0
@@ -166,6 +171,56 @@ def generate():
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.route("/api/expand", methods=["POST"])
+def expand_token():
+    """
+    Expand a token fragment by continuing generation from it.
+
+    Given the original prompt and the response prefix up to a certain
+    position, replace the chosen token with an alternative and generate
+    a few more tokens so the user can see what word the fragment leads to.
+
+    Expected JSON body:
+        { "model": "...", "prompt": "...", "prefix": "...", "alt_token": "M" }
+    """
+    body = request.get_json(force=True)
+    model = body.get("model", DEFAULT_MODEL)
+    prompt = body.get("prompt", "")
+    prefix = body.get("prefix", "")
+    alt_token = body.get("alt_token", "")
+
+    if not alt_token:
+        return jsonify({"error": "alt_token is required"}), 400
+
+    # Build chat messages with trailing assistant message as a forced prefix.
+    # Ollama continues from the last assistant content rather than starting fresh.
+    messages = [
+        {"role": "user", "content": prompt},
+        {"role": "assistant", "content": prefix + alt_token},
+    ]
+
+    try:
+        resp = requests.post(
+            f"{OLLAMA_URL}/api/chat",
+            json={
+                "model": model,
+                "messages": messages,
+                "stream": False,
+                "options": {
+                    "num_predict": 15,
+                    "temperature": 0,
+                },
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        continuation = data.get("message", {}).get("content", "")
+        return jsonify({"expansion": alt_token + continuation})
+    except requests.RequestException as exc:
+        return jsonify({"error": str(exc)}), 502
 
 
 if __name__ == "__main__":

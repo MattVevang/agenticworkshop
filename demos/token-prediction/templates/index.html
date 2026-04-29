@@ -89,7 +89,19 @@ header {
 #prompt { flex: 1; min-width: 0; }
 #model-select { width: 200px; }
 #num-predict { width: 90px; }
+#temperature { width: 80px; }
 #example-select { width: 200px; }
+
+.temp-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.temp-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
 
 button {
   border: none;
@@ -210,6 +222,35 @@ button {
   font-weight: 700;
 }
 
+/* Expandable (non-chosen) candidates */
+.cand-line.expandable .cand-token {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.cand-line.expandable .cand-token:hover {
+  color: var(--yellow);
+  text-decoration: underline;
+}
+
+/* Expansion tooltip */
+.expand-tip {
+  position: fixed;
+  background: var(--bg-card);
+  border: 1px solid var(--cyan);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: var(--text);
+  z-index: 1000;
+  max-width: 400px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  pointer-events: none;
+}
+.expand-tip .arrow { color: var(--cyan); }
+.expand-tip.loading { color: var(--text-dim); font-style: italic; }
+
 /* Stats line */
 #stats-line {
   color: var(--text-dim);
@@ -279,11 +320,16 @@ footer .stat-value { color: var(--cyan); font-weight: 600; }
       <option value="Once upon a time in a land far away,">Once upon a time…</option>
       <option value="The three laws of robotics are:">Three laws of robotics…</option>
       <option value="def fibonacci(n):">def fibonacci(n):</option>
+      <option value="What is the capital of Washington state in the USA? You can only reply using 1 single word.">Capital of Washington state…</option>
       <option value="In the year 2050, robots">In the year 2050…</option>
     </select>
     <input type="text" id="prompt" placeholder="Enter a prompt…" autocomplete="off" />
     <select id="model-select" title="Choose a model"></select>
     <input type="number" id="num-predict" value="40" min="1" max="500" title="Max tokens" />
+    <div class="temp-group">
+      <span class="temp-label">🌡️</span>
+      <input type="number" id="temperature" placeholder="auto" min="0" max="2" step="0.1" title="Temperature (blank = model default)" />
+    </div>
     <button id="btn-generate">▶ Generate</button>
     <button id="btn-stop">⏹ Stop</button>
     <button id="btn-clear">Clear</button>
@@ -313,6 +359,7 @@ footer .stat-value { color: var(--cyan); font-weight: 600; }
 const promptInput   = document.getElementById('prompt');
 const modelSelect   = document.getElementById('model-select');
 const numPredict    = document.getElementById('num-predict');
+const tempInput     = document.getElementById('temperature');
 const exampleSelect = document.getElementById('example-select');
 const btnGenerate   = document.getElementById('btn-generate');
 const btnStop       = document.getElementById('btn-stop');
@@ -327,6 +374,19 @@ const statModel     = document.getElementById('stat-model');
 
 let abortController = null;
 let allDecisions    = [];  // {token, candidates}
+let currentPrompt   = '';  // stored for expand requests
+let expandCache     = {};  // keyed "pos:token" → expansion string
+
+// Tooltip element (created once)
+const expandTip = document.createElement('div');
+expandTip.className = 'expand-tip';
+expandTip.style.display = 'none';
+document.body.appendChild(expandTip);
+
+// Hide tooltip on click-away
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.cand-line.expandable')) expandTip.style.display = 'none';
+});
 
 // -- Models --
 async function loadModels() {
@@ -433,6 +493,8 @@ async function startGeneration() {
 
   const model  = modelSelect.value;
   const maxTok = parseInt(numPredict.value, 10) || 40;
+  const tempVal = tempInput.value.trim();
+  const temperature = tempVal !== '' ? parseFloat(tempVal) : null;
 
   // Reset
   allDecisions = [];
@@ -440,7 +502,7 @@ async function startGeneration() {
   statTokens.textContent = '0';
   statSpeed.textContent = '–';
   statElapsed.textContent = '–';
-  statModel.textContent = model;
+  statModel.textContent = model + (temperature !== null ? ' · temp=' + temperature : '');
 
   // Prompt line
   const promptLine = document.createElement('div');
@@ -481,7 +543,7 @@ async function startGeneration() {
     const resp = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, model, num_predict: maxTok }),
+      body: JSON.stringify({ prompt, model, num_predict: maxTok, ...(temperature !== null && { temperature }) }),
       signal: abortController.signal,
     });
 
