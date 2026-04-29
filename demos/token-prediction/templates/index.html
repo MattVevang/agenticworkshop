@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Token Prediction – How LLMs Generate Text</title>
 <style>
-/* ------------------------------------------------------------------ */
-/* Reset & base                                                        */
-/* ------------------------------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -19,6 +16,7 @@
   --green:     #34D399;
   --red:       #F87171;
   --yellow:    #FBBF24;
+  --orange:    #FB923C;
   --text:      #E2E8F0;
   --text-dim:  #94A3B8;
   --border:    #1E293B;
@@ -36,9 +34,7 @@ body {
   overflow: hidden;
 }
 
-/* ------------------------------------------------------------------ */
-/* Header / Controls                                                   */
-/* ------------------------------------------------------------------ */
+/* Header */
 header {
   padding: 16px 24px;
   background: linear-gradient(135deg, #0f172a 0%, #1a1040 100%);
@@ -92,13 +88,10 @@ header {
   border-color: var(--cyan);
 }
 
-#prompt {
-  flex: 1;
-  min-width: 0;
-}
+#prompt { flex: 1; min-width: 0; }
 #model-select   { width: 200px; }
-#num-predict     { width: 90px; }
-#example-select  { width: 200px; }
+#num-predict    { width: 90px; }
+#example-select { width: 200px; }
 
 button {
   border: none;
@@ -131,9 +124,7 @@ button {
 }
 #btn-clear:hover { border-color: var(--text-dim); color: var(--text); }
 
-/* ------------------------------------------------------------------ */
-/* Main two-panel layout                                               */
-/* ------------------------------------------------------------------ */
+/* Main layout */
 main {
   flex: 1;
   display: flex;
@@ -206,7 +197,6 @@ main {
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Prompt echo */
 .prompt-echo {
   color: var(--purple);
   opacity: 0.7;
@@ -216,10 +206,10 @@ main {
   padding-bottom: 6px;
 }
 
-/* Right panel – probability viz */
+/* Right panel */
 #panel-probs {
-  flex: 0 0 420px;
-  min-width: 320px;
+  flex: 0 0 480px;
+  min-width: 360px;
 }
 
 #prob-area {
@@ -231,34 +221,54 @@ main {
   gap: 14px;
 }
 
-/* Conceptual example card */
-.concept-card {
+/* Current decision card (large) */
+.decision-card {
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px;
+  padding: 16px;
 }
 
-.concept-card .label {
-  font-size: 0.7rem;
+.decision-card.active {
+  border-color: var(--cyan);
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+}
+
+.decision-card .label {
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--yellow);
-  margin-bottom: 8px;
+  color: var(--cyan);
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
 }
 
-.concept-card .context {
+.decision-card .label .token-num {
+  color: var(--text-dim);
+}
+
+.decision-card .context-line {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--purple);
-  margin-bottom: 10px;
-  word-break: break-word;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Bar chart rows */
+.decision-card .context-line .ctx-trail {
+  color: var(--purple);
+}
+
+.decision-card .context-line .ctx-chosen {
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* Bar rows */
 .bar-row {
   display: flex;
   align-items: center;
@@ -266,10 +276,15 @@ main {
   margin-bottom: 5px;
 }
 
+.bar-row.chosen .bar-label { color: var(--green); font-weight: 700; }
+.bar-row.chosen .bar-fill { box-shadow: 0 0 8px rgba(52, 211, 153, 0.3); }
+
+.bar-row.other .bar-label { color: var(--text-dim); font-style: italic; }
+
 .bar-label {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  width: 90px;
+  width: 110px;
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -284,55 +299,67 @@ main {
   background: rgba(255,255,255,0.04);
   border-radius: 4px;
   overflow: hidden;
-  position: relative;
 }
 
 .bar-fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  transition: width 0.3s cubic-bezier(.4,0,.2,1);
   min-width: 2px;
 }
 
 .bar-pct {
   font-size: 0.75rem;
-  width: 52px;
+  width: 58px;
   text-align: right;
   color: var(--text-dim);
   font-family: var(--font-mono);
   flex-shrink: 0;
 }
 
-/* Token timing card */
-.timing-card {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px;
+/* History strip */
+.history-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
-.timing-card .label {
+.history-chip {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+}
+
+.history-chip .chip-token {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.history-chip .chip-prob {
+  color: var(--cyan);
+  font-size: 0.68rem;
+}
+
+.history-chip .chip-runner {
+  color: var(--text-dim);
+  font-size: 0.65rem;
+}
+
+/* Section labels */
+.section-label {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--cyan);
-  margin-bottom: 8px;
-}
-
-.timing-token {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  color: var(--green);
-  background: rgba(52, 211, 153, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  display: inline-block;
-  margin-bottom: 6px;
-}
-
-.timing-detail {
-  font-size: 0.78rem;
   color: var(--text-dim);
+  margin-top: 4px;
 }
 
 /* Speed chart */
@@ -357,7 +384,7 @@ main {
   display: block;
 }
 
-/* Placeholder messages */
+/* Placeholder */
 .placeholder-msg {
   color: var(--text-dim);
   font-size: 0.9rem;
@@ -366,17 +393,38 @@ main {
   line-height: 1.6;
 }
 
-.placeholder-msg code {
+/* Info card */
+.info-card {
   background: var(--bg-input);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
 }
 
-/* ------------------------------------------------------------------ */
-/* Footer / Stats bar                                                  */
-/* ------------------------------------------------------------------ */
+.info-card .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.info-card .detail {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* Error */
+.error-banner {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid var(--red);
+  color: var(--red);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  margin: 12px;
+}
+
+/* Footer */
 footer {
   padding: 10px 24px;
   background: var(--bg-card);
@@ -416,63 +464,40 @@ footer .stat-value {
   50% { opacity: 0.4; }
 }
 
-/* ------------------------------------------------------------------ */
-/* Scrollbar                                                           */
-/* ------------------------------------------------------------------ */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-/* ------------------------------------------------------------------ */
-/* Error banner                                                        */
-/* ------------------------------------------------------------------ */
-.error-banner {
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid var(--red);
-  color: var(--red);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  font-size: 0.85rem;
-  margin: 12px;
-}
 </style>
 </head>
 <body>
 
-<!-- ================================================================ -->
-<!-- Header                                                            -->
-<!-- ================================================================ -->
 <header>
   <div class="title-row">
     <h1>🔮 Token Prediction Visualizer</h1>
-    <span class="subtitle">See how Large Language Models generate text, one token at a time</span>
+    <span class="subtitle">Watch the model choose each word — see what it considered and why</span>
   </div>
   <div class="controls">
     <select id="example-select" title="Load an example prompt">
       <option value="">💡 Example prompts…</option>
       <option value="The capital of France is">The capital of France is</option>
       <option value="Once upon a time in a land far away,">Once upon a time…</option>
-      <option value="Explain quantum computing to a 10 year old:">Explain quantum computing…</option>
-      <option value="def fibonacci(n):">def fibonacci(n):</option>
       <option value="The three laws of robotics are:">Three laws of robotics…</option>
+      <option value="def fibonacci(n):">def fibonacci(n):</option>
       <option value="Write a haiku about artificial intelligence:">Haiku about AI…</option>
       <option value="In the year 2050, robots">In the year 2050…</option>
     </select>
     <input type="text" id="prompt" placeholder="Enter a prompt and watch the model think…" autocomplete="off" />
     <select id="model-select" title="Choose a model"></select>
-    <input type="number" id="num-predict" value="100" min="1" max="1000" title="Max tokens to generate" />
+    <input type="number" id="num-predict" value="60" min="1" max="500" title="Max tokens to generate" />
     <button id="btn-generate">▶ Generate</button>
     <button id="btn-stop">⏹ Stop</button>
     <button id="btn-clear">Clear</button>
   </div>
 </header>
 
-<!-- ================================================================ -->
-<!-- Main panels                                                       -->
-<!-- ================================================================ -->
 <main>
-  <!-- Left: generated text -->
   <div id="panel-text" class="panel">
     <div class="panel-header">
       <span class="dot" style="background:var(--cyan)"></span>
@@ -487,26 +512,23 @@ footer .stat-value {
     </div>
   </div>
 
-  <!-- Right: probability visualization -->
   <div id="panel-probs" class="panel">
     <div class="panel-header">
       <span class="dot" style="background:var(--purple)"></span>
-      Behind the Scenes
+      Model's Decision — Top 5 Candidates
     </div>
     <div id="prob-area">
       <div class="placeholder-msg">
-        When generation starts, this panel shows:<br><br>
-        🔹 Each token as it arrives with timing data<br>
-        🔹 Generation speed over time<br>
-        🔹 Conceptual probability examples showing how the model picks tokens
+        When generation starts, this panel shows the <strong>real probabilities</strong>
+        the model assigned to its top token candidates for each position.<br><br>
+        🔹 For every token, see the top 5 options it considered<br>
+        🔹 The chosen token is highlighted in green<br>
+        🔹 Watch probabilities shift as context builds
       </div>
     </div>
   </div>
 </main>
 
-<!-- ================================================================ -->
-<!-- Footer                                                            -->
-<!-- ================================================================ -->
 <footer>
   <div class="stat">
     <span class="status-dot" id="status-dot"></span>
@@ -518,36 +540,31 @@ footer .stat-value {
   <div class="stat">Model: <span class="stat-value" id="stat-model">–</span></div>
 </footer>
 
-<!-- ================================================================ -->
-<!-- JavaScript                                                        -->
-<!-- ================================================================ -->
 <script>
-// Conceptual examples injected from Flask
-const CONCEPTUAL_EXAMPLES = {{ conceptual_examples | safe }};
+const BAR_COLORS = ['#34D399', '#A78BFA', '#22D3EE', '#FBBF24', '#FB923C', '#94A3B8'];
 
-// DOM refs
-const promptInput    = document.getElementById('prompt');
-const modelSelect    = document.getElementById('model-select');
-const numPredict     = document.getElementById('num-predict');
-const exampleSelect  = document.getElementById('example-select');
-const btnGenerate    = document.getElementById('btn-generate');
-const btnStop        = document.getElementById('btn-stop');
-const btnClear       = document.getElementById('btn-clear');
-const outputArea     = document.getElementById('output-area');
-const probArea       = document.getElementById('prob-area');
-const statusDot      = document.getElementById('status-dot');
-const statusText     = document.getElementById('status-text');
-const statTokens     = document.getElementById('stat-tokens');
-const statSpeed      = document.getElementById('stat-speed');
-const statElapsed    = document.getElementById('stat-elapsed');
-const statModel      = document.getElementById('stat-model');
+const promptInput   = document.getElementById('prompt');
+const modelSelect   = document.getElementById('model-select');
+const numPredict    = document.getElementById('num-predict');
+const exampleSelect = document.getElementById('example-select');
+const btnGenerate   = document.getElementById('btn-generate');
+const btnStop       = document.getElementById('btn-stop');
+const btnClear      = document.getElementById('btn-clear');
+const outputArea    = document.getElementById('output-area');
+const probArea      = document.getElementById('prob-area');
+const statusDot     = document.getElementById('status-dot');
+const statusText    = document.getElementById('status-text');
+const statTokens    = document.getElementById('stat-tokens');
+const statSpeed     = document.getElementById('stat-speed');
+const statElapsed   = document.getElementById('stat-elapsed');
+const statModel     = document.getElementById('stat-model');
 
-let abortController  = null;
-let speedHistory     = [];   // for the speed sparkline
+let abortController = null;
+let speedHistory    = [];
+let historyEntries  = [];   // {token, prob, candidates}
+let generatedText   = '';   // running context of generated tokens
 
-// ------------------------------------------------------------------ //
-// Load models                                                         //
-// ------------------------------------------------------------------ //
+// -- Load models --
 async function loadModels() {
   try {
     const resp = await fetch('/api/models');
@@ -563,128 +580,152 @@ async function loadModels() {
       });
       setStatus('connected', 'Ollama connected');
     } else {
-      const opt = document.createElement('option');
-      opt.value = '{{ default_model }}';
-      opt.textContent = '{{ default_model }}';
-      modelSelect.appendChild(opt);
+      addFallbackModel();
       setStatus('error', 'No models found');
     }
   } catch {
-    const opt = document.createElement('option');
-    opt.value = '{{ default_model }}';
-    opt.textContent = '{{ default_model }} (offline)';
-    modelSelect.appendChild(opt);
+    addFallbackModel();
     setStatus('error', 'Ollama unreachable');
   }
 }
 
-// ------------------------------------------------------------------ //
-// Status helpers                                                      //
-// ------------------------------------------------------------------ //
+function addFallbackModel() {
+  const opt = document.createElement('option');
+  opt.value = '{{ default_model }}';
+  opt.textContent = '{{ default_model }} (offline)';
+  modelSelect.appendChild(opt);
+}
+
+// -- Helpers --
 function setStatus(state, text) {
   statusDot.className = 'status-dot ' + state;
   statusText.textContent = text;
 }
 
 function formatMs(ms) {
-  if (ms < 1000) return ms.toFixed(0) + ' ms';
-  return (ms / 1000).toFixed(1) + ' s';
+  return ms < 1000 ? ms.toFixed(0) + ' ms' : (ms / 1000).toFixed(1) + ' s';
 }
 
-// ------------------------------------------------------------------ //
-// Conceptual example card builder                                     //
-// ------------------------------------------------------------------ //
-const BAR_COLORS = [
-  'var(--cyan)', 'var(--purple)', 'var(--green)', 'var(--yellow)', 'var(--red)'
-];
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-function buildConceptCard(example, animate) {
+function displayToken(t) {
+  // Make whitespace visible in labels
+  return JSON.stringify(t).slice(1, -1) || '""';
+}
+
+// -- Build the current decision card --
+function buildDecisionCard(tokenIdx, chosenToken, candidates) {
   const card = document.createElement('div');
-  card.className = 'concept-card';
+  card.className = 'decision-card active';
+  card.id = 'current-decision';
 
+  // Header
   const label = document.createElement('div');
   label.className = 'label';
-  label.innerHTML = '💡 Conceptual Example — Token Probabilities';
+  label.innerHTML = '<span>🎯 Current Token Decision</span><span class="token-num">Token #' + tokenIdx + '</span>';
   card.appendChild(label);
 
-  const ctx = document.createElement('div');
-  ctx.className = 'context';
-  ctx.textContent = 'Prompt: ' + example.context;
-  card.appendChild(ctx);
+  // Context line: show trailing context + chosen token
+  const ctxLine = document.createElement('div');
+  ctxLine.className = 'context-line';
+  const trailLen = 40;
+  const trail = generatedText.length > trailLen
+    ? '…' + generatedText.slice(-trailLen)
+    : generatedText;
+  ctxLine.innerHTML = '<span class="ctx-trail">' + escapeHtml(trail) + '</span><span class="ctx-chosen">' + escapeHtml(chosenToken) + '</span>';
+  card.appendChild(ctxLine);
 
-  example.candidates.forEach((c, i) => {
-    const row = document.createElement('div');
-    row.className = 'bar-row';
+  // Candidate bars
+  if (candidates && candidates.length > 0) {
+    candidates.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      if (c.token === chosenToken) row.classList.add('chosen');
+      if (c.token === '…other') row.classList.add('other');
 
-    const lbl = document.createElement('span');
-    lbl.className = 'bar-label';
-    lbl.textContent = JSON.stringify(c.token);
-    row.appendChild(lbl);
+      const lbl = document.createElement('span');
+      lbl.className = 'bar-label';
+      lbl.textContent = c.token === '…other' ? '…other' : displayToken(c.token);
+      lbl.title = c.token;
+      row.appendChild(lbl);
 
-    const track = document.createElement('div');
-    track.className = 'bar-track';
-    const fill = document.createElement('div');
-    fill.className = 'bar-fill';
-    fill.style.background = BAR_COLORS[i % BAR_COLORS.length];
-    fill.style.width = animate ? '0%' : c.prob + '%';
-    if (animate) {
+      const track = document.createElement('div');
+      track.className = 'bar-track';
+      const fill = document.createElement('div');
+      fill.className = 'bar-fill';
+      const colorIdx = c.token === chosenToken ? 0 : (c.token === '…other' ? 5 : (i % BAR_COLORS.length));
+      fill.style.background = BAR_COLORS[colorIdx];
+      fill.style.width = '0%';
+      track.appendChild(fill);
+      row.appendChild(track);
+
+      const pct = document.createElement('span');
+      pct.className = 'bar-pct';
+      pct.textContent = c.prob.toFixed(1) + '%';
+      row.appendChild(pct);
+
+      card.appendChild(row);
+
+      // Animate bar
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => { fill.style.width = c.prob + '%'; });
+        requestAnimationFrame(() => { fill.style.width = Math.min(c.prob, 100) + '%'; });
       });
-    }
-    track.appendChild(fill);
-    row.appendChild(track);
-
-    const pct = document.createElement('span');
-    pct.className = 'bar-pct';
-    pct.textContent = c.prob.toFixed(1) + '%';
-    row.appendChild(pct);
-
-    card.appendChild(row);
-  });
+    });
+  }
 
   return card;
 }
 
-// ------------------------------------------------------------------ //
-// Token timing card                                                   //
-// ------------------------------------------------------------------ //
-function buildTimingCard(token, elapsedMs, tokenIdx) {
-  const card = document.createElement('div');
-  card.className = 'timing-card';
+// -- History strip --
+function buildHistoryStrip() {
+  const container = document.createElement('div');
+  container.id = 'history-strip-container';
 
   const label = document.createElement('div');
-  label.className = 'label';
-  label.textContent = '⚡ Token #' + tokenIdx;
-  card.appendChild(label);
+  label.className = 'section-label';
+  label.textContent = '📜 Recent Token Decisions';
+  container.appendChild(label);
 
-  const tok = document.createElement('div');
-  tok.className = 'timing-token';
-  tok.textContent = JSON.stringify(token);
-  card.appendChild(tok);
+  const strip = document.createElement('div');
+  strip.className = 'history-strip';
+  strip.id = 'history-strip';
+  container.appendChild(strip);
 
-  const detail = document.createElement('div');
-  detail.className = 'timing-detail';
-  detail.textContent = 'Generated in ' + elapsedMs.toFixed(1) + ' ms';
-  card.appendChild(detail);
-
-  return card;
+  return container;
 }
 
-// ------------------------------------------------------------------ //
-// Speed sparkline (canvas)                                            //
-// ------------------------------------------------------------------ //
+function updateHistoryStrip(tokenIdx, chosenToken, topProb) {
+  historyEntries.push({ idx: tokenIdx, token: chosenToken, prob: topProb });
+  // Keep last 20
+  if (historyEntries.length > 20) historyEntries.shift();
+
+  let strip = document.getElementById('history-strip');
+  if (!strip) return;
+
+  strip.innerHTML = '';
+  historyEntries.forEach(e => {
+    const chip = document.createElement('span');
+    chip.className = 'history-chip';
+    chip.innerHTML =
+      '<span class="chip-runner">#' + e.idx + '</span>' +
+      '<span class="chip-token">' + escapeHtml(displayToken(e.token)) + '</span>' +
+      '<span class="chip-prob">' + e.prob.toFixed(1) + '%</span>';
+    strip.appendChild(chip);
+  });
+}
+
+// -- Speed chart --
 function buildSpeedChart() {
   let container = document.getElementById('speed-chart-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'speed-chart-container';
-
     const label = document.createElement('div');
     label.className = 'label';
     label.textContent = '📈 Generation Speed (tokens/s)';
     container.appendChild(label);
-
     const canvas = document.createElement('canvas');
     canvas.id = 'speed-canvas';
     container.appendChild(canvas);
@@ -706,39 +747,32 @@ function updateSpeedChart() {
   ctx.clearRect(0, 0, rect.width, rect.height);
 
   const maxVal = Math.max(...speedHistory, 1);
-  const padding = { top: 4, bottom: 14, left: 0, right: 0 };
-  const plotW = rect.width  - padding.left - padding.right;
-  const plotH = rect.height - padding.top  - padding.bottom;
+  const pad = { top: 4, bottom: 14, left: 0, right: 0 };
+  const plotW = rect.width  - pad.left - pad.right;
+  const plotH = rect.height - pad.top  - pad.bottom;
 
-  // Fill area
   ctx.beginPath();
   speedHistory.forEach((v, i) => {
-    const x = padding.left + (i / (speedHistory.length - 1)) * plotW;
-    const y = padding.top + plotH - (v / maxVal) * plotH;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+    const x = pad.left + (i / (speedHistory.length - 1)) * plotW;
+    const y = pad.top + plotH - (v / maxVal) * plotH;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   });
-  // close area
-  ctx.lineTo(padding.left + plotW, padding.top + plotH);
-  ctx.lineTo(padding.left, padding.top + plotH);
+  ctx.lineTo(pad.left + plotW, pad.top + plotH);
+  ctx.lineTo(pad.left, pad.top + plotH);
   ctx.closePath();
   ctx.fillStyle = 'rgba(34, 211, 238, 0.12)';
   ctx.fill();
 
-  // Line
   ctx.beginPath();
   speedHistory.forEach((v, i) => {
-    const x = padding.left + (i / (speedHistory.length - 1)) * plotW;
-    const y = padding.top + plotH - (v / maxVal) * plotH;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+    const x = pad.left + (i / (speedHistory.length - 1)) * plotW;
+    const y = pad.top + plotH - (v / maxVal) * plotH;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   });
-  ctx.strokeStyle = 'var(--cyan)';
   ctx.strokeStyle = '#22D3EE';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Latest value label
   const latest = speedHistory[speedHistory.length - 1];
   ctx.fillStyle = '#94A3B8';
   ctx.font = '11px system-ui';
@@ -746,44 +780,65 @@ function updateSpeedChart() {
   ctx.fillText(latest.toFixed(1) + ' tok/s', rect.width - 4, rect.height - 2);
 }
 
-// ------------------------------------------------------------------ //
-// Main generation logic                                               //
-// ------------------------------------------------------------------ //
+// -- Throttled UI update for probability panel --
+let pendingUpdate = null;
+let rafScheduled = false;
+
+function scheduleUpdate(fn) {
+  pendingUpdate = fn;
+  if (!rafScheduled) {
+    rafScheduled = true;
+    requestAnimationFrame(() => {
+      rafScheduled = false;
+      if (pendingUpdate) {
+        pendingUpdate();
+        pendingUpdate = null;
+      }
+    });
+  }
+}
+
+// -- Main generation --
 async function startGeneration() {
   const prompt = promptInput.value.trim();
   if (!prompt) { promptInput.focus(); return; }
 
-  const model   = modelSelect.value;
-  const maxTok  = parseInt(numPredict.value, 10) || 100;
+  const model  = modelSelect.value;
+  const maxTok = parseInt(numPredict.value, 10) || 60;
 
-  // Reset UI
+  // Reset
   outputArea.innerHTML = '';
   probArea.innerHTML = '';
   speedHistory = [];
+  historyEntries = [];
+  generatedText = '';
   statTokens.textContent = '0';
   statSpeed.textContent = '–';
   statElapsed.textContent = '–';
   statModel.textContent = model;
 
-  // Show prompt echo
+  // Prompt echo
   const promptEcho = document.createElement('span');
   promptEcho.className = 'prompt-echo';
   promptEcho.textContent = prompt;
   outputArea.appendChild(promptEcho);
 
-  // Add cursor
+  // Cursor
   const cursor = document.createElement('span');
   cursor.className = 'cursor-blink';
   cursor.innerHTML = '&nbsp;';
   outputArea.appendChild(cursor);
 
-  // Add speed chart to prob panel
-  const speedChart = buildSpeedChart();
-  probArea.appendChild(speedChart);
+  // Build right panel structure
+  probArea.appendChild(buildSpeedChart());
 
-  // Pick a random conceptual example to show immediately
-  const randomEx = CONCEPTUAL_EXAMPLES[Math.floor(Math.random() * CONCEPTUAL_EXAMPLES.length)];
-  probArea.appendChild(buildConceptCard(randomEx, true));
+  // Placeholder for current decision
+  const decisionSlot = document.createElement('div');
+  decisionSlot.id = 'decision-slot';
+  probArea.appendChild(decisionSlot);
+
+  // History strip
+  probArea.appendChild(buildHistoryStrip());
 
   // UI state
   btnGenerate.disabled = true;
@@ -811,10 +866,8 @@ async function startGeneration() {
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
-
-      // Parse SSE lines
       const lines = buffer.split('\n');
-      buffer = lines.pop();  // keep incomplete line in buffer
+      buffer = lines.pop();
 
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
@@ -824,7 +877,6 @@ async function startGeneration() {
         let event;
         try { event = JSON.parse(jsonStr); } catch { continue; }
 
-        // Handle errors
         if (event.error) {
           const banner = document.createElement('div');
           banner.className = 'error-banner';
@@ -834,71 +886,72 @@ async function startGeneration() {
           break;
         }
 
-        // Append token to output
+        // Append token
         if (event.token) {
           tokenIdx++;
+          generatedText += event.token;
 
-          // Remove 'latest' from previous token
           if (lastTokenSpan) lastTokenSpan.classList.remove('latest');
-
           const span = document.createElement('span');
           span.className = 'token-span latest';
           span.textContent = event.token;
-          span.title = `Token #${tokenIdx}  •  ${event.elapsed_ms} ms`;
+          span.title = 'Token #' + tokenIdx + '  •  ' + event.elapsed_ms + ' ms';
           outputArea.insertBefore(span, cursor);
           lastTokenSpan = span;
-
-          // Auto-scroll
           outputArea.scrollTop = outputArea.scrollHeight;
 
-          // Update stats
+          // Stats
           statTokens.textContent = event.token_count;
           statSpeed.textContent  = event.tokens_per_second;
           statElapsed.textContent = formatMs(event.total_elapsed_ms);
 
-          // Record speed
           speedHistory.push(event.tokens_per_second);
           if (speedHistory.length > 200) speedHistory.shift();
-          updateSpeedChart();
 
-          // Add timing card to right panel (keep last 6 visible)
-          const timingCards = probArea.querySelectorAll('.timing-card');
-          if (timingCards.length >= 6) timingCards[0].remove();
-          probArea.appendChild(buildTimingCard(event.token, event.elapsed_ms, tokenIdx));
+          // Update probability panel (throttled via rAF)
+          const _tokenIdx = tokenIdx;
+          const _token = event.token;
+          const _candidates = event.candidates;
+          const _topProb = _candidates && _candidates.length > 0
+            ? _candidates.find(c => c.token === _token)?.prob ?? _candidates[0].prob
+            : 0;
 
-          // Show a new conceptual example every 20 tokens
-          if (tokenIdx % 20 === 0) {
-            const ex = CONCEPTUAL_EXAMPLES[Math.floor(Math.random() * CONCEPTUAL_EXAMPLES.length)];
-            // Remove old concept cards except the first one
-            const oldCards = probArea.querySelectorAll('.concept-card');
-            if (oldCards.length >= 2) oldCards[0].remove();
-            probArea.appendChild(buildConceptCard(ex, true));
-          }
+          scheduleUpdate(() => {
+            updateSpeedChart();
 
-          // Scroll prob area
-          probArea.scrollTop = probArea.scrollHeight;
+            // Replace current decision card
+            const slot = document.getElementById('decision-slot');
+            if (slot && _candidates) {
+              slot.innerHTML = '';
+              slot.appendChild(buildDecisionCard(_tokenIdx, _token, _candidates));
+            }
+
+            updateHistoryStrip(_tokenIdx, _token, _topProb);
+            probArea.scrollTop = probArea.scrollHeight;
+          });
         }
 
-        // Generation complete
+        // Done
         if (event.done) {
           cursor.remove();
           if (lastTokenSpan) lastTokenSpan.classList.remove('latest');
 
-          // Show summary
+          // Remove active glow from decision card
+          const activeCard = document.querySelector('.decision-card.active');
+          if (activeCard) activeCard.classList.remove('active');
+
           let summaryParts = [];
           if (event.eval_count) summaryParts.push(event.eval_count + ' tokens generated');
           if (event.eval_duration) {
             const evalSec = event.eval_duration / 1e9;
-            summaryParts.push(
-              (event.eval_count / evalSec).toFixed(1) + ' tok/s (Ollama reported)'
-            );
+            summaryParts.push((event.eval_count / evalSec).toFixed(1) + ' tok/s (Ollama reported)');
           }
           if (summaryParts.length) {
             const summary = document.createElement('div');
-            summary.className = 'timing-card';
+            summary.className = 'info-card';
             summary.innerHTML =
-              '<div class="label">✅ Generation Complete</div>' +
-              '<div class="timing-detail">' + summaryParts.join(' · ') + '</div>';
+              '<div class="label" style="color:var(--green)">✅ Generation Complete</div>' +
+              '<div class="detail">' + summaryParts.join(' · ') + '</div>';
             probArea.appendChild(summary);
             probArea.scrollTop = probArea.scrollHeight;
           }
@@ -921,22 +974,19 @@ async function startGeneration() {
   }
 }
 
-// ------------------------------------------------------------------ //
-// Event listeners                                                     //
-// ------------------------------------------------------------------ //
+// -- Events --
 btnGenerate.addEventListener('click', startGeneration);
-
-btnStop.addEventListener('click', () => {
-  if (abortController) abortController.abort();
-});
+btnStop.addEventListener('click', () => { if (abortController) abortController.abort(); });
 
 btnClear.addEventListener('click', () => {
   outputArea.innerHTML = '<div class="placeholder-msg">Enter a prompt above and press <strong>Generate</strong> to watch the model produce text token by token.</div>';
-  probArea.innerHTML = '<div class="placeholder-msg">When generation starts, this panel shows:<br><br>🔹 Each token as it arrives with timing data<br>🔹 Generation speed over time<br>🔹 Conceptual probability examples showing how the model picks tokens</div>';
+  probArea.innerHTML = '<div class="placeholder-msg">When generation starts, this panel shows the <strong>real probabilities</strong> the model assigned to its top token candidates for each position.<br><br>🔹 For every token, see the top 5 options it considered<br>🔹 The chosen token is highlighted in green<br>🔹 Watch probabilities shift as context builds</div>';
   statTokens.textContent = '0';
   statSpeed.textContent = '–';
   statElapsed.textContent = '–';
   speedHistory = [];
+  historyEntries = [];
+  generatedText = '';
 });
 
 exampleSelect.addEventListener('change', () => {
@@ -951,7 +1001,6 @@ promptInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !btnGenerate.disabled) startGeneration();
 });
 
-// Kick off
 loadModels();
 promptInput.focus();
 </script>
