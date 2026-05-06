@@ -64,7 +64,7 @@ The programming side of FRC robots has evolved significantly over the years. Ear
 Now, based ONLY on the MATCH SCOUTING DATA at the very beginning:
 
 1. Which team had the highest TELEOP score, and in which match?
-2. What was Team 4150's average TOTAL score across their matches?
+2. How many total points did Team 2876 score across ALL their matches combined?
 ```
 
 **Run it through these models** (start a **new chat** each time):
@@ -78,7 +78,7 @@ Now, based ONLY on the MATCH SCOUTING DATA at the very beginning:
 | Dimension | llama3.2:1b | llama3.2:3b | llama3.1:8b |
 |---|---|---|---|
 | **Q1: Highest teleop — correct team and match?** | | | |
-| **Q2: Team 4150 average — correct answer?** | | | |
+| **Q2: Team 2876 total points — correct answer?** | | | |
 | **Did it claim data was "not provided"?** | | | |
 | **Did it show its math/reasoning?** | | | |
 | **Speed** (fast / medium / slow) | | | |
@@ -87,16 +87,19 @@ Now, based ONLY on the MATCH SCOUTING DATA at the very beginning:
 
 The correct answers from the scouting data:
 1. **Team 2876** scored **95 teleop** points in **Match 5**
-2. Team 4150 played Matches 1 and 3: **(127 + 128) / 2 = 127.5**
+2. Team 2876 played Matches 2 and 5: **129 + 130 = 259 total points**
 
-> 🔍 **What you'll likely see:** The smallest model may struggle to find the data at all — it might claim the information "isn't provided" even though it's right there at the top of the prompt. The largest model is more likely to dig through the filler text and calculate the correct average. This happens because larger models are better at **attending to** relevant information across longer inputs.
+> 🔍 **What you'll likely see:** A clear staircase of capability:
+> - The **1b model** struggles with both questions — it may confuse teleop/total scores and fail the addition
+> - The **3b model** can handle the straightforward addition (Q2) but still fails to identify the specific match and score type for Q1
+> - The **8b model** nails both — it correctly parses which score column to look at AND does the math
 >
-> This doesn't mean bigger models are always accurate — they still make mistakes! But they handle complex, information-dense prompts more robustly than smaller ones.
+> This demonstrates that larger models are better at **precise data extraction** (finding specific values in specific columns) and at **following multi-step instructions** (find all matches for X team, then sum their totals).
 
 ### 🤔 Reflection
 
-- The same data was in every prompt — why might the smallest model claim it "wasn't provided"?
-- Which model showed its work (math steps)? Does showing work make you trust the answer more?
+- Why could the 3b model handle addition (Q2) but not find the highest teleop score (Q1)?
+- What makes Q1 harder? (Hint: it requires comparing across rows AND reading the right column)
 - If you were building a scouting app that analyzed match data, which model size would you want?
 
 ---
