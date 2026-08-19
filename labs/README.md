@@ -36,6 +36,8 @@ These are the workshop models loaded on the server — they're **pinned** to the
 
 > **💡 Tip:** Bigger ≠ always better. Part of this workshop is learning *when* to use which model. The first three are all from Meta's **Llama family** — same architecture, different sizes — so you can fairly compare them.
 
+> **🧰 Heads up — Lab 9 is different.** [Lab 9: Agents & Tools](lab-09-agents-and-tools.md) uses a **separate, tool-enabled** Open WebUI instance on **port 3001** (not 3000) running a larger, tool-capable model (`qwen3.6:35b`). It's the one lab where the AI can **search the web**. Your instructor will point you to it when you get there.
+
 ---
 
 ## 📋 Lab Overview
@@ -50,7 +52,7 @@ These are the workshop models loaded on the server — they're **pinned** to the
 | [Lab 6](lab-06-local-vs-cloud-discussion.md) | Local vs. Cloud AI | 15 min | Discussion |
 | [Lab 7](lab-07-bias-and-fairness.md) | Bias and Fairness in AI | 20 min | Hands-on |
 | [Lab 8](lab-08-real-world-scenarios.md) | Real-World AI Scenarios | 20 min | Hands-on |
-| [Lab 9](lab-09-custom-modelfile.md) | Build Your Own AI Personality (Bonus) | 15–20 min | Instructor-led demo |
+| [Lab 9](lab-09-agents-and-tools.md) | Agents & Tools | 20–25 min | Hands-on |
 
 ---
 

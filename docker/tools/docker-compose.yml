@@ -1,0 +1,85 @@
+# =============================================================================
+# Open WebUI — TOOL-ENABLED (Agentic) instance
+# =============================================================================
+# This is a SECOND, independent Open WebUI instance that runs in PARALLEL with
+# the default "dumb" workshop instance in ../docker-compose.yml.
+#
+#   ../docker-compose.yml   -> port 3000, no tools  (older lab models, Labs 1-8)
+#   ./docker-compose.yml    -> port 3001, TOOLS ON  (qwen3.6:35b, web search, Lab 9)
+#
+# Both share the same host Ollama backend, but use separate containers, ports,
+# and data volumes, so neither affects the other. Start this one with:
+#
+#   cd docker\tools
+#   docker compose up -d            # -> http://<server-ip>:3001
+#
+# After first start, run the one-time model setup so qwen3.6 gets the Web Search
+# capability + tool calling turned on by default (no clicking required):
+#
+#   python demos/scripts/openwebui-tools-setup.py
+#
+# See ./README.md for the full "tools vs no-tools" demo walkthrough.
+# =============================================================================
+
+name: open-webui-tools   # distinct compose project so it never collides with the default instance
+
+services:
+  open-webui-tools:
+    image: ghcr.io/open-webui/open-webui:v0.8.12
+    container_name: open-webui-tools
+    restart: unless-stopped
+    ports:
+      # Host 3001 -> container 8080. Different host port so it runs alongside
+      # the default instance (which uses 3000).
+      - "3001:8080"
+    environment:
+      # Connect to Ollama running on the Windows host (shared with the 3000 instance)
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+
+      # Disable authentication for frictionless workshop/lab use (shared kiosk mode).
+      - WEBUI_AUTH=false
+
+      # Branded title so students can tell this instance apart from the 3000 one.
+      - WEBUI_NAME=Agentic AI 101 — Tools
+
+      # Default + pinned models: the tool-capable Qwen models. qwen3.6:35b reports
+      # the "tools" capability in Ollama, so it can do native function calling.
+      - DEFAULT_MODELS=qwen3.6:35b
+      - DEFAULT_PINNED_MODELS=qwen3.6:35b,qwen3.6:27b
+
+      # --- Tool calling -------------------------------------------------------
+      # Make every model default to NATIVE (Agentic) function calling. This is
+      # what lets a tool-capable model decide on its own to call search_web /
+      # fetch_url. There is no standalone FUNCTION_CALLING_MODE var — function
+      # calling is a key inside DEFAULT_MODEL_PARAMS.
+      - 'DEFAULT_MODEL_PARAMS={"function_calling":"native"}'
+
+      # --- Web search ---------------------------------------------------------
+      # Enable the built-in web search tool. DuckDuckGo needs no API key, which
+      # is ideal for a workshop. Swap WEB_SEARCH_ENGINE for tavily/brave/etc. (and
+      # add the matching API key) if you want more reliable results.
+      - ENABLE_WEB_SEARCH=true
+      - WEB_SEARCH_ENGINE=duckduckgo
+      - WEB_SEARCH_RESULT_COUNT=5
+      # Set to 1 if your chosen provider rate-limits concurrent queries.
+      - WEB_SEARCH_CONCURRENT_REQUESTS=2
+
+      # Disable telemetry for a local lab environment
+      - SCARF_NO_ANALYTICS=true
+      - DO_NOT_TRACK=true
+
+      # NOTE: Ollama host tuning (OLLAMA_HOST, OLLAMA_NUM_PARALLEL, etc.) is set on
+      # the HOST before 'ollama serve' — see ../docker-compose.yml and
+      # resources/workshop-tuning-guide.md. qwen3.6:35b is large (~36B); make sure
+      # OLLAMA_MAX_LOADED_MODELS / VRAM can hold it alongside any 3000-instance model.
+
+    volumes:
+      # SEPARATE volume from the default instance so configs/chats are independent.
+      - open-webui-tools-data:/app/backend/data
+
+    extra_hosts:
+      # Ensure host.docker.internal resolves on all Docker versions
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  open-webui-tools-data:

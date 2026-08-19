@@ -41,6 +41,22 @@ python openwebui-hide-models.py --unhide              # Revert: show all models
 python openwebui-hide-models.py --webui-url http://biglittle.local:3000
 ```
 
+### 🛠️ `openwebui-tools-setup.py`
+
+Configures and verifies the **tool-enabled** Open WebUI instance (port **3001** — see
+[`docker/tools/`](../../docker/tools/README.md)). For each tool-capable model (default:
+`qwen3.6:35b`, `qwen3.6:27b`) it turns on the Web Search capability + native (agentic) function
+calling and makes web search a default feature, then verifies the model actually reaches for the
+`search_web` tool.
+
+```bash
+python openwebui-tools-setup.py                       # configure + verify
+python openwebui-tools-setup.py --verify-only         # just run the current-events check
+python openwebui-tools-setup.py --no-default-on       # capability on, but not auto-on per chat
+python openwebui-tools-setup.py --revert              # remove the per-model config entries
+python openwebui-tools-setup.py --webui-url http://biglittle.local:3001
+```
+
 ## Tips
 
 - Run `ollama-health-check.py` **before** the workshop to catch setup issues

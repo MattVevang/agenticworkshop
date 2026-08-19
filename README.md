@@ -36,7 +36,7 @@ The goal: make AI understandable, inspectable, and discussion-friendly — with 
 │   ├── lab-06-local-vs-cloud-discussion.md
 │   ├── lab-07-bias-and-fairness.md
 │   ├── lab-08-real-world-scenarios.md
-│   └── lab-09-custom-modelfile.md       # Bonus: Ollama Modelfile customization
+│   └── lab-09-agents-and-tools.md       # Capstone: web search + tools (port 3001)
 ├── demos/
 │   ├── token-prediction/        # Live token prediction visualizer (presenter tool)
 │   └── scripts/                 # Model speed comparison, health check & warm-up utilities
@@ -53,7 +53,10 @@ The goal: make AI understandable, inspectable, and discussion-friendly — with 
 │   ├── workshop-feedback.md     # Feedback collection & polling setup
 │   └── ai-news-template.md     # Template for current AI news at workshop start
 ├── docker/
-│   ├── docker-compose.yml       # Open WebUI container definition
+│   ├── docker-compose.yml       # Open WebUI container (no tools) — port 3000
+│   ├── tools/
+│   │   ├── docker-compose.yml   # Tool-enabled Open WebUI (web search) — port 3001
+│   │   └── README.md            # Agentic instance guide & demo walkthrough
 │   └── TROUBLESHOOTING.md       # Docker & workshop troubleshooting guide
 ├── generate_agentic_ai_101_workshop.py  # PowerPoint slide deck generator (25 slides)
 └── .github/                     # Workflows and Copilot config
@@ -125,6 +128,18 @@ docker compose up -d
 
 Open WebUI will be available at **http://\<server-ip\>:3000**. Authentication is disabled for frictionless lab use (shared kiosk mode — all users see the same interface).
 
+> **🛠️ Optional — tool-enabled "agentic" instance (port 3001):** A second, parallel Open WebUI
+> instance gives a tool-capable model (`qwen3.6:35b`) **web search + native tool calling**, so it
+> can answer **current-events** questions the older lab models can't. Run the labs on the no-tools
+> instance (3000) first, then transition to 3001 to show how tools "change the game." See
+> [`docker/tools/README.md`](docker/tools/README.md). Quick start:
+>
+> ```powershell
+> cd docker\tools
+> docker compose up -d                              # -> http://<server-ip>:3001
+> python demos/scripts/openwebui-tools-setup.py     # enable + verify web search
+> ```
+
 ### 4. Verify Setup
 
 ```powershell
@@ -189,7 +204,7 @@ No login required. See [`resources/openwebui-quickstart.md`](resources/openwebui
 | 6 | [Local vs Cloud](labs/lab-06-local-vs-cloud-discussion.md) | 15 min | Privacy and tradeoffs |
 | 7 | [Bias & Fairness](labs/lab-07-bias-and-fairness.md) | 20 min | AI bias and responsibility |
 | 8 | [Real-World Scenarios](labs/lab-08-real-world-scenarios.md) | 20 min | Practical AI problem-solving |
-| 9 | [Custom Modelfile](labs/lab-09-custom-modelfile.md) | 15 min | Bonus: build an AI personality |
+| 9 | [Agents & Tools](labs/lab-09-agents-and-tools.md) | 20–25 min | Capstone: web search + tools (port 3001) |
 
 ## Presenter Tools
 

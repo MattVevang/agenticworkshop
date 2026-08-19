@@ -373,4 +373,4 @@ You've tried five scenarios we picked. Now it's your turn.
 
 ---
 
-**Next up: [Lab 9: Build Your Own AI Personality (Bonus) →](lab-09-custom-modelfile.md)**
+**Next up: [Lab 9: Agents & Tools →](lab-09-agents-and-tools.md)**

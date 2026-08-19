@@ -86,7 +86,7 @@ This is the workshop's **default model**. When a lab says "pick a model" and you
 - **Lab 5** — Creative & Multimodal AI (Parts 1 & Exercise 7)
 - **Lab 7** — Bias and Fairness (suggested model)
 - **Lab 8** — Real-World Scenarios (suggested model)
-- **Lab 9** — Custom Modelfile (base model)
+- **Lab 9** — Agents & Tools (the no-tools foil on port 3000)
 
 ---
 
@@ -209,6 +209,51 @@ Use LLaVA whenever a lab involves **images**. It's the only model that can proce
 
 ---
 
+## 🧰 Qwen 3.6 35B — *"The Agent"*
+
+> *"Hold on — let me look that up."*
+
+| | |
+|---|---|
+| **Creator** | Alibaba (Qwen team) |
+| **Parameters** | ~35 billion |
+| **Disk Size** | ~24 GB |
+| **Personality** | The resourceful one — the only model here that can reach *outside itself* |
+
+### Stat Line
+
+| ⚡ Speed | 🎯 Quality | 🎨 Creativity | 🧠 Reasoning |
+|:---------:|:----------:|:--------------:|:------------:|
+| ★★☆☆☆ | ★★★★★ | ★★★★☆ | ★★★★★ |
+
+**🌟 Bonus Stat:** 🌐 Tools & Web Search — ★★★★★ (the only model that can call tools and search the live web)
+
+### 💪 Strengths
+
+- **Tool-capable** — supports *native function calling*, so it can decide to use tools on its own
+- **Searches the live web** — answers current-events questions its training data can't possibly contain, with citations
+- **Top-tier reasoning** — the strongest "thinker" on the machine, great at multi-step problems
+- **Grounded answers** — can look something up and *confirm* it instead of guessing
+
+### 😅 Weaknesses
+
+- **The big one** — by far the largest model here, so it's noticeably **slower** and uses most of the GPU
+- Tools only help when there's something to look up — for offline tasks the smaller models are plenty
+- Like any model, it can still be wrong — always check the sources it cites
+
+### 🎯 Best Workshop Use
+
+This is the **star of [Lab 9: Agents & Tools](../labs/lab-09-agents-and-tools.md)**. It runs on the
+**separate tool-enabled instance (port 3001)**, *not* the usual port-3000 dropdown. Use it to show
+how a model with a **web-search tool** transforms from a "brain in a jar" into an **agent** that can
+pull in real, current information — the big "AI isn't so dumb after all" reveal.
+
+### 📋 Used In
+
+- **Lab 9** — Agents & Tools (the tool-enabled model, on port 3001)
+
+---
+
 ## 🗺️ Which Model Should I Use?
 
 Not sure which model to pick? Use this quick decision chart:
@@ -234,6 +279,9 @@ Not sure which model to pick? Use this quick decision chart:
 ├─ 🧠 "I want the BEST quality"
 │   └─➤ llama3.1:8b
 │
+├─ 🌐 "I need CURRENT info or web search"
+│   └─➤ qwen3.6:35b — on the TOOLS instance, port 3001 (see Lab 9)
+│
 └─ 🏎️ "I want to COMPARE model sizes"
     └─➤ Try the same prompt on 1B → 3B → 8B!
 ```
@@ -247,6 +295,11 @@ Not sure which model to pick? Use this quick decision chart:
 | `llama3.1:8b` | 4.7 GB | 🐇 | Drag race large, quality | The big sibling |
 | `mistral:7b` | 4.4 GB | 🐇 | Hallucination lab (Lab 4 only) | The confident storyteller |
 | `llava:7b` | 4.7 GB | 🐇 | Image analysis (multimodal) | The one with eyes |
+| `qwen3.6:35b` | ~24 GB | 🐢 | Web search + tools — **port 3001** (Lab 9) | The agent |
+
+> 🧰 **Note:** `qwen3.6:35b` runs on the **separate tool-enabled instance (port 3001)**, so it
+> won't appear in the normal port-3000 model dropdown — it's used only in Lab 9. See
+> [`docker/tools/README.md`](../docker/tools/README.md).
 
 ### ⚡ Benchmark Data (RTX 5090, 32 GB VRAM)
 

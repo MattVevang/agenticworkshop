@@ -257,6 +257,52 @@ docker compose up -d
 
 ---
 
+## Tool-Enabled Instance (Port 3001)
+
+The second, agentic instance ([`docker/tools/`](tools/README.md)) runs alongside the default one.
+Most issues above apply to it too — just substitute the container name **`open-webui-tools`**, port
+**3001**, and run `docker compose` commands from **`docker\tools`**.
+
+### Port 3001 already in use
+
+```powershell
+netstat -ano | findstr ":3001"
+# stop the conflicting PID, or change the host port in docker\tools\docker-compose.yml ("3001:8080")
+```
+
+### The model answers but never searches the web
+
+1. **Confirm web search is enabled and the model is configured:**
+   ```powershell
+   python demos/scripts/openwebui-tools-setup.py --verify-only
+   ```
+   A `✅ PASS` means the tool is wired up. If it fails, re-run without `--verify-only`.
+
+2. **Use a tool-capable model.** Only models that advertise the `tools` capability (e.g.
+   `qwen3.6:35b`) can call `search_web`. The small lab models (≤8B) cannot — that's expected.
+
+3. **Make sure Web Search is toggled on in the chat box.** The setup script turns it on by
+   default; if someone turned it off, results come from training data only.
+
+4. **Ask a question that truly needs live data** (today's date, this week's news, a current
+   price). A model may answer "who is the president" from memory without searching.
+
+### Web search returns empty or errors
+
+DuckDuckGo (the keyless default) can occasionally rate-limit. Check the container logs for the
+search backend, and consider switching to a keyed provider for reliability:
+
+```powershell
+docker logs open-webui-tools --tail 50 | Select-String "ddgs|search|error"
+# then edit docker\tools\docker-compose.yml -> WEB_SEARCH_ENGINE=tavily (+ TAVILY_API_KEY), and:
+cd docker\tools; docker compose up -d
+```
+
+> **Note:** Over the plain HTTP API the agentic answer is empty by design — Open WebUI runs the
+> search loop in the browser (WebSocket). Test the full experience in the **UI** at :3001, not curl.
+
+---
+
 ## Checking Logs
 
 When something isn't working and the cause isn't obvious, check the logs:
@@ -291,3 +337,6 @@ docker logs open-webui 2>&1 | Select-String -Pattern "error|failed|refused"
 | GPU status | `nvidia-smi` |
 | Loaded models | `ollama ps` |
 | Your IP address | `Get-NetIPAddress -AddressFamily IPv4` |
+| Start tools instance | `cd C:\Src\agenticworkshop\docker\tools && docker compose up -d` |
+| Configure/verify tools | `python demos/scripts/openwebui-tools-setup.py` |
+| Tools instance logs | `docker logs open-webui-tools --tail 50` |
