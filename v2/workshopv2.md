@@ -225,38 +225,45 @@ tens of thousands of entries). That list is the number → word lookup:
 
 ```
 vocabulary (fixed, baked into the model)
-  token #17    → "the"     token #1188  → "make"
-  token #522   → "is"      token #2731  → "bees"
-  token #91    → "what"    token #5509  → "honey"
+  token #91    → "what"    token #3104  → "Ava"
+  token #522   → "is"      token #8871  → "country"
+  token #1400  → "from"    token #6021  → "USA"
   …            (a few 10,000s total)
 ```
 
-Now the whole answer becomes followable on one slide — the user's question, end to end:
+Now the same mechanism on a real customer question — the answer is right
+*inside* Section 2's database table, so the room can follow it against
+something they've already seen:
 
 ```
-user:      "what do bees make?"
+user:      "what country is Ava from?"
 
-1  tokens:          "what | do | bees | make | ?"
+1  tokens:          "what | country | is | Ava | from | ?"
                     │ through THE vocabulary (word → slot)
-2  numbers:         [91, 4002, 2731, 1188, 9]
+2  numbers:         [91, 8871, 522, 3104, 1400, 9]
                     │  the arithmetic of 4d (weights in, scores out)
-3  scores:          "wax" 2.3%  "baskets" 0.6%  "sting" 0.2%  "honey" 96.7% …
+3  scores:          "Ghana" 1.1%  "Italy" 0.8%  "Seattle" 0.2%  "USA" 97.4% …
                     ▲ it *scores EVERY token in the list*, picks the top
-4  word out:        "honey"
+4  word out:        "USA"
                     │ through the vocab again (slot → word)
-next round repeats: "honey" + history → "."
+next round repeats: "USA" + history → "."
                     ─────────────────────────────────────────────
-                    "what do bees make? honey ."
+                    "what country is Ava from? USA ."
 ```
+
+(If someone asks "wait, is that *right?*" — yes: check CUST-001 on the
+table from Section 2. It's the same customer, now reached *through* the
+model instead of *through* a database key.)
 
 - **Why the output can't be random nonsense:** at every step the model only picks words
   *from that fixed vocabulary*. It has no vocabulary entry for a word it never learned — and
   its scores are shaped by the text from which the vocabulary was carved, so the words it
   picks fit the grammar and meaning of what came before.
-- **Why it correlates with *this* request:** the "bees" token is in the input, and training
-  wired the weights so that *bees co-occur with honey* — it's everywhere in the text they
-  read. Your question nudges the scores to put "honey" far on top of everything else — the
-  numbers are doing the joining that a database row would.
+- **Why it correlates with *this* request:** the "Ava" token is in the input, and whatever
+  text mentioned Ava in training also put *USA* right next to her. Your question nudges the
+  scores to put "USA" far on top of everything else — the numbers are doing the joining a
+  database row would, and the answer turns out to be the same one a real query would
+  return (that's not a coincidence — the model learned it from the same data).
 - **The database tie-back (makes the whole section pay off):** the vocabulary is the LLM's
   nearest equivalent of Section 2's `customerId → name` lookup — a *fixed, inspectable*
   mapping of number → thing. The model's difference: the answer isn't retrieved from a
