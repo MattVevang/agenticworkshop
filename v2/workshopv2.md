@@ -61,6 +61,8 @@ and "what is a tool call" already make sense.
 > are deliberately left out until the content stabilizes.
 > Lettered sub-sections (e.g. `3a`) break a topic out of its parent for slide
 > readability — they still cross-reference their parent, so they build on it.
+> `_(Instructor depth …)_` bullets are **presenter notes** — they route to the slide's
+> notes pane, never the slide itself (see [Deck Generation](#deck-generation)).
 
 ### 1. What is AI (as of 2026) _(draft)_
 
@@ -646,3 +648,11 @@ slides, output to `v2/AI_Workshop_V2.pptx`. v1's generator and deck stay untouch
   lock a generator to sections we're about to rewrite.
 - The deck should read as the *concept ladder* (each slide leans on the previous), not a
   topic buffet. The status tags above are the deck's build order.
+- **Presenter notes routing:** any `_(Instructor depth …)_` bullet is **presenter notes, not
+  slide content.** It never appears on the slide face — it goes into the slide's notes pane,
+  only visible to the presenter in Presenter View. In python-pptx that is a separate *notes
+  slide* per slide, set via `slide.notes_slide.notes_text_frame.text = "…"` (accessing
+  `notes_slide` auto-creates it). The rule for the generator: for each slide, body text =
+  the section's non-italic bullets; `_(Instructor depth …)_` lines = that slide's
+  `notes_slide`. If a slide has none, leave `notes_slide` unset (don't create an empty one).
+  This tag is the single source of truth for "in the doc but not on the slide."
