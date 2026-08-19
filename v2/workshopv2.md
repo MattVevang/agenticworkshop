@@ -67,6 +67,9 @@ and "what is a tool call" already make sense.
 > **Audience contract:** the room has *no* prior LLM/agent experience (see Audience &
 > Constraints — "Assume NOT"). Never claim students "already use" or "already know" a tool
 > in this doc; say "the tools they'll meet" or name the product without asserting history.
+> **Term discipline:** one term per concept, reused exactly — e.g., **compression**
+> (lossy compression) is *the* word for summarizing history; never introduce synonyms
+> (no "digest") that dilute the reinforced message.
 
 ### 1. What is AI (as of 2026) _(draft)_
 
@@ -334,7 +337,8 @@ That is the entire engine — and there is nothing hidden behind it.
 
 - The "fancy word guesser" is a real starting point — build on it instead of over it:
   - Given a prompt, the model scores **every possible next word** (from its vocabulary).
-  - It picks (weighted by probability — hence the knob from Section 3), appends it, re-scores, repeats.
+  - It picks (weighted by probability — how spread out those odds are can be dialed, which is
+    the whole temperature story), appends it, re-scores, repeats.
   - That's the whole engine. Everything else is scaffolding around it.
 - **"There's more to it," made concrete:**
   - **It's not one guess — it's billions of parameters doing arithmetic.** The "fancy" is
