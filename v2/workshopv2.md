@@ -59,6 +59,8 @@ and "what is a tool call" already make sense.
 > Status key: `draft` = sketched · `refine` = needs rewrite · `lock` = final · `cut` = removed.
 > Sections are **not time-boxed** yet — any section may get rebalanced. Time budgets
 > are deliberately left out until the content stabilizes.
+> Lettered sub-sections (e.g. `3a`) break a topic out of its parent for slide
+> readability — they still cross-reference their parent, so they build on it.
 
 ### 1. What is AI (as of 2026) _(draft)_
 
@@ -113,22 +115,23 @@ and "what is a tool call" already make sense.
   pattern matcher that was trained by imitation and answers by prediction, not by lookup.**
 - Same prompt twice → can get different answers. Same question, different month → can get a
   different answer (training data changed). Show on Open WebUI.
-- **Temperature — a knob that's real even when the provider hides it.** One idea, kept brief:
-  - **What it is:** a number (typically 0–2) that controls how spread-out the model's
-    next-token guesses are. Low = "commit to the most likely token"; high = "wander into the
-    unlikely tokens too."
-  - **0.0** → near-locked. Same prompt, same answer nearly every time (the closest a model gets
-    to deterministic — but a database is *always* the same, so they're still different animals).
-  - **2.0** → max spread. Even unlikely tokens win real odds, so output gets creative *and*
-    sloppy.
-  - **0.7** → the semi-defacto default. Not locked, not wild — fluent, on-topic prose with a
-    little human-feel variety. This is why chat-style products default near here.
-  - **Where you can (and can't) touch it:** OpenAI / Anthropic mask it (they bake in a fixed
-    value per model / use case). Self-run local models (Ollama) expose it directly, and some
-    clouds (e.g. Azure AI Foundry models) let you set it. So the knob is real even on the
-    services that don't show you the dial.
-- _(Fold-in candidate from v1: Lab 1's non-determinism becomes a 3-minute demo here, not a
-  15-minute student lab.)_
+- The randomness is not an accident — it's a knob. See [Section 3a](#3a-temperature-the-determinism-knob-refine).
+
+### 3a. Temperature: the determinism knob _(refine)_
+
+- **What it is:** a number (typically 0–2) that controls how spread-out the model's
+  next-token guesses are. Low = "commit to the most likely token"; high = "wander into the
+  unlikely tokens too."
+- **0.0** → near-locked. Same prompt, same answer nearly every time (the closest a model gets
+  to deterministic — but a database is *always* the same, so they're still different animals).
+- **2.0** → max spread. Even unlikely tokens win real odds, so output gets creative *and*
+  sloppy.
+- **0.7** → the semi-defacto default. Not locked, not wild — fluent, on-topic prose with a
+  little human-feel variety. This is why chat-style products default near here.
+- **Where you can (and can't) touch it:** OpenAI / Anthropic mask it (they bake in a fixed
+  value per model / use case). Self-run local models (Ollama) expose it directly, and some
+  clouds (e.g. Azure AI Foundry models) let you set it. So the knob is real even on the
+  services that don't show you the dial.
 
 ### 4. What is a model, really? (weights, training, the internet) _(draft)_
 
@@ -447,7 +450,7 @@ fits its time budget; don't try all four. Decide at refine.)_
 
 | v1 item | What it was | Why it's out / where it goes |
 |---------|-------------|-----------------------------|
-| Lab 1 Non-Determinism | Temperature, same-prompt-different-answer | **Folded** into Section 3 as a 3-min demo |
+| Lab 1 Non-Determinism | Temperature, same-prompt-different-answer | **Folded** into Section 3a (concepts only, no hands-on lab) |
 | Lab 2 Model Comparison | Llama 1b/3b/8b drag race | **Cut** — benchmarking is instructor fuel, not a 2026 concept |
 | Lab 4 Hallucination Detection | Catching AI mistakes | **Folded** into Section 10 as a 5-min find-the-false-fact game |
 | Lab 5 Multimodal / image | Image analysis with llava | **Cut** — explicitly no media in v2 (may return as a v3 "agents that see") |
