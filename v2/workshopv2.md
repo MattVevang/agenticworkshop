@@ -64,6 +64,9 @@ and "what is a tool call" already make sense.
 > `_(Instructor depth …)_` bullets are **presenter notes** — they route to the slide's
 > notes pane, never the slide itself (see [Deck Generation](#deck-generation)).
 > `> TODO (…)` blocks are instructions to the deck builder — never rendered as slides.
+> **Audience contract:** the room has *no* prior LLM/agent experience (see Audience &
+> Constraints — "Assume NOT"). Never claim students "already use" or "already know" a tool
+> in this doc; say "the tools they'll meet" or name the product without asserting history.
 
 ### 1. What is AI (as of 2026) _(draft)_
 
