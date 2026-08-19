@@ -82,8 +82,22 @@ and "what is a tool call" already make sense.
   The rules of how data becomes an answer are *written and inspectable*.
 - FRC-friendly version: a database is like a spreadsheet with a contract — you can always
   find out *why* an answer came back, because the path is logical.
-- Quick live: query the same thing twice in any DB (or simulate with a tiny Python script) —
-  identical output both times. Students now hold the "determinism = baseline" in their heads.
+- **Mini example (shown as static text, no live demo — stays on-slide):** a tiny customers
+  table. Static values in fields, readable twice with the same result every time:
+
+  ```
+  name        | age | location    | country
+  ------------+-----+-------------+--------
+  Ava Chen    |  17 | Seattle     | USA
+  Kofi Mensah |  17 | Accra       | Ghana
+  Sofia Rossi |  16 | Milan       | Italy
+  ```
+
+  - Point at it: "ask for *the 17-year-old's city* and the answer is always the same row,
+    always, because the value is *stored*, not *predicted*." The table is the exhibit —
+    rows, columns, static values, zero chance involved.
+  - Reused later: this same table is the "deterministic side" when we put the LLM side
+    ([Section 3](#3-what-is-an-llm-draft)) next to it.
 - _(Possible fold-in from v1: none. This replaces the old model-comparison slot with the
   actual comparison that matters: deterministic system vs. probabilistic system.)_
 
