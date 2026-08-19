@@ -564,10 +564,10 @@ other                         grep/rg · glob · web_fetch · skill · ask_user
   **system prompt**. It sets the model's role, tone, constraints, and rules for *this* session
   ("You are a careful code reviewer. Never run destructive commands. Answer in English.")
 - **Why it's powerful:** it's the highest-authority instruction in the context — the model
-  treats it as the framing for everything after. It's how the same base model becomes a
-  friendly tutor in one app and a strict linter in another, *without changing weights at all*.
-  (Same model, different harness → different system prompt → different "personality."
-  Pays off Section 11's thesis again.)
+  treats it as the framing for everything after. It's how the *exact same model, in the
+  exact same harness*, becomes a friendly tutor under one system prompt and a strict
+  linter under another — *without changing weights at all*. Same model, same harness,
+  different system prompt → different "personality."
 - **What it is NOT:** it's not *extra* knowledge, and it's not *stronger than the model's
   training* in an absolute sense — it's a strong *bias* in context. A long, clever user prompt
   can bleed it (this is the seed of [prompt-injection, Section 17](#17-guided-failure-when-things-go-off-the-rails-draft)).
