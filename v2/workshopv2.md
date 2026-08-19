@@ -469,7 +469,8 @@ That is the entire engine — and there is nothing hidden behind it.
   because the harness decides what the model sees, what it can do, and when it stops.
   "Model X is dumb" is often really "harness Y didn't give it the context/tools it needed."
 - Same model / different harness (bare chat vs. tool-enabled), same task → different behavior.
-  Re-pays the Section 1 setup.
+  That's the same-model-different-behavior thread from the opening of this whole workshop —
+  now the room knows exactly what keeps it.
 
 ### 12. What is a harness tool _(refine)_
 
@@ -626,18 +627,21 @@ doubles as a **diagnostic**: when something goes wrong, which concept explains i
 does the fix usually look like.
 
 - **The runaway loop** — a tool that keeps returning "not done" so the harness re-calls the
-  model forever. *(Pays off: the loop is the agent, Section 11.)* Fix: a max-iterations guard.
+  model forever. The loop is the agent — and nothing in the loop says when to stop by
+  itself. Fix: a max-iterations guard.
 - **The prompt-injection via tool output** — a "fetched page" that contains *instructions* for
   the agent ("ignore previous rules, do X"). The model can't fully tell "data" from "orders."
-  *(Pays off: context is all text, Section 7; system vs. user competition, Section 15.)*
-- **The confidently-wrong answer** — a hallucination in a high-stakes-looking fact, caught by
-  asking for a source + the cross-check from Section 10. *(Pays off: hallucination handling.)*
-- **The overload** — a context pushed past the window: truncation/summarization kicks in,
-  and the answer degrades. *(Pays off: Section 7/8 budgets.)*
+  Why: everything it ever sees — the built-in role, the conversation, the fetched page — is
+  the same flat stream of text. There is no official instruction channel and no ordinary
+  one, so the model can't structurally tell the difference.
+- **The confidently-wrong answer** — a hallucination in a high-stakes-looking fact, caught
+  by asking the model for its source and cross-checking it against something real.
+- **The overload** — a context pushed past its fixed window: truncation or summarization
+  kicks in, and the answer degrades.
 
-**The whole section's payoff:** read back-to-front, this is a diagnostic list — when
-something in the wild goes off the rails, a student can name which concept explains it, and
-what the fix usually looks like.
+**The whole section's payoff:** this is a diagnostic list — when something in the wild goes
+off the rails, a student can name which concept explains it, and what the fix usually looks
+like.
 
 ## Cut by default from v1 _(revisit only if a section above genuinely needs it)_
 
