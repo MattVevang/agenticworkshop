@@ -148,6 +148,8 @@ chassis around it.
   ([4d](#4d-feeding-the-weights-at-inferencerefine)).
 - **How a number becomes an actual word:** the vocabulary list, end-to-end
   ([4e](#4e-how-does-a-number-become-a-word-vocabularyrefine)).
+- **The whole engine in one loop:** every answer, built the same way — one word at a time
+  ([4f](#4f-putting-it-all-together-how-one-answer-gets-builtdraft)).
 
 ### 4a. The "brain" is just a file (weights) _(refine)_
 
@@ -268,6 +270,50 @@ next round repeats: "Paris" + history → "."
 - Where this leaves the open questions: the *ranking* is where 3a (temperature) works and
   where Section 5 (non-determinism) lives — and where Section 10 (hallucination) sneaks in,
   because "high score" can still be "plausible but wrong."
+
+### 4f. Putting it all together: how one answer gets built _(draft)_
+
+The whole "how does it actually work" story in one place, start to finish. No side-trips and
+no "trust me," because that is exactly what this section exists to avoid.
+
+- **The cast is tiny — that's all there is:** a bag of learned numbers (the *weights*, 4a)
+  that encode which words tend to appear together, plus one fixed list of every word it's
+  allowed to say (the *vocabulary*, 4e). A question in, and the same **five steps repeat,
+  one word at a time**, until the answer is done:
+
+```
+        ┌──────────────────────────────────────────────────────┐
+        │  for EVERY word the model outputs:                   │
+        │    1. take the whole conversation so far → numbers   │
+        │    2. run the bag-of-numbers math on those numbers   │
+        │    3. on the other side: a SCORE for every word in   │
+        │       the entire vocabulary                          │
+        │    4. pick a word (the scores decide which one)      │
+        │    5. feed that word back in  →  repeat from 1       │
+        └──────────────────────────────────────────────────────┘
+        it stops when step 3 ranks the "end of answer" marker first
+```
+
+- **Follow the loop on one real question, top to bottom:**
+  "what is the capital of France?" → numbers → scores → **"Paris"** wins (the rest of the
+  world's capitals land far below) → "Paris" feeds back in → scores again → **"."** → the
+  "end" marker wins → **stop.** Two words came out, and *each one* was produced by that
+  identical five-step loop. Nothing else happened behind the scenes.
+
+- **Every "weird" thing about AI is just that same loop wearing a different hat** — these
+  aren't extra features, they fall straight out of the five steps:
+  - **Temperature** is a knob on *step 4 only.* Low = always take the top scorer (always
+    "Paris"). High = sometimes gamble on a low scorer (maybe "London"). Same scores,
+    different strictness about how hard we respect them.
+  - **It never invents a word** — *step 4* can only ever pick from that fixed list. That's
+    why an answer always *sounds* like real language, even when it's wrong.
+  - **It can be confidently wrong** — the loop emits the *most probable* next word, and the
+    most probable word isn't always the *true* one. When the two disagree, the model says
+    the one that merely *sounds* right. That **is** a hallucination: not a bug, just the
+    direct consequence of building an answer by predicting the next word.
+
+**One line to take away:** a bag of numbers, a word list, and a loop that runs once per word.
+That is the entire engine — and there is nothing hidden behind it.
 
 ### 5. How does an LLM work if it isn't deterministic _(draft)_
 
