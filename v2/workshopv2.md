@@ -401,8 +401,11 @@ That is the entire engine — and there is nothing hidden behind it.
 - Rule of thumb to send home: **the model's window is an upper bound; the harness's budget
   is the real limit your session actually runs under.** (And: bigger window ≠ smarter answers —
   it just lets you put more on the table.)
-- _("Same model, different box" made visible: the small vs. extended-context tags for the same
-  model, side-by-side in `ollama list` / model metadata.)_
+> **TODO (later-me — deck production, screenshot):** the "same model, different box" exhibit.
+> Do **not** use a live or local `ollama list` — it differs per machine, so it wouldn't match
+> the room. Instead screenshot the **Copilot CLI's model list**: every student's list is the
+> same one, so anyone who goes home and opens it themselves sees exactly what we did. Place
+> that screenshot as a static exhibit on the **next slide**.
 
 ### 9. Why isn't AI current? _(draft)_
 
