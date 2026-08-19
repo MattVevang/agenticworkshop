@@ -394,7 +394,8 @@ That is the entire engine — and there is nothing hidden behind it.
   profiles document default / native-max / extended tags (98K / 262K / 393K / 786K) with
   different memory costs. Same brain, different notebook size — and a bigger notebook can
   cost real speed (measured: ~9% CPU offload and minutes of ingestion on the 393K profile,
-  40+ minutes at 786K). Context is a **budget, not a free lunch.**
+  40+ minutes at 786K). In short: the window is a **fixed allowance, not free space** —
+  everything put into it is paid for in memory and speed, every session.
 - **Input vs output budgets:** the window is shared by *prompt* (history, instructions, tool
   results) and *completion* (the answer). Big-in + big-out needs a bigger tag than big-in alone.
 - Rule of thumb to send home: **the model's window is an upper bound; the harness's budget
