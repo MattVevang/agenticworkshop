@@ -63,6 +63,7 @@ and "what is a tool call" already make sense.
 > readability — they still cross-reference their parent, so they build on it.
 > `_(Instructor depth …)_` bullets are **presenter notes** — they route to the slide's
 > notes pane, never the slide itself (see [Deck Generation](#deck-generation)).
+> `> TODO (…)` blocks are instructions to the deck builder — never rendered as slides.
 
 ### 1. What is AI (as of 2026) _(draft)_
 
@@ -653,6 +654,9 @@ slides, output to `v2/AI_Workshop_V2.pptx`. v1's generator and deck stay untouch
   lock a generator to sections we're about to rewrite.
 - The deck should read as the *concept ladder* (each slide leans on the previous), not a
   topic buffet. The status tags above are the deck's build order.
+- **`> TODO (…)` blocks are production instructions, not content.** They tell the deck
+  builder what to do (e.g. insert a screenshot on the next slide) — they are never rendered
+  onto a slide face or into notes.
 - **Presenter notes routing:** any `_(Instructor depth …)_` bullet is **presenter notes, not
   slide content.** It never appears on the slide face — it goes into the slide's notes pane,
   only visible to the presenter in Presenter View. In python-pptx that is a separate *notes
