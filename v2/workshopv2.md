@@ -489,6 +489,43 @@ That is the entire engine — and there is nothing hidden behind it.
   a student asks "what tools actually exist." We don't teach all of them — we teach *one* and
   let them know the rest are real.
 
+### 12a. A real inventory: the tools a harness actually mounts _(refine)_
+
+- **Receipts, not abstraction:** the Copilot CLI's own reference *publicly documents* its
+  built-in tool list ("Tool availability values"). Students use an app in this class every
+  day — and the built-ins are **three named families plus an "other" bucket**, each one a
+  capability the model itself cannot perform:
+
+```
+family                        tools (as listed)
+─────                         ─────────────────
+shell tools                   bash/powershell, plus list/read/stop/write shell sessions
+file operation tools          view · create · edit · apply_patch
+agent and task delegation     task · read_agent · write_agent · list_agents
+other                         grep/rg · glob · web_fetch · skill · ask_user
+```
+
+- **The depiction:** the model in and out is *only text*. `view("config.py")` isn't the model
+  reading a file — it's the model emitting a text request; the CLI's process does the reading,
+  and the returned *text* is what enters the context. The model ever "sees" only what tool
+  results hand back as words.
+- **"How does it read files I've never showed it?" — trace `grep` end-to-end:**
+  1. user: *"why is the build failing?"*
+  2. model → `grep("ERROR", "build.log")` — that's *text* (a tool-call request).
+  3. harness runs grep on the local machine; matching lines **come back into the context**.
+  4. model reads them: *"the failure is in X, line 42"* → next call: `view("X", near 42)`.
+  5. harness returns those lines; model → `edit(...)`; the result is fed back; it verifies.
+  The file lives on the machine, **not in the model** — nothing of it is among 27B weights.
+  The model "understands" it only because each tool result becomes new context for the next
+  call, and it can keep iterating as long as it keeps calling. *That* iterate loop is what
+  "agentic" means, mechanically.
+- **Quantified:** 0 bytes of the local file ever enter the model — yet N rounds of text-out
+  (request) → text-in (result) let it act on the file repeatedly. New *capability* is mounted
+  by the harness, never trained into the weights.
+- **Students can verify at home:** the list above is public documentation — the "Tool
+  availability values" section of the Copilot CLI command reference; every student opens the
+  same list.
+
 ### 13. What is MCP _(refine)_
 
 - **The problem tools exposed:** every harness wanted tools, every app wanted to *be* a tool,
