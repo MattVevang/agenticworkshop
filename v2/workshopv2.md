@@ -492,9 +492,9 @@ That is the entire engine — and there is nothing hidden behind it.
 ### 12a. A real inventory: the tools a harness actually mounts _(refine)_
 
 - **Receipts, not abstraction:** the Copilot CLI's own reference *publicly documents* its
-  built-in tool list ("Tool availability values"). Students use an app in this class every
-  day — and the built-ins are **three named families plus an "other" bucket**, each one a
-  capability the model itself cannot perform:
+  built-in tool list ("Tool availability values"). This is the same kind of tool students
+  will meet in real software work — and its built-ins are **three named families plus an
+  "other" bucket**, each one a capability the model itself cannot perform:
 
 ```
 family                        tools (as listed)
@@ -522,9 +522,10 @@ other                         grep/rg · glob · web_fetch · skill · ask_user
 - **Quantified:** 0 bytes of the local file ever enter the model — yet N rounds of text-out
   (request) → text-in (result) let it act on the file repeatedly. New *capability* is mounted
   by the harness, never trained into the weights.
-- **Students can verify at home:** the list above is public documentation — the "Tool
-  availability values" section of the Copilot CLI command reference; every student opens the
-  same list.
+- **It's public documentation:** the list above is the "Tool availability values" section
+  of the Copilot CLI command reference — anyone can read it, and it's identical everywhere.
+  _(Instructor depth: the doc page is the single source of truth if a student disputes any line
+  of the table.)_
 
 ### 13. What is MCP _(refine)_
 
