@@ -347,7 +347,7 @@ That is the entire engine — and there is nothing hidden behind it.
   right there in the numbers.
 - _(Instructor depth: if a student asks "what's a Q4 weight?" — see
   [4d's quantization block](#4d-feeding-the-weights-at-inferencerefine) for the "rounding, not
-  amputation" answer. LocalLLMCopilot's measured inventory backs it up. Not on the program; back pocket.)_
+  amputation" answer. LocalLLMCopilot's measured inventory backs it up.)_
 
 ### 6. What is a token _(draft)_
 
@@ -501,7 +501,7 @@ That is the entire engine — and there is nothing hidden behind it.
 - _(Instructor depth: LocalLLMCopilot's benchmark is literally measuring tool-call reliability
   across an MCP tool inventory — how many of 95 GitHub MCP tools a model can actually call
   correctly. If students ask "how do we *know* tools work?", the answer is: you measure it,
-  exactly like that repo does. Great credibility anchor. Not on the program; back pocket.)_
+  exactly like that repo does. Great credibility anchor.)_
 
 ### 14. What is a system prompt _(refine)_
 
