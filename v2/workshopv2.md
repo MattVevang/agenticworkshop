@@ -416,6 +416,14 @@ That is the entire engine — and there is nothing hidden behind it.
   - **Knew-at-train-time:** baked into the weights, never refreshed, can be confidently stale.
   - **Sees-at-runtime:** anything a tool hands it (web search, files, API responses) —
     fresh, but only because the *harness* fetched it, not the model.
+- **The asterisk, because this is where "AI isn't current" misleads:** the never-current
+  claim is about **the model by itself**, not **the services people actually open.** The online
+  AI tools students will use (Copilot, ChatGPT, and the like) bundle web-search and similar
+  tools *on by default*, so the answer on your screen **can be current** even though the model
+  underneath still has knowledge frozen months or years back. What a student touches is almost
+  never the bare model — it's the service that wraps it: *fresh at the edges, stale at the core*.
+  Both are true at once; the core — the baked-in, un-updated part — is the one to stay skeptical
+  of, because it's the one that can be confidently wrong in the ways [Section 10](#10-whats-a-hallucination-draft) describes.
 - The punchline that pays off in Section 12: **a model with no tools can never be current;
   a model with the right tools is only as current as its sources.** Curation isn't a model
   feature — it's a harness feature.
