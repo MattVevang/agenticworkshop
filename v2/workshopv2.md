@@ -42,12 +42,12 @@ and "what is a tool call" already make sense.
 ## Guiding Principles
 
 1. **Concepts before artifacts.** A model of the week is an example, never the thesis.
-2. **Do over observe.** Each section lands as something the student did, saw break, or made —
-   a prompt they wrote, a context they filled up, a tool call they traced.
+2. **Concrete over abstract.** Each section lands as a specific, self-contained situation
+   students can picture and re-verify themselves later — no hands-on lab, no live demo.
 3. **One idea per section, in load order.** No section assumes a later one.
-4. **Fail visibly on purpose.** At least one deliberate, guided failure (overloaded context,
-   stale knowledge, malformed tool call) — a failure students *cause* teaches better than a
-   slide that describes one.
+4. **Failures are content.** The ways things actually go off the rails (overloaded context,
+   stale knowledge, malformed tool call) are taught as concepts and diagnostic patterns —
+   what breaks, why, and the usual fix. Not as activities to run in the room.
 5. **Local is the microscope.** The in-room Ollama stack exists so we can *see* internals
    (tokens, context, tool-call JSON) that closed products hide. Teach the industry shape,
    inspect it locally.
@@ -451,8 +451,6 @@ That is the entire engine — and there is nothing hidden behind it.
 - **Reframe honesty:** hallucination isn't a bug to be fixed by "a smarter model." It's the
   *expected behavior of a predictive engine.* Your job (theirs, anyone's) is to build the
   verification, not wait for the model that never lies.
-- _(Fold-in candidate: v1 Lab 4's hallucination-detection exercises, re-scoped as a 5-minute
-  "find the buried false fact" game with the tool-enabled model. Decide at refine.)_
 
 ### 11. What is a harness _(draft)_
 
@@ -581,8 +579,10 @@ That is the entire engine — and there is nothing hidden behind it.
 
 ### 17. Guided failure: when things go off the rails _(draft)_
 
-The one deliberately-broken part of the session. Students are *invited* to cause each; each
-failure maps to a concept from earlier, so it *pays off* rather than just being a "watch it break."
+The ways things actually go off the rails — and why. These are real failure modes students
+will meet in the wild, outside this room; each maps to a concept from earlier, so the list
+doubles as a **diagnostic**: when something goes wrong, which concept explains it, and what
+does the fix usually look like.
 
 - **The runaway loop** — a tool that keeps returning "not done" so the harness re-calls the
   model forever. *(Pays off: the loop is the agent, Section 11.)* Fix: a max-iterations guard.
@@ -591,13 +591,12 @@ failure maps to a concept from earlier, so it *pays off* rather than just being 
   *(Pays off: context is all text, Section 7; system vs. user competition, Section 15.)*
 - **The confidently-wrong answer** — a hallucination in a high-stakes-looking fact, caught by
   asking for a source + the cross-check from Section 10. *(Pays off: hallucination handling.)*
-- **The overload** — feed a context past the window; watch truncation/summarization degrade
-  the answer. *(Pays off: Section 7/8 budgets.)*
+- **The overload** — a context pushed past the window: truncation/summarization kicks in,
+  and the answer degrades. *(Pays off: Section 7/8 budgets.)*
 
-_(Each failure: student triggers it → names which concept caused it → applies a one-line fix →
-re-runs. This is where "concepts" stops being a list and becomes a diagnostic tool they can
-use on any AI failure they meet. Pick 2–3 of these for the actual running order so the section
-fits its time budget; don't try all four. Decide at refine.)_
+**The whole section's payoff:** read back-to-front, this is a diagnostic list — when
+something in the wild goes off the rails, a student can name which concept explains it, and
+what the fix usually looks like.
 
 ## Cut by default from v1 _(revisit only if a section above genuinely needs it)_
 
@@ -605,7 +604,7 @@ fits its time budget; don't try all four. Decide at refine.)_
 |---------|-------------|-----------------------------|
 | Lab 1 Non-Determinism | Temperature, same-prompt-different-answer | **Folded** into Section 3a (concepts only, no hands-on lab) |
 | Lab 2 Model Comparison | Llama 1b/3b/8b drag race | **Cut** — benchmarking is instructor fuel, not a 2026 concept |
-| Lab 4 Hallucination Detection | Catching AI mistakes | **Folded** into Section 10 as a 5-min find-the-false-fact game |
+| Lab 4 Hallucination Detection | Catching AI mistakes | **Folded** into Section 10 (concept only: spotting and verifying AI errors — no hands-on piece) |
 | Lab 5 Multimodal / image | Image analysis with llava | **Cut** — explicitly no media in v2 (may return as a v3 "agents that see") |
 | Lab 6 Local vs Cloud | Privacy/tradeoffs discussion | **Deferred** — not a *concept* core; keep as an optional discussion |
 | Lab 7 Bias & Fairness | AI bias & responsibility | **Deferred** — important but a values discussion, not a mechanics concept; optional |
