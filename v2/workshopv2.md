@@ -135,58 +135,85 @@ and "what is a tool call" already make sense.
 
 ### 4. What is a model, really? (weights, training, the internet) _(draft)_
 
-Section 3 called the LLM a "weighted pattern matcher" — this section makes the *weights* real,
-because "the model" is the layer that actually gets sold, named, and benchmarked. Everything
-else (harness, tools) is the chassis around it.
+Section 3 said "weighted pattern matcher" — this group makes *weights* real. "The model" is
+the layer that gets sold, named, and benchmarked; everything else (harness, tools) is the
+chassis around it.
 
-- **What a model actually is: a huge bag of numbers.** A model is a fixed set of math operations
-  (the "architecture") plus **billions of small numbers — the weights** — that training wrote in.
-  All the "intelligence" lives in the numbers; the program that runs them is generic. The weights
-  *are* the product — and they're physically big: the models in this room are on the order of
-  ~17 GB even after compression (LocalLLMCopilot's list has the exact per-model numbers).
-- **Training, as a loop:**
-  1. Feed the model some text.
-  2. It predicts the next token (it will be wrong).
-  3. The mistake nips the weights a *hair* in the direction that would have made the right token
-     more likely.
-  4. Repeat — trillions of times, over as much text as the lab could scrape.
-  - The result: the statistical structure of language (and the facts that rode along with it) gets
-    **compressed into the numbers**. That's the whole training story, honestly told.
-- **The "not memorizing" reframe (the one that sticks):** training isn't the model reading and
-  storing the internet — it's like becoming a chef after cooking thousands of recipes: you no
-  longer have the cookbook *in your kitchen*, but the patterns are in your head, and you can
-  improvise new dishes. Payoff ahead: because no book is stored inside, the model can't *look a
-  fact up* — which is exactly why it's stale ([Section 9](#9-why-isnt-ai-currentdraft)) and why it
-  hallucinates ([Section 10](#10-whats-a-hallucination-draft)).
-- **Same data, different flavors.** The 2026 model families are all, in broad strokes, trained on
-  **the same raw material** — the big public-internet text scrape, plus books and code — so the
-  differences between labs come from the *kitchen*, not the ingredients:
-  - **The recipe** — architecture + scale (how the math is arranged, how many parameters): same
-    data, different engine.
-  - **The mix ratio** — data curation: how much code vs. books vs. conversation, what gets thrown
-    out (low-quality pages, junk, NSFW). This is each lab's "flair."
-  - **The seasoning** — an alignment pass (preference tuning / RLHF) that shapes the *style and
-    behavior* of answers, not the facts inside them.
-  - **Consequence for the room:** models from the same era share quirks and blind spots because
-    they ate the same diet. "Try another model" sometimes fixes a problem and sometimes doesn't —
-    different weights, similar food. (LocalLLMCopilot's measured model inventory — same family,
-    different builds, different behavior — is the live proof if a student pushes on this.)
-- **How the weights actually "play in" at inference time:**
-  - Your prompt becomes tokens → number-vectors; the network then does the same matrix arithmetic
-    against **all those stored weights**, layer after layer; out comes the score-per-next-token
-    that [Section 5](#5-how-does-an-llm-work-if-it-isnt-deterministicdraft) runs with.
-  - So "using a model" = running arithmetic through a fixed bag of saved numbers. No lookup, no
-    page-turn — the weights *are* the compressed knowledge, and the math is the same every time.
-    (This is why one model behaves consistently: *your* prompt is the only varying input.)
-  - **One line on quantization** (the "Q4" in a model name): the weights are stored with fewer
-    bits per number (roughly 4 instead of 16), so the brain fits in less memory at a small
-    accuracy cost. If a student asks "what does Q4 mean?", LocalLLMCopilot's Q4_K_M explainer
-    is the ready answer. Back pocket, not the program.
-- **Two exhibits that make this concrete:**
-  - `ollama list` with the file size on screen: "that file *is* the brain. Every number it
-    ever 'learned' is sitting right there on disk."
-  - The weights file opened: one big blob of numbers — **no source text anywhere in
-      it**. The internet is not stored inside; the *patterns* are.
+- **What a model is:** math + a huge bag of numbers ([4a](#4a-the-brain-is-just-a-fileweights-refine)).
+- **How the numbers got there:** a prediction-and-tweak loop run trillions of times
+  ([4b](#4b-training-the-loop-that-wrote-the-weightsdraft)).
+- **Why every 2026 model is similar (and different):** same raw data, different kitchens
+  ([4c](#4c-same-ingredients-different-kitchensdraft)).
+- **What using a model is, mechanically:** arithmetic on a fixed bag of saved numbers
+  ([4d](#4d-feeding-the-weights-at-inferencerefine)).
+
+### 4a. The "brain" is just a file (weights) _(refine)_
+
+- A model = **billions of small numbers (the weights)** + a generic set of math operations
+  (the "architecture"). All the "intelligence" lives in the numbers; the math that runs them
+  is the same shape for anyone's model of that family.
+- The weights *are* the product — and they're physically big: the models in this room are
+  on the order of ~17 GB **even after compression** (LocalLLMCopilot's `ollama list` shows
+  the exact per-model sizes).
+- **The exhibit (the "database table" of the LLM world):** Section 2's database was a tidy
+  little *display* — rows and columns with static values. The model's display doesn't exist
+  as a table because the values aren't structured that way. The closest honest stand-in:
+
+  ```
+  qwen3.8:27b-q4_K_M   17 GB   (≈ 27 billion weights as numbers)
+  ```
+
+  vs. the LLM's full "display" — a flat blob of **~27 billion numbers**, with *no rows, no
+  columns, no keys, no lookup*. Every piece of "knowledge" is dissolved into that mass
+  (LocalLLMCopilot's `ollama list` numbers give the exact per-model sizes). The point isn't
+  the size; it's the contrast:
+  a database's display is organized so you can *point at* a fact; a model's display has
+  nothing to point at — so you *describe* what you want and it *predicts*.
+
+### 4b. Training: the loop that wrote the weights _(draft)_
+
+1. Feed the model some text.
+2. It predicts the next token (it will be wrong).
+3. The mistake nips the weights a *hair* in the direction that would have made the right
+   token more likely.
+4. Repeat trillions of times, over as much text as the lab could scrape (mostly: the
+   public-internet text, plus books and code).
+
+- Result: the statistical structure of language — and the facts that rode along with it —
+  gets **compressed into the numbers**. That's the whole training story, honestly told.
+- **The "not memorizing" reframe (the one that sticks):** training isn't reading and storing
+  the internet — it's like becoming a chef after cooking thousands of recipes. You no longer
+  keep the cookbook *in your kitchen*, but the patterns are in your head, and you can
+  improvise new dishes. Payoff ahead: because no book is stored inside, the model can't
+  *look a fact up* — which is exactly why it's stale ([Section 9](#9-why-isnt-ai-currentdraft))
+  and why it hallucinates ([Section 10](#10-whats-a-hallucination-draft)).
+
+### 4c. Same ingredients, different kitchens _(draft)_
+
+- The 2026 model families are all, in broad strokes, trained on **the same raw material** —
+  so the differences between labs come from the *kitchen*, not the ingredients:
+  - **The recipe** — architecture + scale (how the math is arranged, how many parameters):
+      same data, different engine.
+  - **The mix ratio** — data curation: how much code vs. books vs. conversation, what gets
+      thrown out (low-quality pages, junk, NSFW). Each lab's "flair."
+  - **The seasoning** — an alignment pass (preference tuning / RLHF) that shapes the *style
+      and behavior* of answers, not the facts inside them.
+- **Consequence for the room:** models from the same era share quirks and blind spots
+  because they ate the same diet. "Try another model" sometimes helps and sometimes isn't
+  different at all — different weights, similar food. (LocalLLMCopilot's measured inventory
+  — same family, different builds, different behavior — is the proof if a student pushes.)
+
+### 4d. Feeding the weights at inference _(refine)_
+
+- Your prompt becomes tokens → number-vectors; the network runs the same matrix arithmetic
+  against **all those stored weights**, layer after layer; out comes the score-per-next-token
+  that [Section 5](#5-how-does-an-llm-work-if-it-isnt-deterministicdraft) runs with.
+- So "using a model" = running arithmetic through a fixed bag of saved numbers. No lookup,
+  no page-turn — the weights *are* the compressed knowledge, and the math is the same every
+  time. (This is why one model behaves consistently: *your* prompt is the only varying input.)
+- **One line on quantization** (the "Q4" in a model name): the weights are stored with fewer
+  bits per number (roughly 4 instead of 16), so the brain fits in less memory at a small
+  accuracy cost. Back pocket, not the program.
 
 ### 5. How does an LLM work if it isn't deterministic _(draft)_
 
