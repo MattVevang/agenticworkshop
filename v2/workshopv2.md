@@ -69,9 +69,9 @@ and "what is a tool call" already make sense.
   - **The model** (the pattern engine — the weights; expanded in [Section 4](#4-what-is-a-model-really-weights-training-the-internet-draft)),
   - **The harness** (the app/agent loop around it — [Section 11](#11-whats-a-harness-draft)),
   - **The tools & services** (everything the harness can call — [Sections 12–13](#12-whats-a-harness-tool-refine)).
-- One live 60-second demo: the same model, two different harnesses (bare Open WebUI chat vs.
-  a tool-enabled harness) producing visibly different behavior. Sets up the whole "model ≠
-  product" thread the rest of the workshop pays off.
+- Demo: the same model, two different harnesses (bare Open WebUI chat vs. a tool-enabled
+  harness) producing visibly different behavior. Sets up the whole "model ≠ product" thread
+  the rest of the workshop pays off.
 - _(Instructor depth if asked "why 2026": see LocalLLMCopilot model inventory — same family,
   different builds, different measured behavior. The model is a moving target; the concept is stable.)_
 
@@ -82,20 +82,23 @@ and "what is a tool call" already make sense.
   The rules of how data becomes an answer are *written and inspectable*.
 - FRC-friendly version: a database is like a spreadsheet with a contract — you can always
   find out *why* an answer came back, because the path is logical.
-- **Mini example (shown as static text, no live demo — stays on-slide):** a tiny customers
-  table. Static values in fields, readable twice with the same result every time:
+- **Mini example:** a tiny customers table — the whole exhibit for this section:
 
   ```
-  name        | age | location    | country
-  ------------+-----+-------------+--------
-  Ava Chen    |  17 | Seattle     | USA
-  Kofi Mensah |  17 | Accra       | Ghana
-  Sofia Rossi |  16 | Milan       | Italy
+  customerId | name        | age | location  | country
+  ----------+-------------+-----+-----------+--------
+  CUST-001   | Ava Chen    |  17 | Seattle   | USA
+  CUST-002   | Kofi Mensah |  17 | Accra     | Ghana
+  CUST-003   | Sofia Rossi |  16 | Milan     | Italy
   ```
 
-  - Point at it: "ask for *the 17-year-old's city* and the answer is always the same row,
-    always, because the value is *stored*, not *predicted*." The table is the exhibit —
-    rows, columns, static values, zero chance involved.
+  - Rows and columns with static values: ask for *the customer with ID CUST-002* and the
+    answer is the same row, always — the value is *stored*, not *predicted*.
+  - **Why `customerId` is there:** a real database identifies rows by a *unique* key. Names,
+    ages, and cities can all repeat — the ID never does. It's how you point at one record
+    without ambiguity, and what later joins and relationships hang on. (An LLM has no
+    equivalent key: you can only *describe* what you want, which is part of why answers can
+    come back plausible-but-wrong — [Section 10](#10-whats-a-hallucination-draft).)
   - Reused later: this same table is the "deterministic side" when we put the LLM side
     ([Section 3](#3-what-is-an-llm-draft)) next to it.
 - _(Possible fold-in from v1: none. This replaces the old model-comparison slot with the
@@ -109,7 +112,7 @@ and "what is a tool call" already make sense.
 - The one honest sentence students should walk away with: **an LLM is a very fancy weighted
   pattern matcher that was trained by imitation and answers by prediction, not by lookup.**
 - Same prompt twice → can get different answers. Same question, different month → can get a
-  different answer (training data changed). Show it live on Open WebUI.
+  different answer (training data changed). Show on Open WebUI.
 - The determinism dial (temperature) exists as one mention, not a section: "the randomness is
   a knob, not an accident" — and it's *still* not deterministic like a database.
 - _(Fold-in candidate from v1: Lab 1's non-determinism becomes a 3-minute demo here, not a
@@ -164,14 +167,13 @@ else (harness, tools) is the chassis around it.
     bits per number (roughly 4 instead of 16), so the brain fits in less memory at a small
     accuracy cost. If a student asks "what does Q4 mean?", LocalLLMCopilot's Q4_K_M explainer
     is the ready answer. Back pocket, not the program.
-- **Live / feel (pick what fits the room):**
-  - Show `ollama list` — the file size on screen — and say: "that file *is* the brain. Every
-    number it ever 'learned' is sitting right there on disk."
-  - The killer anti-myth demo: open the model's weights file and show it is one big blob of
-    numbers — **no source text anywhere in it**. The internet is not stored inside; the *patterns*
-    are. If the room has energy, this is the section's money shot.
+- **Show:**
+  - `ollama list` with the file size on screen: "that file *is* the brain. Every number it
+    ever 'learned' is sitting right there on disk."
+  - The model's weights file opened: one big blob of numbers — **no source text anywhere in
+    it**. The internet is not stored inside; the *patterns* are.
 - _(Fold-in candidate: v1's instructor demo-model lineup (gemma / qwen / deepseek) is ready
-  "same era, different kitchens" material if this section needs a live extension.)_
+  "same era, different kitchens" material if this section needs a demo extension.)_
 
 ### 5. How does an LLM work if it isn't deterministic _(draft)_
 
@@ -191,9 +193,9 @@ else (harness, tools) is the chassis around it.
   - **(Optional, one sentence) it can also be steered — RLHF/preference tuning.** "Aligned"
     models are the same engine with an extra training pass on "what humans prefer." Mention,
     don't build.
-- **Live: the token-prediction visualizer** (`demos/token-prediction/`) showing the top next-token
-  probabilities for a real prompt — students *see* the guessing. This is the one v1 presenter
-  tool that earns a core slot in v2, exactly for this section.
+- **Demo: the token-prediction visualizer** (`demos/token-prediction/`) showing the top next-token
+  probabilities for a real prompt — students *see* the guessing. The one v1 presenter tool
+  that earns a core slot in v2, exactly for this section.
 - _(Instructor depth: quantization, if a student asks "what's a Q4 weight?" — LocalLLMCopilot's
   Q4_K_M explanation is the ready answer. Not on the program; in the back pocket.)_
 
@@ -203,9 +205,9 @@ else (harness, tools) is the chassis around it.
   English, but a whole rare word, a punctuation mark, or half a name can also be one token).
 - Why it matters in practice: **context, limits, and speed are all measured in tokens, not words.**
   Everything that comes after this section (limits, windows, costs) is denominated in tokens.
-- Live demo: paste a student sentence into a tokenizer (Open WebUI's token counter, or a tiny
+- Demo: paste a student sentence into a tokenizer (Open WebUI's token counter, or a tiny
   Python script against the model's tokenizer) and watch "The driver said 'let's go'!" break
-  into chunks. Students get surprised at least once per table — this is the cheapest "aha" in the room.
+  into chunks.
 - One number to plant: typical English ≈ 4 characters per token, roughly 0.75 tokens per word.
   They'll use this ratio the rest of the session.
 
@@ -226,9 +228,9 @@ else (harness, tools) is the chassis around it.
 - **How we describe "compression" without lying:** the transcript becomes a *digest* —
   a smaller text that carries the gist but not the detail, exactly like you'd write on a
   whiteboard for the next shift: "we fixed the PID, still fighting the limelight."
-- Live demo: an instructor harness with a deliberately small budget (LocalLLMCopilot shows the
-  exact `PromptTokens` budget mechanics) — run a long conversation until it degrades and show
-  the truncation/summarization event. Students should *cause* this failure once.
+- Demo: an instructor harness with a deliberately small budget (LocalLLMCopilot documents the
+  exact `PromptTokens` budget mechanics) — run a long conversation until it degrades,
+  showing the truncation/summarization event. The student *causes* this failure once.
 
 ### 8. Context sizes and limits across models _(draft)_
 
@@ -244,8 +246,8 @@ else (harness, tools) is the chassis around it.
 - Rule of thumb to send home: **the model's window is an upper bound; the harness's budget
   is the real limit your session actually runs under.** (And: bigger window ≠ smarter answers —
   it just lets you put more on the table.)
-- _(Live: show `ollama list` / model metadata side-by-side for a small vs. extended-context
-  tag — the "same model, different box" made visible.)_
+- _(Show `ollama list` / model metadata side-by-side for a small vs. extended-context tag —
+  the "same model, different box" made visible.)_
 
 ### 9. Why isn't AI current? _(draft)_
 
@@ -258,9 +260,9 @@ else (harness, tools) is the chassis around it.
 - The punchline that pays off in Section 12: **a model with no tools can never be current;
   a model with the right tools is only as current as its sources.** Curation isn't a model
   feature — it's a harness feature.
-- Live: ask the model something from *this year*, let it miss or waffle, then re-ask through a
-  web-search tool and watch the same model answer correctly. Same weights, different answer —
-  the gap was the tool, not the brain. _(This is the demo that makes Section 12 unavoidable.)_
+- Demo: ask the model something from *this year*, let it miss or waffle, then re-ask through a
+  web-search tool — the same model answers correctly. Same weights, different answer; the gap
+  was the tool, not the brain. This is the demo that makes Section 12 unavoidable.
 
 ### 10. What is a hallucination _(draft)_
 
@@ -298,7 +300,7 @@ else (harness, tools) is the chassis around it.
 - **Why it matters (the thesis):** the *same model* behaves differently in different harnesses
   because the harness decides what the model sees, what it can do, and when it stops.
   "Model X is dumb" is often really "harness Y didn't give it the context/tools it needed."
-- Live: side-by-side, same model / different harness (bare chat vs. tool-enabled), same task.
+- Demo: side-by-side, same model / different harness (bare chat vs. tool-enabled), same task.
   Re-pays the Section 1 setup.
 
 ### 12. What is a harness tool _(refine)_
@@ -343,8 +345,8 @@ else (harness, tools) is the chassis around it.
   weights. With MCP, the same model can read *your* repo, *your* files, *live* pages — current
   where it used to be stale. That's the whole "extend capabilities from closed limited data
   to other sources" thesis in one breath.
-- Live: attach an MCP server to the demo harness and watch its tools appear in the model's tool
-  list; fire one off and trace it (Section 12's walkthrough, now on a *real, external* server).
+- Demo: attach an MCP server to the demo harness and its tools appear in the model's tool
+  list; fire one off and trace it (Section 12's walkthrough, now on an *external* server).
 - _(Instructor depth: LocalLLMCopilot's benchmark is literally measuring tool-call reliability
   across an MCP tool inventory — how many of 95 GitHub MCP tools a model can actually call
   correctly. If students ask "how do we *know* tools work?", the answer is: you measure it,
@@ -363,9 +365,9 @@ else (harness, tools) is the chassis around it.
 - **What it is NOT:** it's not *extra* knowledge, and it's not *stronger than the model's
   training* in an absolute sense — it's a strong *bias* in context. A long, clever user prompt
   can bleed it (this is the seed of [prompt-injection, Section 17](#17-guided-failure-when-things-go-off-the-rails-draft)).
-- **Live:** show a system prompt in a real harness (Copilot / Open WebUI settings) — students
-  get to read the actual text that shapes a product they use. Then toggle one and feel the
-  model's behavior change on the same question.
+- **Demo:** show a system prompt in a real harness (Copilot / Open WebUI settings) — the
+  actual text that shapes a product in use. Toggle one; the model's behavior changes on the
+  same question.
 
 ### 15. Instructions and the system prompt _(refine)_
 
@@ -386,7 +388,7 @@ else (harness, tools) is the chassis around it.
 - **The practical takeaway students keep:** you *steer* a model with layered text, not by
   replacing anything. That's why a repo's `AGENTS.md` can make the same AI behave differently
   in one repo vs. another — no retraining, just *more instructions in the context*.
-- **Live:** in one harness, show the effect of (a) system prompt only, (b) + a project
+- **Demo:** in one harness, (a) system prompt only vs. (b) system prompt + a project
   instruction file, same task → visibly different behavior. Same model, two instruction sets.
 
 ### 16. What are skills _(refine)_
@@ -433,7 +435,7 @@ fits its time budget; don't try all four. Decide at refine.)_
 
 | v1 item | What it was | Why it's out / where it goes |
 |---------|-------------|-----------------------------|
-| Lab 1 Non-Determinism | Temperature, same-prompt-different-answer | **Folded** into Section 3 as a 3-min live demo |
+| Lab 1 Non-Determinism | Temperature, same-prompt-different-answer | **Folded** into Section 3 as a 3-min demo |
 | Lab 2 Model Comparison | Llama 1b/3b/8b drag race | **Cut** — benchmarking is instructor fuel, not a 2026 concept |
 | Lab 4 Hallucination Detection | Catching AI mistakes | **Folded** into Section 10 as a 5-min find-the-false-fact game |
 | Lab 5 Multimodal / image | Image analysis with llava | **Cut** — explicitly no media in v2 (may return as a v3 "agents that see") |
@@ -441,7 +443,7 @@ fits its time budget; don't try all four. Decide at refine.)_
 | Lab 7 Bias & Fairness | AI bias & responsibility | **Deferred** — important but a values discussion, not a mechanics concept; optional |
 | Lab 8 Real-World Scenarios | Practical problem-solving | **Superseded** by Section 17 guided failures |
 | Lab 9 Agents & Tools | Capstone: web search + tools | **Folded** into Sections 11–13 (now concepts, not a one-off lab) |
-| Instructor demo models (gemma/qwen/deepseek) | Live large-vs-small contrast | **Cut** as a scheduled demo; available on demand |
+| Instructor demo models (gemma/qwen/deepseek) | Large-vs-small model contrast | **Cut** as a scheduled demo; available on demand |
 
 > v1's `docker/` (both Open WebUI instances), `demos/token-prediction`, and `resources/`
 > **stay in play**: 3000/3001 are v2's room setup, token-prediction powers Section 5,
@@ -458,7 +460,7 @@ the schedule turns out to want the slower, hands-on-comparison version instead, 
 - **As a second day or follow-up session** — v2 concepts in the morning, v1 labs as the
   hands-on afternoon. This is the strongest case for keeping it: students who already hold
   the concept ladder (v2) will extract far more from the comparison labs (v1).
-- **As a v2 fallback** — if a v2 section loses its live demo on the day (server trouble
+- **As a v2 fallback** — if a v2 section loses its demo on the day (server trouble
   with the tool-enabled stack, etc.), its v1 lab twin is the backfill.
 
 Decision at refine time: keep this option documented, or fold v1 labs in as "extra credit"
