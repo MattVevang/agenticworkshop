@@ -376,14 +376,15 @@ That is the entire engine — and there is nothing hidden behind it.
 - **Why parts get lost in long interactions:**
   - **The window is finite** → when the conversation outgrows it, *something* has to give.
   - **What gives, in harnesses:** older turns are **compressed/summarized** (the harness asks
-    a model to shrink the history into a digest) or **dropped**. The summary *is* a lossy
+    a model to summarize the old history into a shorter piece of text) or **dropped**. The
+    summary *is* a lossy
     compression — like a high-compression JPEG, not a zipped file: the detail that's lost is
     gone for good, no amount of re-opening brings it back (a real ZIP loses nothing).
   - **The "lost in the middle" effect:** even when everything fits, attention to the very middle
     of a long prompt is weaker than to the start and end. So "it saw it" still can mean "it
     saw it but under-weighted it."
-- **How we describe "compression" without lying:** the transcript becomes a *digest* —
-  a smaller text that carries the gist but not the detail, exactly like you'd write on a
+- **How we describe "compression" without lying:** the transcript becomes a *smaller
+  compressed text* — it carries the gist but not the detail, exactly like you'd write on a
   whiteboard for the next shift: "we fixed the PID, still fighting the limelight."
 - _(Instructor depth: what it looks like in the wild — a harness with a deliberately small
   budget (LocalLLMCopilot documents the exact `PromptTokens` budget mechanics) hits its limit
@@ -396,16 +397,17 @@ That is the entire engine — and there is nothing hidden behind it.
   "What is my name?" → **Bob.** That looks like memory. It isn't — every call re-sends the
   whole transcript, and the sentence "My name is Bob" was right there in it.
 - **The long-session beat:** then you do hours of back-and-forth coding. The transcript
-  outgrows the window, so the harness digests the old turns to stay under budget. The digest
-  chases what the conversation has been about: hours of code → build errors and decisions
-  survive, "My name is Bob" does not — like shift handover notes that say "PID fixed, still
-  fighting the limelight" and never mention anyone's name.
+  outgrows the window, so the harness **compresses** the old turns to stay under budget.
+  The compression chases what the conversation has been about: hours of code → build
+  errors and decisions survive, "My name is Bob" does not — like shift handover notes
+  that say "PID fixed, still fighting the limelight" and never mention anyone's name.
 - **The come-back beat:** you ask again, "What is my name?" The model has genuinely no idea.
   Not a mood swing — the sentence no longer exists in the context it receives, and it can't
   know what it isn't given.
-- **What it means:** "forgetting" isn't the brain failing; it's the transcript. A digest
-  keeps what looks important *to the conversation so far* — so facts that matter to you (a
-  name, a preference, a constraint) matter to the model only while you keep saying them.
+- **What it means:** "forgetting" isn't the brain failing; it's the transcript. The
+  compression keeps what looks important *to the conversation so far* — so facts that
+  matter to you (a name, a preference, a constraint) matter to the model only while you
+  keep saying them.
 
 ### 8. Context sizes and limits across models _(draft)_
 
