@@ -460,7 +460,7 @@ That is the entire engine — and there is nothing hidden behind it.
   and repeats until done.
 - That "repeats until done" is what makes something **agentic** — the loop is the agent.
   One call = chatbot. Loop + tools = agent. (Now "agentic" has a definition the room can use.)
-- Examples the students already know: Copilot CLI, Open WebUI, any `aider`/`claude`-style
+- The names they'll actually meet: Copilot CLI, Open WebUI, any `aider`/`claude`-style
   CLI. Different skins, same skeleton: **assemble → call → act → repeat.**
 - **Why it matters (the thesis):** the *same model* behaves differently in different harnesses
   because the harness decides what the model sees, what it can do, and when it stops.
@@ -568,9 +568,9 @@ other                         grep/rg · glob · web_fetch · skill · ask_user
 - **What it is NOT:** it's not *extra* knowledge, and it's not *stronger than the model's
   training* in an absolute sense — it's a strong *bias* in context. A long, clever user prompt
   can bleed it (this is the seed of [prompt-injection, Section 17](#17-guided-failure-when-things-go-off-the-rails-draft)).
-- **Concrete:** a system prompt is fully readable in the products they already use (Copilot /
-  Open WebUI settings) — the same question, a different system prompt, and the model's
-  behavior visibly changes.
+- **Concrete:** a system prompt is fully readable — e.g., in the settings of Copilot or
+  Open WebUI — the same question, a different system prompt, and the model's behavior
+  visibly changes.
 
 ### 15. Instructions and the system prompt _(refine)_
 
