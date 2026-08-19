@@ -71,9 +71,9 @@ and "what is a tool call" already make sense.
   - **The model** (the pattern engine — the weights; expanded in [Section 4](#4-what-is-a-model-really-weights-training-the-internet-draft)),
   - **The harness** (the app/agent loop around it — [Section 11](#11-whats-a-harness-draft)),
   - **The tools & services** (everything the harness can call — [Sections 12–13](#12-whats-a-harness-tool-refine)).
-- Demo: the same model, two different harnesses (bare Open WebUI chat vs. a tool-enabled
-  harness) producing visibly different behavior. Sets up the whole "model ≠ product" thread
-  the rest of the workshop pays off.
+- The "model ≠ product" gap: the same model, two different harnesses (bare chat vs.
+  tool-enabled), produces visibly different behavior. This is the thread the rest of the
+  workshop pays off.
 - _(Instructor depth if asked "why 2026": see LocalLLMCopilot model inventory — same family,
   different builds, different measured behavior. The model is a moving target; the concept is stable.)_
 
@@ -114,7 +114,7 @@ and "what is a tool call" already make sense.
 - The one honest sentence students should walk away with: **an LLM is a very fancy weighted
   pattern matcher that was trained by imitation and answers by prediction, not by lookup.**
 - Same prompt twice → can get different answers. Same question, different month → can get a
-  different answer (training data changed). Show on Open WebUI.
+  different answer (training data changed).
 - The randomness is not an accident — it's a knob. See [Section 3a](#3a-temperature-the-determinism-knob-refine).
 
 ### 3a. Temperature: the determinism knob _(refine)_
@@ -182,13 +182,11 @@ else (harness, tools) is the chassis around it.
     bits per number (roughly 4 instead of 16), so the brain fits in less memory at a small
     accuracy cost. If a student asks "what does Q4 mean?", LocalLLMCopilot's Q4_K_M explainer
     is the ready answer. Back pocket, not the program.
-- **Show:**
+- **Two exhibits that make this concrete:**
   - `ollama list` with the file size on screen: "that file *is* the brain. Every number it
     ever 'learned' is sitting right there on disk."
-  - The model's weights file opened: one big blob of numbers — **no source text anywhere in
-    it**. The internet is not stored inside; the *patterns* are.
-- _(Fold-in candidate: v1's instructor demo-model lineup (gemma / qwen / deepseek) is ready
-  "same era, different kitchens" material if this section needs a demo extension.)_
+  - The weights file opened: one big blob of numbers — **no source text anywhere in
+      it**. The internet is not stored inside; the *patterns* are.
 
 ### 5. How does an LLM work if it isn't deterministic _(draft)_
 
@@ -208,9 +206,9 @@ else (harness, tools) is the chassis around it.
   - **(Optional, one sentence) it can also be steered — RLHF/preference tuning.** "Aligned"
     models are the same engine with an extra training pass on "what humans prefer." Mention,
     don't build.
-- **Demo: the token-prediction visualizer** (`demos/token-prediction/`) showing the top next-token
-  probabilities for a real prompt — students *see* the guessing. The one v1 presenter tool
-  that earns a core slot in v2, exactly for this section.
+- **The guessing made visible:** for every position in the prompt, the model ranks the
+  possible next tokens by probability — look at just the top few and the "guessing" is
+  right there in the numbers.
 - _(Instructor depth: quantization, if a student asks "what's a Q4 weight?" — LocalLLMCopilot's
   Q4_K_M explanation is the ready answer. Not on the program; in the back pocket.)_
 
@@ -220,9 +218,9 @@ else (harness, tools) is the chassis around it.
   English, but a whole rare word, a punctuation mark, or half a name can also be one token).
 - Why it matters in practice: **context, limits, and speed are all measured in tokens, not words.**
   Everything that comes after this section (limits, windows, costs) is denominated in tokens.
-- Demo: paste a student sentence into a tokenizer (Open WebUI's token counter, or a tiny
-  Python script against the model's tokenizer) and watch "The driver said 'let's go'!" break
-  into chunks.
+- A typical sentence breaks apart in surprising ways: words split on quotes, apostrophes,
+  and hyphens; punctuation can even get its own token. So "The driver said 'let's go'!" does
+  not map one-to-one onto its words at all.
 - One number to plant: typical English ≈ 4 characters per token, roughly 0.75 tokens per word.
   They'll use this ratio the rest of the session.
 
@@ -243,9 +241,10 @@ else (harness, tools) is the chassis around it.
 - **How we describe "compression" without lying:** the transcript becomes a *digest* —
   a smaller text that carries the gist but not the detail, exactly like you'd write on a
   whiteboard for the next shift: "we fixed the PID, still fighting the limelight."
-- Demo: an instructor harness with a deliberately small budget (LocalLLMCopilot documents the
-  exact `PromptTokens` budget mechanics) — run a long conversation until it degrades,
-  showing the truncation/summarization event. The student *causes* this failure once.
+- What it looks like in the wild: a harness with a deliberately small budget
+  (LocalLLMCopilot documents the exact `PromptTokens` budget mechanics) hits its limit in a
+  long conversation — and the truncation/summarization event is exactly where the degradation
+  starts.
 
 ### 8. Context sizes and limits across models _(draft)_
 
@@ -261,8 +260,8 @@ else (harness, tools) is the chassis around it.
 - Rule of thumb to send home: **the model's window is an upper bound; the harness's budget
   is the real limit your session actually runs under.** (And: bigger window ≠ smarter answers —
   it just lets you put more on the table.)
-- _(Show `ollama list` / model metadata side-by-side for a small vs. extended-context tag —
-  the "same model, different box" made visible.)_
+- _("Same model, different box" made visible: the small vs. extended-context tags for the same
+  model, side-by-side in `ollama list` / model metadata.)_
 
 ### 9. Why isn't AI current? _(draft)_
 
@@ -275,9 +274,9 @@ else (harness, tools) is the chassis around it.
 - The punchline that pays off in Section 12: **a model with no tools can never be current;
   a model with the right tools is only as current as its sources.** Curation isn't a model
   feature — it's a harness feature.
-- Demo: ask the model something from *this year*, let it miss or waffle, then re-ask through a
-  web-search tool — the same model answers correctly. Same weights, different answer; the gap
-  was the tool, not the brain. This is the demo that makes Section 12 unavoidable.
+- The pattern in miniature: ask about something from *this year* → the model misses or waffles.
+  Re-ask through a web-search tool → the same model answers correctly. Same weights, different
+  answer — the gap was the tool, not the brain. This is what makes Section 12 unavoidable.
 
 ### 10. What is a hallucination _(draft)_
 
@@ -310,12 +309,12 @@ else (harness, tools) is the chassis around it.
   and repeats until done.
 - That "repeats until done" is what makes something **agentic** — the loop is the agent.
   One call = chatbot. Loop + tools = agent. (Now "agentic" has a definition the room can use.)
-- Examples the students already know: the Copilot CLI they saw in the demo, Open WebUI,
-  any `aider`/`claude`-style CLI. Different skins, same skeleton: **assemble → call → act → repeat.**
+- Examples the students already know: Copilot CLI, Open WebUI, any `aider`/`claude`-style
+  CLI. Different skins, same skeleton: **assemble → call → act → repeat.**
 - **Why it matters (the thesis):** the *same model* behaves differently in different harnesses
   because the harness decides what the model sees, what it can do, and when it stops.
   "Model X is dumb" is often really "harness Y didn't give it the context/tools it needed."
-- Demo: side-by-side, same model / different harness (bare chat vs. tool-enabled), same task.
+- Same model / different harness (bare chat vs. tool-enabled), same task → different behavior.
   Re-pays the Section 1 setup.
 
 ### 12. What is a harness tool _(refine)_
@@ -360,8 +359,8 @@ else (harness, tools) is the chassis around it.
   weights. With MCP, the same model can read *your* repo, *your* files, *live* pages — current
   where it used to be stale. That's the whole "extend capabilities from closed limited data
   to other sources" thesis in one breath.
-- Demo: attach an MCP server to the demo harness and its tools appear in the model's tool
-  list; fire one off and trace it (Section 12's walkthrough, now on an *external* server).
+- Attach an MCP server and its tools appear in the model's tool list — Section 12's
+  walkthrough, now on an *external* server.
 - _(Instructor depth: LocalLLMCopilot's benchmark is literally measuring tool-call reliability
   across an MCP tool inventory — how many of 95 GitHub MCP tools a model can actually call
   correctly. If students ask "how do we *know* tools work?", the answer is: you measure it,
@@ -380,9 +379,9 @@ else (harness, tools) is the chassis around it.
 - **What it is NOT:** it's not *extra* knowledge, and it's not *stronger than the model's
   training* in an absolute sense — it's a strong *bias* in context. A long, clever user prompt
   can bleed it (this is the seed of [prompt-injection, Section 17](#17-guided-failure-when-things-go-off-the-rails-draft)).
-- **Demo:** show a system prompt in a real harness (Copilot / Open WebUI settings) — the
-  actual text that shapes a product in use. Toggle one; the model's behavior changes on the
-  same question.
+- **Concrete:** a system prompt is fully readable in the products they already use (Copilot /
+  Open WebUI settings) — the same question, a different system prompt, and the model's
+  behavior visibly changes.
 
 ### 15. Instructions and the system prompt _(refine)_
 
@@ -403,8 +402,9 @@ else (harness, tools) is the chassis around it.
 - **The practical takeaway students keep:** you *steer* a model with layered text, not by
   replacing anything. That's why a repo's `AGENTS.md` can make the same AI behave differently
   in one repo vs. another — no retraining, just *more instructions in the context*.
-- **Demo:** in one harness, (a) system prompt only vs. (b) system prompt + a project
-  instruction file, same task → visibly different behavior. Same model, two instruction sets.
+- The contrast to build the section on: (a) system prompt only vs. (b) system prompt + a
+  project instruction file, same task → visibly different behavior. Same model, two
+  instruction sets.
 
 ### 16. What are skills _(refine)_
 
@@ -458,12 +458,13 @@ fits its time budget; don't try all four. Decide at refine.)_
 | Lab 7 Bias & Fairness | AI bias & responsibility | **Deferred** — important but a values discussion, not a mechanics concept; optional |
 | Lab 8 Real-World Scenarios | Practical problem-solving | **Superseded** by Section 17 guided failures |
 | Lab 9 Agents & Tools | Capstone: web search + tools | **Folded** into Sections 11–13 (now concepts, not a one-off lab) |
-| Instructor demo models (gemma/qwen/deepseek) | Large-vs-small model contrast | **Cut** as a scheduled demo; available on demand |
+| Instructor models (gemma/qwen/deepseek) | Large-vs-small model contrast | **Cut** from the program; available ad-hoc on demand |
 
 > v1's `docker/` (both Open WebUI instances), `demos/token-prediction`, and `resources/`
-> **stay in play**: 3000/3001 are v2's room setup, token-prediction powers Section 5,
-> `resources/` (glossary, ethics, further-reading, whats-next) are on-demand references.
-> `docker/tools/` (port 3001) is *the* Section 12/13 live environment.
+> **stay around for ad-hoc use** (during or after the presenting, if someone asks): 3000/3001
+> remain the base room setup, `resources/` (glossary, ethics, further-reading, whats-next)
+> are on-demand references, and `demos/token-prediction` is there if a student pushes on the
+> prediction mechanics. `docker/tools/` (port 3001) stands by for Sections 12/13 the same way.
 
 ## Option B: v1.5 — the old lab track (preservative option)
 
@@ -475,7 +476,7 @@ the schedule turns out to want the slower, hands-on-comparison version instead, 
 - **As a second day or follow-up session** — v2 concepts in the morning, v1 labs as the
   hands-on afternoon. This is the strongest case for keeping it: students who already hold
   the concept ladder (v2) will extract far more from the comparison labs (v1).
-- **As a v2 fallback** — if a v2 section loses its demo on the day (server trouble
+- **As a v2 fallback** — if a v2 concept needs concrete backing on the day (server trouble
   with the tool-enabled stack, etc.), its v1 lab twin is the backfill.
 
 Decision at refine time: keep this option documented, or fold v1 labs in as "extra credit"
@@ -491,8 +492,8 @@ materials for fast finishers. _(Default: keep as-is, zero maintenance.)_
 5. **Local-only vs. mix in a real API** — v2 teaches the industry shape (API) but runs locally
    for reliability/inspection. Lean: local Ollama only, framed as "the same API your cloud agent uses."
 6. **Capstone?** The original v1 had one (Lab 9). v2 as written is *concepts* — do we add a
-   short "build a tiny agent" capstone at the end, or is
-   a guided "wire one real tool to the demo harness" exercise the natural finish? Decide once Section 13 lands.
+   short "build a tiny agent" wrap at the end, or end on Section 17 as-is? Decide once
+   Section 13 lands.
 7. **Is there a "what's next / where this is going" 5-min wrap?** (Keep tiny, links only —
    `resources/whats-next.md`. Don't let it become a history lesson.)
 
