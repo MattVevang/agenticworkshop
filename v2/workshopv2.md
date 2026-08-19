@@ -146,6 +146,8 @@ chassis around it.
   ([4c](#4c-same-ingredients-different-kitchensdraft)).
 - **What using a model is, mechanically:** arithmetic on a fixed bag of saved numbers
   ([4d](#4d-feeding-the-weights-at-inferencerefine)).
+- **How a number becomes an actual word:** the vocabulary list, end-to-end
+  ([4e](#4e-how-does-a-number-become-a-word-vocabularyrefine)).
 
 ### 4a. The "brain" is just a file (weights) _(refine)_
 
@@ -214,6 +216,54 @@ chassis around it.
 - **One line on quantization** (the "Q4" in a model name): the weights are stored with fewer
   bits per number (roughly 4 instead of 16), so the brain fits in less memory at a small
   accuracy cost. Back pocket, not the program.
+
+### 4e. How does a number become a word? (vocabulary) _(refine)_
+
+4d says "out comes a score-per-next-token" — but **which** next tokens? The model ships
+with a **vocabulary**: a fixed list of *every* token it can ever produce (for current models,
+tens of thousands of entries). That list is the number → word lookup:
+
+```
+vocabulary (fixed, baked into the model)
+  token #17    → "the"        token #3401  → "Seattle"
+  token #522   → "is"         token #8871  → "country"
+  token #0912  → "Kofi"       …            (a few 10,000s total)
+```
+
+Now the whole answer becomes followable on one slide — the user's question, end to end:
+
+```
+user:      "what country is Kofi from?"
+
+1  tokens:          "what | country | is | Kofi | from | ?"
+                    │ through THE vocabulary (word → slot)
+2  numbers:         [221, 8871, 522, 912, 1400, 9]
+                    │  the arithmetic of 4d (weights in, scores out)
+3  scores:          "from" 3.1%  "at" 1.4%  "the" 0.7%   "in" 95.6%  …
+                    ▲ it *scores EVERY token in the list*, picks the top
+4  word out:        "in"
+                    │ through the vocab again (slot → word)
+next round repeats: "in" + history → "the" → "Ghana" → "."
+                    ─────────────────────────────────────────────
+                    "what country is Kofi from? in the Ghana ."
+```
+
+- **Why the output can't be random nonsense:** at every step the model only picks words
+  *from that fixed vocabulary*. It has no vocabulary entry for a word it never learned — and
+  its scores are shaped by the text from which the vocabulary was carved, so the words it
+  picks fit the grammar and meaning of what came before.
+- **Why it correlates with *this* request:** the "Kofi" token is in the input, and training
+  wired the weights so that *Kofi co-occurs with Accra and Ghana*. Your question nudges the
+  scores to put "in / the / Ghana" on top — the numbers are doing the joining that a
+  database row would.
+- **The database tie-back (makes the whole section pay off):** the vocabulary is the LLM's
+  nearest equivalent of Section 2's `customerId → name` lookup — a *fixed, inspectable*
+  mapping of number → thing. The model's difference: the answer isn't retrieved from a
+  stored row, it's *assembled one scored word at a time*, each round using that list. That
+  is the entire "numbers → coherent thought" mechanism, honestly stated.
+- Where this leaves the open questions: the *ranking* is where 3a (temperature) works and
+  where Section 5 (non-determinism) lives — and where Section 10 (hallucination) sneaks in,
+  because "high score" can still be "plausible but wrong."
 
 ### 5. How does an LLM work if it isn't deterministic _(draft)_
 
