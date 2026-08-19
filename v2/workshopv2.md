@@ -215,9 +215,18 @@ chassis around it.
 - So "using a model" = running arithmetic through a fixed bag of saved numbers. No lookup,
   no page-turn — the weights *are* the compressed knowledge, and the math is the same every
   time. (This is why one model behaves consistently: *your* prompt is the only varying input.)
-- **One line on quantization** (the "Q4" in a model name): the weights are stored with fewer
-  bits per number (roughly 4 instead of 16), so the brain fits in less memory at a small
-  accuracy cost. Back pocket, not the program.
+- **Quantization** (the "Q4" in a model name): the weights start life as FP16 (16 bits per
+  number), the "raw" brain — and it's *massive*. Q8 halves it, Q4 quarters it, in **memory
+  and speed**. The catch isn't memory — it's the fear that "Q4 = ¼ of the brain." It **isn't:**
+  quantization is *rounding* the weights to fewer digits (a lossy **compression**), not
+  deleting knowledge. There's no region where "the France capital got rounded away" so the answer
+  goes null. The loop (4f) mostly needs the weights' *ranking* — "big connection vs. small one" —
+  not their exact last digits, so rounding shifts each score by dust that, across billions of
+  weights, barely moves the final pick. (The `_K_M` in `Q4_K_M` is the extra safety: the few
+  weights that matter most keep extra precision, the noise absorbs a coarser rounding.)
+  **Bottom line a student taking home Ollama/LMStudio should hear:** Q4 ≈ **~98–99% of the
+  behavior** at **¼ the RAM, ~3–4× faster** — a *slightly* dumber model, not a lobotomized one.
+  It's exactly what makes a frontier-class model fit on a laptop at all.
 
 ### 4e. How does a number become a word? (vocabulary) _(refine)_
 
@@ -336,8 +345,9 @@ That is the entire engine — and there is nothing hidden behind it.
 - **The guessing made visible:** for every position in the prompt, the model ranks the
   possible next tokens by probability — look at just the top few and the "guessing" is
   right there in the numbers.
-- _(Instructor depth: quantization, if a student asks "what's a Q4 weight?" — LocalLLMCopilot's
-  Q4_K_M explanation is the ready answer. Not on the program; in the back pocket.)_
+- _(Instructor depth: if a student asks "what's a Q4 weight?" — see
+  [4d's quantization block](#4d-feeding-the-weights-at-inferencerefine) for the "rounding, not
+  amputation" answer. LocalLLMCopilot's measured inventory backs it up. Not on the program; back pocket.)_
 
 ### 6. What is a token _(draft)_
 
