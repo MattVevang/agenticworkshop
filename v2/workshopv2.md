@@ -373,7 +373,8 @@ That is the entire engine — and there is nothing hidden behind it.
   - **The window is finite** → when the conversation outgrows it, *something* has to give.
   - **What gives, in harnesses:** older turns are **compressed/summarized** (the harness asks
     a model to shrink the history into a digest) or **dropped**. The summary *is* a lossy
-    compression, like a zipped file — some detail is permanently gone.
+    compression — like a high-compression JPEG, not a zipped file: the detail that's lost is
+    gone for good, no amount of re-opening brings it back (a real ZIP loses nothing).
   - **The "lost in the middle" effect:** even when everything fits, attention to the very middle
     of a long prompt is weaker than to the start and end. So "it saw it" still can mean "it
     saw it but under-weighted it."
