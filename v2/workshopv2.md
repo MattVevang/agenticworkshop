@@ -225,37 +225,38 @@ tens of thousands of entries). That list is the number → word lookup:
 
 ```
 vocabulary (fixed, baked into the model)
-  token #17    → "the"        token #3401  → "Seattle"
-  token #522   → "is"         token #8871  → "country"
-  token #0912  → "Kofi"       …            (a few 10,000s total)
+  token #17    → "the"     token #1188  → "make"
+  token #522   → "is"      token #2731  → "bees"
+  token #91    → "what"    token #5509  → "honey"
+  …            (a few 10,000s total)
 ```
 
 Now the whole answer becomes followable on one slide — the user's question, end to end:
 
 ```
-user:      "what country is Kofi from?"
+user:      "what do bees make?"
 
-1  tokens:          "what | country | is | Kofi | from | ?"
+1  tokens:          "what | do | bees | make | ?"
                     │ through THE vocabulary (word → slot)
-2  numbers:         [221, 8871, 522, 912, 1400, 9]
+2  numbers:         [91, 4002, 2731, 1188, 9]
                     │  the arithmetic of 4d (weights in, scores out)
-3  scores:          "from" 3.1%  "at" 1.4%  "the" 0.7%   "in" 95.6%  …
+3  scores:          "wax" 2.3%  "baskets" 0.6%  "sting" 0.2%  "honey" 96.7% …
                     ▲ it *scores EVERY token in the list*, picks the top
-4  word out:        "in"
+4  word out:        "honey"
                     │ through the vocab again (slot → word)
-next round repeats: "in" + history → "the" → "Ghana" → "."
+next round repeats: "honey" + history → "."
                     ─────────────────────────────────────────────
-                    "what country is Kofi from? in the Ghana ."
+                    "what do bees make? honey ."
 ```
 
 - **Why the output can't be random nonsense:** at every step the model only picks words
   *from that fixed vocabulary*. It has no vocabulary entry for a word it never learned — and
   its scores are shaped by the text from which the vocabulary was carved, so the words it
   picks fit the grammar and meaning of what came before.
-- **Why it correlates with *this* request:** the "Kofi" token is in the input, and training
-  wired the weights so that *Kofi co-occurs with Accra and Ghana*. Your question nudges the
-  scores to put "in / the / Ghana" on top — the numbers are doing the joining that a
-  database row would.
+- **Why it correlates with *this* request:** the "bees" token is in the input, and training
+  wired the weights so that *bees co-occur with honey* — it's everywhere in the text they
+  read. Your question nudges the scores to put "honey" far on top of everything else — the
+  numbers are doing the joining that a database row would.
 - **The database tie-back (makes the whole section pay off):** the vocabulary is the LLM's
   nearest equivalent of Section 2's `customerId → name` lookup — a *fixed, inspectable*
   mapping of number → thing. The model's difference: the answer isn't retrieved from a
