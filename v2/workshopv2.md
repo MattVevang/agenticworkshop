@@ -225,45 +225,39 @@ tens of thousands of entries). That list is the number → word lookup:
 
 ```
 vocabulary (fixed, baked into the model)
-  token #91    → "what"    token #3104  → "Ava"
-  token #522   → "is"      token #8871  → "country"
-  token #1400  → "from"    token #6021  → "USA"
+  token #91    → "what"     token #2210  → "capital"
+  token #522   → "is"       token #1188  → "France"
+  token #4401  → "the"      token #4402  → "Paris"
   …            (a few 10,000s total)
 ```
 
-Now the same mechanism on a real customer question — the answer is right
-*inside* Section 2's database table, so the room can follow it against
-something they've already seen:
+Now the whole answer, followable on one slide — a question every student
+already knows the answer to, so nothing here needs checking:
 
 ```
-user:      "what country is Ava from?"
+user:      "what is the capital of France?"
 
-1  tokens:          "what | country | is | Ava | from | ?"
+1  tokens:          "what | is | the | capital | of | France | ?"
                     │ through THE vocabulary (word → slot)
-2  numbers:         [91, 8871, 522, 3104, 1400, 9]
+2  numbers:         [91, 522, 4401, 2210, 187, 1188, 9]
                     │  the arithmetic of 4d (weights in, scores out)
-3  scores:          "Ghana" 1.1%  "Italy" 0.8%  "Seattle" 0.2%  "USA" 97.4% …
+3  scores:          "London" 2.1%  "Lyon" 1.3%  "Nice" 0.4%   "Paris" 95.0% …
                     ▲ it *scores EVERY token in the list*, picks the top
-4  word out:        "USA"
+4  word out:        "Paris"
                     │ through the vocab again (slot → word)
-next round repeats: "USA" + history → "."
+next round repeats: "Paris" + history → "."
                     ─────────────────────────────────────────────
-                    "what country is Ava from? USA ."
+                    "what is the capital of France? Paris ."
 ```
-
-(If someone asks "wait, is that *right?*" — yes: check CUST-001 on the
-table from Section 2. It's the same customer, now reached *through* the
-model instead of *through* a database key.)
 
 - **Why the output can't be random nonsense:** at every step the model only picks words
   *from that fixed vocabulary*. It has no vocabulary entry for a word it never learned — and
   its scores are shaped by the text from which the vocabulary was carved, so the words it
   picks fit the grammar and meaning of what came before.
-- **Why it correlates with *this* request:** the "Ava" token is in the input, and whatever
-  text mentioned Ava in training also put *USA* right next to her. Your question nudges the
-  scores to put "USA" far on top of everything else — the numbers are doing the joining a
-  database row would, and the answer turns out to be the same one a real query would
-  return (that's not a coincidence — the model learned it from the same data).
+- **Why it correlates with *this* request:** "France" is in the input, and the model has
+  seen "France" next to "Paris" countless times in its training text — in billions of the
+  same sentences. Your question nudges the scores so "Paris" lands far above "London" and
+  "Lyon" — the numbers do the job a database join would do.
 - **The database tie-back (makes the whole section pay off):** the vocabulary is the LLM's
   nearest equivalent of Section 2's `customerId → name` lookup — a *fixed, inspectable*
   mapping of number → thing. The model's difference: the answer isn't retrieved from a
