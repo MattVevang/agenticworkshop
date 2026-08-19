@@ -250,10 +250,12 @@ next round repeats: "Paris" + history → "."
                     "what is the capital of France? Paris ."
 ```
 
-- **Why the output can't be random nonsense:** at every step the model only picks words
-  *from that fixed vocabulary*. It has no vocabulary entry for a word it never learned — and
-  its scores are shaped by the text from which the vocabulary was carved, so the words it
-  picks fit the grammar and meaning of what came before.
+- **Vocabulary ≠ knowledge.** The list is a pure *inventory* — "which tokens this model can
+  output" (words, sub-word chunks, digits, punctuation), with zero meaning in it. The "France
+  goes with Paris" association is not in the vocab; it's in the **weights**, learned from the
+  co-occurrences in training text. There's no geography section, no fact table — every kind of
+  "knowledge" (facts, grammar, coding, tone, reasoning) is one big shared statistical
+  association space, held in those same weight numbers.
 - **Why it correlates with *this* request:** "France" is in the input, and the model has
   seen "France" next to "Paris" countless times in its training text — in billions of the
   same sentences. Your question nudges the scores so "Paris" lands far above "London" and
