@@ -113,8 +113,20 @@ and "what is a tool call" already make sense.
   pattern matcher that was trained by imitation and answers by prediction, not by lookup.**
 - Same prompt twice → can get different answers. Same question, different month → can get a
   different answer (training data changed). Show on Open WebUI.
-- The determinism dial (temperature) exists as one mention, not a section: "the randomness is
-  a knob, not an accident" — and it's *still* not deterministic like a database.
+- **Temperature — a knob that's real even when the provider hides it.** One idea, kept brief:
+  - **What it is:** a number (typically 0–2) that controls how spread-out the model's
+    next-token guesses are. Low = "commit to the most likely token"; high = "wander into the
+    unlikely tokens too."
+  - **0.0** → near-locked. Same prompt, same answer nearly every time (the closest a model gets
+    to deterministic — but a database is *always* the same, so they're still different animals).
+  - **2.0** → max spread. Even unlikely tokens win real odds, so output gets creative *and*
+    sloppy.
+  - **0.7** → the semi-defacto default. Not locked, not wild — fluent, on-topic prose with a
+    little human-feel variety. This is why chat-style products default near here.
+  - **Where you can (and can't) touch it:** OpenAI / Anthropic mask it (they bake in a fixed
+    value per model / use case). Self-run local models (Ollama) expose it directly, and some
+    clouds (e.g. Azure AI Foundry models) let you set it. So the knob is real even on the
+    services that don't show you the dial.
 - _(Fold-in candidate from v1: Lab 1's non-determinism becomes a 3-minute demo here, not a
   15-minute student lab.)_
 
