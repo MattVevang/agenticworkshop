@@ -13,6 +13,45 @@
 > The old "9-lab observe" track is preserved as a **v1.5 option** (see [Option B](#option-b-v15-the-old-lab-track-preservative-option))
 > in case we ever want the comparison/slow-pace version back.
 
+## Late additions
+
+### Grounding and tempering expectations
+
+What is AI today? (fancy word guesser)
+
+- It is an algorithm which attempts to perform an activity
+- It is always triggered via some human action and follows its programming to perform
+- that task.
+  - It never just decides to do something on its own.  
+
+What is AGI
+
+- Insert definition of AGI
+  - Sub text as applicable
+
+Circle of money explained?
+
+- Candid but find example image of the cash flow happening today between tech companies (the circular diagram where money is in this endless circle)
+
+Comparison image of Azure services regarding the broad scope of Azure vs AI
+  
+- No AI is like another and they the things we have today as we know them are not the same
+  - Something that OpenAI does well or poorly is not guaranteed to be the same with Anthropic for example
+- Models all of which do something different from others
+- Tools and harnesses all of which do something different from others
+- Each company doing something typically has their own herbs and seasoning on something
+
+Imagine the array of AI tools out there to physical ones like a hammer in your workbench.
+
+- They all can hit something to some degree but some may hit harder and some do a better job or you learn the feel of the tool
+in the hand after use and you can do better work with the same tool
+
+Do you use AI today?
+
+- Do you ever use spell check while writing a document or email?
+- Have you ever searched for something online?
+- ^ those may not feel like AI but those two are systems that use an algorithm.
+
 ## Why this shape?
 
 The original workshop was an observe-first lab track (temperature, drag races, hallucination trivia).
