@@ -112,10 +112,12 @@ and "what is a tool call" already make sense.
 
 ### 1. What is AI (as of 2026) _(draft)_
 
-- Working definition for the room: software that **perceives** (text in 2026 — we're not doing
-  media in this workshop), **learns patterns from data**, and **acts or decides** on those patterns.
-- The 2026 flavor, honestly: "AI" in daily life means *mostly* large language models and the
-  systems built around them. Distinguish three layers and label them all the time after:
+- Working definition for the room: software that takes in information, uses patterns learned
+  from data, and produces something useful from it: a prediction, recommendation, decision,
+  or new content.
+- The 2026 flavor this workshop focuses on is large language models and the systems built
+  around them. AI is broader than LLMs, but these are the tools behind today's chat and
+  coding assistants. Distinguish three layers and label them all the time after:
   - **The model** (the pattern engine — the weights; expanded in [Section 4](#4-what-is-a-model-really-weights-training-the-internet-draft)),
   - **The harness** (the app/agent loop around it — [Section 11](#11-whats-a-harness-draft)),
   - **The tools & services** (everything the harness can call — [Sections 12–13](#12-whats-a-harness-tool-refine)).
@@ -128,8 +130,9 @@ and "what is a tool call" already make sense.
 ### 2. What is a database _(draft)_
 
 - The contrast anchor for everything LLM-related. A database is **structured, defined, and
-  deterministic**: rows, columns, keys. Ask the same query twice → same answer, always.
-  The rules of how data becomes an answer are *written and inspectable*.
+  designed for deterministic retrieval**: rows, columns, keys. Ask the same query against
+  the same stored data → the same answer. The rules of how data becomes an answer are
+  *written and inspectable*.
 - FRC-friendly version: a database is like a spreadsheet with a contract — you can always
   find out *why* an answer came back, because the path is logical.
 - **Mini example:** a tiny customers table — the whole exhibit for this section:
@@ -143,10 +146,10 @@ and "what is a tool call" already make sense.
   ```
 
   - Rows and columns with static values: ask for *the customer with ID CUST-002* and the
-    answer is the same row, always — the value is *stored*, not *predicted*.
-  - **Why `customerId` is there:** a real database identifies rows by a *unique* key. Names,
-    ages, and cities can all repeat — the ID never does. It's how you point at one record
-    without ambiguity, and what later joins and relationships hang on. (An LLM has no
+    answer is the same stored row — the value is *retrieved*, not *predicted*.
+  - **Why `customerId` is there:** a real database can enforce a *unique* key. Names,
+    ages, and cities can all repeat — this ID is defined not to. It's how you point at one
+    record without ambiguity, and what later joins and relationships hang on. (An LLM has no
     equivalent key: you can only *describe* what you want, which is part of why answers can
     come back plausible-but-wrong — [Section 10](#10-whats-a-hallucination-draft).)
   - Reused later: this same table is the "deterministic side" when we put the LLM side
@@ -161,25 +164,21 @@ and "what is a tool call" already make sense.
   *retrieving* one.
 - The one honest sentence students should walk away with: **an LLM is a very fancy weighted
   pattern matcher that was trained by imitation and answers by prediction, not by lookup.**
-- Same prompt twice → can get different answers. Same question, different month → can get a
-  different answer (training data changed).
+- Same prompt twice → can get different answers. The same product can also answer differently
+  later because its model, instructions, tools, or data sources changed.
 - The randomness is not an accident — it's a knob. See [Section 3a](#3a-temperature-the-determinism-knob-refine).
 
 ### 3a. Temperature: the determinism knob _(refine)_
 
-- **What it is:** a number (typically 0–2) that controls how spread-out the model's
-  next-token guesses are. Low = "commit to the most likely token"; high = "wander into the
-  unlikely tokens too."
-- **0.0** → near-locked. Same prompt, same answer nearly every time (the closest a model gets
-  to deterministic — but a database is *always* the same, so they're still different animals).
-- **2.0** → max spread. Even unlikely tokens win real odds, so output gets creative *and*
-  sloppy.
-- **0.7** → the semi-defacto default. Not locked, not wild — fluent, on-topic prose with a
-  little human-feel variety. This is why chat-style products default near here.
-- **Where you can (and can't) touch it:** OpenAI / Anthropic mask it (they bake in a fixed
-  value per model / use case). Self-run local models (Ollama) expose it directly, and some
-  clouds (e.g. Azure AI Foundry models) let you set it. So the knob is real even on the
-  services that don't show you the dial.
+- **What it is:** a decoding setting that controls how willing the system is to choose a
+  less-likely next token. Low = "stay close to the highest scores"; high = "give the lower
+  scores more of a chance."
+- **Low temperature** → usually more repeatable and focused. Even a setting of 0 does not
+  promise byte-for-byte identical answers every time.
+- **High temperature** → more variation, which can mean more creativity and more mistakes.
+- **The dial is not universal:** its range, default, and availability depend on the model
+  and provider. Local runtimes such as Ollama commonly expose it; cloud APIs may expose,
+  restrict, or ignore it for a particular model.
 
 ### 4. What is a model, really? (weights, training, the internet) _(draft)_
 
@@ -201,9 +200,9 @@ chassis around it.
 
 ### 4a. The "brain" is just a file (weights) _(refine)_
 
-- A model = **billions of small numbers (the weights)** + a generic set of math operations
-  (the "architecture"). All the "intelligence" lives in the numbers; the math that runs them
-  is the same shape for anyone's model of that family.
+- A model = **billions of small numbers (the weights)** arranged inside a particular set of
+  math operations (the "architecture"). The learned behavior is encoded in those numbers
+  and in how the architecture uses them.
 - The weights *are* the product — and they're physically big: the models in this room are
   on the order of ~17 GB **even after compression** (LocalLLMCopilot's `ollama list` shows
   the exact per-model sizes).
@@ -215,12 +214,12 @@ chassis around it.
   qwen3.8:27b-q4_K_M   17 GB   (≈ 27 billion weights as numbers)
   ```
 
-  vs. the LLM's full "display" — a flat blob of **~27 billion numbers**, with *no rows, no
-  columns, no keys, no lookup*. Every piece of "knowledge" is dissolved into that mass
-  (LocalLLMCopilot's `ollama list` numbers give the exact per-model sizes). The point isn't
-  the size; it's the contrast:
-  a database's display is organized so you can *point at* a fact; a model's display has
-  nothing to point at — so you *describe* what you want and it *predicts*.
+  vs. the LLM's full "display" — **~27 billion numbers**, organized for the model's math but
+  not as human-readable rows, keys, or facts. Every piece of "knowledge" is spread through
+  that structure (LocalLLMCopilot's `ollama list` numbers give the exact per-model sizes).
+  The point isn't the size; it's the contrast: a database is organized so you can *point at*
+  a stored fact. A model has no `France → Paris` row to retrieve, so you *describe* what you
+  want and it *predicts*.
 
 ### 4b. Training: the loop that wrote the weights _(draft)_
 
@@ -228,28 +227,30 @@ chassis around it.
 2. It predicts the next token (it will be wrong).
 3. The mistake nips the weights a *hair* in the direction that would have made the right
    token more likely.
-4. Repeat trillions of times, over as much text as the lab could scrape (mostly: the
-   public-internet text, plus books and code).
+4. Repeat on a huge training mixture that may include public text, licensed material,
+   books, code, human examples, and synthetic examples.
 
 - Result: the statistical structure of language — and the facts that rode along with it —
   gets **compressed into the numbers**. That's the whole training story, honestly told.
-- **The "not memorizing" reframe (the one that sticks):** training isn't reading and storing
-  the internet — it's like becoming a chef after cooking thousands of recipes. You no longer
-  keep the cookbook *in your kitchen*, but the patterns are in your head, and you can
-  improvise new dishes. Payoff ahead: because no book is stored inside, the model can't
-  *look a fact up* — which is exactly why it's stale ([Section 9](#9-why-isnt-ai-currentdraft))
-  and why it hallucinates ([Section 10](#10-whats-a-hallucination-draft)).
+- **The "not a searchable copy" reframe (the one that sticks):** training isn't building a
+  library where the model can reopen the original pages — it's like becoming a chef after
+  cooking thousands of recipes. The patterns are in your head, and you can improvise new
+  dishes, but you cannot point to the exact cookbook page. Models can memorize occasional
+  examples, but they still have no reliable fact lookup. That's why they can be stale
+  ([Section 9](#9-why-isnt-ai-currentdraft)) and hallucinate
+  ([Section 10](#10-whats-a-hallucination-draft)).
 
 ### 4c. Same ingredients, different kitchens _(draft)_
 
-- The 2026 model families are all, in broad strokes, trained on **the same raw material** —
-  so the differences between labs come from the *kitchen*, not the ingredients:
+- The 2026 model families draw from **many overlapping kinds of raw material**, but no two
+  labs publish or use exactly the same mixture. Their differences come from both the
+  ingredients and the *kitchen*:
   - **The recipe** — architecture + scale (how the math is arranged, how many parameters):
-      same data, different engine.
+      similar task, different engine.
   - **The mix ratio** — data curation: how much code vs. books vs. conversation, what gets
       thrown out (low-quality pages, junk, NSFW). Each lab's "flair."
-  - **The seasoning** — an alignment pass (preference tuning / RLHF) that shapes the *style
-      and behavior* of answers, not the facts inside them.
+  - **The seasoning** — post-training (preference tuning / RLHF and related methods) that
+      shapes style, safety, reasoning behavior, tool use, and when the model says "I don't know."
 - **Consequence for the room:** models from the same era share quirks and blind spots
   because they ate the same diet. "Try another model" sometimes helps and sometimes isn't
   different at all — different weights, similar food. (LocalLLMCopilot's measured inventory
@@ -261,33 +262,29 @@ chassis around it.
   against **all those stored weights**, layer after layer; out comes the score-per-next-token
   that [Section 5](#5-how-does-an-llm-work-if-it-isnt-deterministicdraft) runs with.
 - So "using a model" = running arithmetic through a fixed bag of saved numbers. No lookup,
-  no page-turn — the weights *are* the compressed knowledge, and the math is the same every
-  time. (This is why one model behaves consistently: *your* prompt is the only varying input.)
-- **Quantization** (the "Q4" in a model name): the weights start life as FP16 (16 bits per
-  number), the "raw" brain — and it's *massive*. Q8 halves it, Q4 quarters it, in **memory
-  and speed**. The catch isn't memory — it's the fear that "Q4 = ¼ of the brain." It **isn't:**
-  quantization is *rounding* the weights to fewer digits (a lossy **compression**), not
-  deleting knowledge. There's no region where "the France capital got rounded away" so the answer
-  goes null. The loop (4f) mostly needs the weights' *ranking* — "big connection vs. small one" —
-  not their exact last digits, so rounding shifts each score by dust that, across billions of
-  weights, barely moves the final pick. (The `_K_M` in `Q4_K_M` is the extra safety: the few
-  weights that matter most keep extra precision, the noise absorbs a coarser rounding.)
-  **Bottom line a student taking home Ollama/LMStudio should hear:** Q4 ≈ **~98–99% of the
-  behavior** at **¼ the RAM, ~3–4× faster** — a *slightly* dumber model, not a lobotomized one.
-  It's exactly what makes a frontier-class model fit on a laptop at all.
+  no page-turn — the weights hold learned patterns, while your prompt and the surrounding
+  system decide what the model does with them.
+- **Quantization** (the "Q4" in a model name): model weights are normally created and run at
+  higher precision. Quantization rounds many of those numbers to fewer digits - a lossy
+  **compression**, not deleting a quarter of the model's knowledge. There is no region where
+  "the capital of France" gets cut out. Lower-precision files use much less weight memory and
+  can run faster, although total RAM and speed also depend on context size, hardware, and the
+  runtime. **Bottom line for a student taking home Ollama/LM Studio:** Q4 is usually a practical
+  trade - a much smaller model file with some possible quality loss, not a lobotomized model.
+  It is what makes many otherwise-too-large models usable on ordinary hardware.
 
 ### 4e. How does a number become a word? (vocabulary) _(refine)_
 
 4d says "out comes a score-per-next-token" — but **which** next tokens? The model ships
-with a **vocabulary**: a fixed list of *every* token it can ever produce (for current models,
-tens of thousands of entries). That list is the number → word lookup:
+with a **vocabulary**: a fixed list of the text pieces and special markers it can output.
+That list is the number → token lookup:
 
 ```
 vocabulary (fixed, baked into the model)
   token #91    → "what"     token #2210  → "capital"
   token #522   → "is"       token #1188  → "France"
   token #4401  → "the"      token #4402  → "Paris"
-  …            (a few 10,000s total)
+  …            (the total depends on the model)
 ```
 
 Now the whole answer, followable on one slide — a question every student
@@ -297,13 +294,13 @@ already knows the answer to, so nothing here needs checking:
 user:      "what is the capital of France?"
 
 1  tokens:          "what | is | the | capital | of | France | ?"
-                    │ through THE vocabulary (word → slot)
+                    │ through THE vocabulary (token → slot)
 2  numbers:         [91, 522, 4401, 2210, 187, 1188, 9]
                     │  the arithmetic of 4d (weights in, scores out)
 3  scores:          "London" 2.1%  "Lyon" 1.3%  "Nice" 0.4%   "Paris" 95.0% …
-                    ▲ it *scores EVERY token in the list*, picks the top
-4  word out:        "Paris"
-                    │ through the vocab again (slot → word)
+                    ▲ it *scores EVERY token in the list*, then chooses one
+4  token out:       "Paris"
+                    │ through the vocab again (slot → token)
 next round repeats: "Paris" + history → "."
                     ─────────────────────────────────────────────
                     "what is the capital of France? Paris ."
@@ -316,13 +313,13 @@ next round repeats: "Paris" + history → "."
   "knowledge" (facts, grammar, coding, tone, reasoning) is one big shared statistical
   association space, held in those same weight numbers.
 - **Why it correlates with *this* request:** "France" is in the input, and the model has
-  seen "France" next to "Paris" countless times in its training text — in billions of the
-  same sentences. Your question nudges the scores so "Paris" lands far above "London" and
+  learned a very strong relationship between "France," "capital," and "Paris" from its
+  training examples. Your question nudges the scores so "Paris" lands far above "London" and
   "Lyon" — the numbers do the job a database join would do.
 - **The database tie-back (makes the whole section pay off):** the vocabulary is the LLM's
   nearest equivalent of Section 2's `customerId → name` lookup — a *fixed, inspectable*
   mapping of number → thing. The model's difference: the answer isn't retrieved from a
-  stored row, it's *assembled one scored word at a time*, each round using that list. That
+  stored row, it's *assembled one scored token at a time*, each round using that list. That
   is the entire "numbers → coherent thought" mechanism, honestly stated.
 - Where this leaves the open questions: the *ranking* is where 3a (temperature) works and
   where Section 5 (non-determinism) lives — and where Section 10 (hallucination) sneaks in,
@@ -333,20 +330,20 @@ next round repeats: "Paris" + history → "."
 The whole "how does it actually work" story in one place, start to finish. No side-trips and
 no "trust me," because that is exactly what this section exists to avoid.
 
-- **The cast is tiny — that's all there is:** a bag of learned numbers (the *weights*, 4a)
-  that encode which words tend to appear together, plus one fixed list of every word it's
-  allowed to say (the *vocabulary*, 4e). A question in, and the same **five steps repeat,
-  one word at a time**, until the answer is done:
+- **The simplified cast is tiny:** a bag of learned numbers (the *weights*, 4a), the model's
+  architecture that runs the math, and one fixed vocabulary of tokens it can choose from
+  (4e). A question goes in, and the same **five steps repeat, one token at a time**, until
+  the answer is done:
 
 ```
         ┌──────────────────────────────────────────────────────┐
-        │  for EVERY word the model outputs:                   │
+        │  for EVERY token the model outputs:                  │
         │    1. take the whole conversation so far → numbers   │
         │    2. run the bag-of-numbers math on those numbers   │
-        │    3. on the other side: a SCORE for every word in   │
+        │    3. on the other side: a SCORE for every token in  │
         │       the entire vocabulary                          │
-        │    4. pick a word (the scores decide which one)      │
-        │    5. feed that word back in  →  repeat from 1       │
+        │    4. choose a token using those scores              │
+        │    5. feed that token back in  →  repeat from 1      │
         └──────────────────────────────────────────────────────┘
         it stops when step 3 ranks the "end of answer" marker first
 ```
@@ -354,31 +351,30 @@ no "trust me," because that is exactly what this section exists to avoid.
 - **Follow the loop on one real question, top to bottom:**
   "what is the capital of France?" → numbers → scores → **"Paris"** wins (the rest of the
   world's capitals land far below) → "Paris" feeds back in → scores again → **"."** → the
-  "end" marker wins → **stop.** Two words came out, and *each one* was produced by that
-  identical five-step loop. Nothing else happened behind the scenes.
+  "end" marker wins → **stop.** Two visible tokens came out, and *each one* was produced by
+  that identical five-step loop.
 
 - **Every "weird" thing about AI is just that same loop wearing a different hat** — these
   aren't extra features, they fall straight out of the five steps:
-  - **Temperature** is a knob on *step 4 only.* Low = always take the top scorer (always
-    "Paris"). High = sometimes gamble on a low scorer (maybe "London"). Same scores,
-    different strictness about how hard we respect them.
-  - **It never invents a word** — *step 4* can only ever pick from that fixed list. That's
-    why an answer always *sounds* like real language, even when it's wrong.
-  - **It can be confidently wrong** — the loop emits the *most probable* next word, and the
-    most probable word isn't always the *true* one. When the two disagree, the model says
+  - **Temperature** influences *step 4.* Low = stay near the top scorers. High = give lower
+    scorers more of a chance. Same scores, different strictness about how closely to follow them.
+  - **It builds from fixed pieces** — *step 4* can only pick tokens from the vocabulary, but
+    several tokens can combine into a new word, name, or code identifier.
+  - **It can be confidently wrong** — the loop emits a probable next token, and the
+    probable continuation isn't always the *true* one. When the two disagree, the model says
     the one that merely *sounds* right. That **is** a hallucination: not a bug, just the
-    direct consequence of building an answer by predicting the next word.
+    direct consequence of building an answer by predicting the next token.
 
-**One line to take away:** a bag of numbers, a word list, and a loop that runs once per word.
-That is the entire engine — and there is nothing hidden behind it.
+**One line to take away:** learned numbers, a token list, and a prediction loop that runs
+once per token. That is the useful mental model for how an answer is generated.
 
 ### 5. How does an LLM work if it isn't deterministic _(draft)_
 
 - The "fancy word guesser" is a real starting point — build on it instead of over it:
-  - Given a prompt, the model scores **every possible next word** (from its vocabulary).
+  - Given a prompt, the model scores **every possible next token** (from its vocabulary).
   - It picks (weighted by probability — how spread out those odds are can be dialed, which is
     the whole temperature story), appends it, re-scores, repeats.
-  - That's the whole engine. Everything else is scaffolding around it.
+  - That's the core generation loop. The transformer architecture is what creates those scores.
 - **"There's more to it," made concrete:**
   - **It's not one guess — it's billions of parameters doing arithmetic.** The "fancy" is
     that the weights encode statistical structure of language (and, incidentally, knowledge
@@ -407,28 +403,27 @@ That is the entire engine — and there is nothing hidden behind it.
 - A typical sentence breaks apart in surprising ways: words split on quotes, apostrophes,
   and hyphens; punctuation can even get its own token. So "The driver said 'let's go'!" does
   not map one-to-one onto its words at all.
-- One number to plant: typical English ≈ 4 characters per token, roughly 0.75 tokens per word.
-  They'll use this ratio the rest of the session.
+- One number to plant: typical English ≈ 4 characters or 0.75 words per token - equivalently,
+  about 1.33 tokens per word. It varies by model and text, but it is a useful rough estimate.
 
 ### 7. What is AI context _(draft)_
 
-- **Within a session/thread:** every model call sends the whole conversation (history) + the
-  new message. The model has **no memory between calls** — "it remembered" is actually
-  "the harness re-sent everything." This reframes the whole product experience: the chat
-  transcript isn't memory, it's evidence we keep handing to a short-term brain.
+- **Within a session/thread:** the model has **no automatic memory between independent calls**.
+  The product must make earlier information available again - commonly by re-sending messages,
+  referencing stored conversation state, or retrieving saved memory. "It remembered" is
+  really "the system supplied that information again." The transcript is not memory inside
+  the weights; it is evidence repeatedly handed to a short-term brain.
 - **Why parts get lost in long interactions:**
   - **The window is finite** → when the conversation outgrows it, *something* has to give.
-  - **What gives, in harnesses:** older turns are **compressed/summarized** (the harness asks
-    a model to summarize the old history into a shorter piece of text) or **dropped**. The
-    summary *is* a lossy
-    compression — like a high-compression JPEG, not a zipped file: the detail that's lost is
-    gone for good, no amount of re-opening brings it back (a real ZIP loses nothing).
-  - **The "lost in the middle" effect:** even when everything fits, attention to the very middle
-    of a long prompt is weaker than to the start and end. So "it saw it" still can mean "it
-    saw it but under-weighted it."
-- **How we describe "compression" without lying:** the transcript becomes a *smaller
-  compressed text* — it carries the gist but not the detail, exactly like you'd write on a
-  whiteboard for the next shift: "we fixed the PID, still fighting the limelight."
+  - **What gives, in harnesses:** older turns may be **compressed/summarized**, selectively
+    retrieved, or dropped. Compression is lossy - like a high-compression JPEG, not a zipped
+    file: details that were not preserved may be unavailable later.
+  - **The "lost in the middle" effect:** many models have more trouble retrieving details from
+    the middle of a long prompt than from the start or end. So "it fit in the window" does not
+    always mean "the model used every detail equally well."
+- **How we describe "compression" without lying:** older state becomes a *smaller
+  representation* - often compressed text carrying the gist but not every detail, like you'd
+  write on a whiteboard for the next shift: "we fixed the PID, still fighting the limelight."
 - _(Instructor depth: what it looks like in the wild — a harness with a deliberately small
   budget (LocalLLMCopilot documents the exact `PromptTokens` budget mechanics) hits its limit
   in a long conversation, and the truncation/summarization event is exactly where the
@@ -437,8 +432,8 @@ That is the entire engine — and there is nothing hidden behind it.
 ### 7a. The Bob example: why the model "forgets" _(refine)_
 
 - **The memory beat:** you tell a session, "My name is Bob." A few messages later you ask,
-  "What is my name?" → **Bob.** That looks like memory. It isn't — every call re-sends the
-  whole transcript, and the sentence "My name is Bob" was right there in it.
+  "What is my name?" → **Bob.** That looks like memory. It isn't memory inside the model -
+  the system supplied "My name is Bob" again as part of the session state.
 - **The long-session beat:** then you do hours of back-and-forth coding. The transcript
   outgrows the window, so the harness **compresses** the old turns to stay under budget.
   The compression chases what the conversation has been about: hours of code → build
@@ -475,31 +470,35 @@ That is the entire engine — and there is nothing hidden behind it.
 
 ### 9. Why isn't AI current? _(draft)_
 
-- **Because it was trained, not updated.** A model's knowledge is frozen at its training
-  cutoff. Nothing about your session changes what it *knows* — changes what it can *see*.
+- **Because a deployed model's weights are trained, then fixed.** Your conversation does not
+  rewrite them. It changes what the model can *see now*, not what is baked into that model version.
 - The clean split for students:
   - **Knew-at-train-time:** baked into the weights, never refreshed, can be confidently stale.
   - **Sees-at-runtime:** anything a tool hands it (web search, files, API responses) —
     fresh, but only because the *harness* fetched it, not the model.
 - **The asterisk, because this is where "AI isn't current" misleads:** the never-current
   claim is about **the model by itself**, not **the services people actually open.** The online
-  AI tools students will use (Copilot, ChatGPT, and the like) bundle web-search and similar
-  tools *on by default*, so the answer on your screen **can be current** even though the model
-  underneath still has knowledge frozen months or years back. What a student touches is almost
+  AI tools students will use (Copilot, ChatGPT, and the like) may bundle web search and similar
+  tools, sometimes invoking them automatically, so the answer on your screen **can be current**
+  even though the model underneath still has knowledge frozen months or years back. What a
+  student touches is almost
   never the bare model — it's the service that wraps it: *fresh at the edges, stale at the core*.
   Both are true at once; the core — the baked-in, un-updated part — is the one to stay skeptical
   of, because it's the one that can be confidently wrong in the ways [Section 10](#10-whats-a-hallucination-draft) describes.
-- The punchline that pays off in Section 12: **a model with no tools can never be current;
-  a model with the right tools is only as current as its sources.** Curation isn't a model
-  feature — it's a harness feature.
+- The punchline that pays off in Section 12: **a model cannot independently fetch current
+  information without an outside input path.** A user can paste in today's information, or
+  a harness can retrieve it with tools - and the answer is only as current as those sources.
+  Curation isn't a model feature; it is a system and source-selection feature.
 - The pattern in miniature: ask about something from *this year* → the model misses or waffles.
   Re-ask through a web-search tool → the same model answers correctly. Same weights, different
   answer — the gap was the tool, not the brain. This is what makes Section 12 unavoidable.
 
 ### 10. What is a hallucination _(draft)_
 
-- **Definition for the room:** a confident, fluent answer that isn't grounded in reality.
-  Not a "mistake" the way a calculator wrong is — it's the *predicted* answer being
+- **Definition for the room:** an answer that sounds plausible but is false or unsupported
+  by the evidence available to it. It may sound confident, but confidence is not required.
+  It is not a "mistake" in the same way as entering the wrong equation into a calculator -
+  it is the *predicted* answer being
   plausible-but-false, because the engine (Section 5) optimizes for *plausible text,* and
   "sounds right" ≠ "is right."
 - **Why it happens (tie back, don't re-derive):**
@@ -509,13 +508,14 @@ That is the entire engine — and there is nothing hidden behind it.
   - No fact-checking step exists *inside* the model. (Everything external to it is Section 12.)
 - **How we catch/handle it (the practical part students keep):**
   - Ask for a **source or cite**, then **check the citation.**
-  - Ask it to **show its work** (reasoning / code) — verifiable artifacts beat asserted answers.
+  - Ask for **verifiable work**: code you can run, calculations you can repeat, or claims you
+    can trace to a real source. A generated explanation by itself is not proof.
   - Use **tools** (search, DB, code execution) to ground facts instead of trusting weights.
-  - **Two-model cross-check** for cheap high-stakes facts (two different engines disagreeing
-    is a signal, even if neither is "right").
-- **Reframe honesty:** hallucination isn't a bug to be fixed by "a smarter model." It's the
-  *expected behavior of a predictive engine.* Your job (theirs, anyone's) is to build the
-  verification, not wait for the model that never lies.
+  - **A second model can be a warning signal**, especially when the answers disagree, but
+    agreement is not independent proof. Both models can share the same bad assumption.
+- **Reframe honesty:** better models and grounding can reduce hallucinations, but no current
+  model makes verification unnecessary. Your job (theirs, anyone's) is to verify important
+  output, not wait for the model that never lies.
 
 ### 11. What is a harness _(draft)_
 
@@ -523,8 +523,9 @@ That is the entire engine — and there is nothing hidden behind it.
   model* that: takes user input, assembles the context (history + system prompt + tool
   results), makes the API calls, runs the model's requested actions, feeds results back,
   and repeats until done.
-- That "repeats until done" is what makes something **agentic** — the loop is the agent.
-  One call = chatbot. Loop + tools = agent. (Now "agentic" has a definition the room can use.)
+- That "repeats until done" loop is the most common shape of something **agentic**: the
+  system pursues a goal across multiple steps, often using tools and deciding what to do next.
+  The loop is part of the harness; the configured goal-seeking system is the agent.
 - The names they'll actually meet: Copilot CLI, Open WebUI, any `aider`/`claude`-style
   CLI. Different skins, same skeleton: **assemble → call → act → repeat.**
 - **Why it matters (the thesis):** the *same model* behaves differently in different harnesses
@@ -536,8 +537,9 @@ That is the entire engine — and there is nothing hidden behind it.
 
 ### 12. What is a harness tool _(refine)_
 
-- **A tool is a function the model can call.** The model never *executes* anything — it
-  outputs a *request* (usually JSON: `tool_name(args)`). The **harness** runs it, gets the
+- **A tool is a function the model can request.** The model never *executes* anything — it
+  outputs a structured request (often represented like `tool_name(args)`). The **harness**
+  decides whether to allow it, runs it, gets the
   result, and **feeds the result back as context** for the next model call.
 - Walk one tool call by hand, token by token:
   1. Model outputs `web_search("FRC 2026 rookie season results")`.
@@ -545,115 +547,117 @@ That is the entire engine — and there is nothing hidden behind it.
   3. Harness appends the search result to the conversation.
   4. Model reads its own "history" (which now includes the result) and answers.
 - **The mental model students keep:** tools are how a brain with no hands gets hands. The model
-  *decides*; the world (via the harness) *acts*. The loop from Section 11 is where this lives.
+  proposes; the harness permits and acts. The loop from Section 11 is where this lives.
 - **What a tool is NOT:** it's not the model "knowing" a thing. A tool is just a pipe to the
   outside world; the model's *knowledge* is still (Section 9) whatever it was trained on.
   This kills the "the AI *can* search the web" misconception — the *harness* can; the model
   just *asked* nicely.
-- **Where we pull a real one from:** LocalLLMCopilot's full tool inventory (138–140 measured
-  tools across built-ins, web, browser, and GitHub MCP) is the canonical list to reference when
-  a student asks "what tools actually exist." We don't teach all of them — we teach *one* and
-  let them know the rest are real.
+- **Where we pull a real one from:** use the live Copilot CLI session as the exhibit when a
+  student asks "what tools actually exist." The exact count changes with CLI version,
+  permissions, enabled features, and MCP servers. We don't teach all of them - we teach *one*
+  and let them see that the rest are real.
 
 ### 12a. A real inventory: the tools a harness actually mounts _(refine)_
 
-- **Receipts, not abstraction:** the Copilot CLI's own reference *publicly documents* its
-  built-in tool list ("Tool availability values"). This is the same kind of tool students
-  will meet in real software work — and its built-ins are **three named families plus an
-  "other" bucket**, each one a capability the model itself cannot perform:
+- **Receipts, not abstraction:** the Copilot CLI exposes a real tool inventory. The exact
+  names vary by version and configuration, but the capabilities fall into a few recognizable
+  families - each one something the model itself cannot perform:
 
 ```
-family                        tools (as listed)
-─────                         ─────────────────
-shell tools                   bash/powershell, plus list/read/stop/write shell sessions
-file operation tools          view · create · edit · apply_patch
+family                        representative tools
+─────                         ────────────────────
+shell execution               powershell, plus session start/read/stop
+file operations               view · search · glob · apply_patch
+web and external services     web fetch/search · browser · MCP tools
 agent and task delegation     task · read_agent · write_agent · list_agents
-other                         grep/rg · glob · web_fetch · skill · ask_user
+specialized workflows         skills · code review · user approval
 ```
 
-- **The depiction:** the model in and out is *only text*. `view("config.py")` isn't the model
-  reading a file — it's the model emitting a text request; the CLI's process does the reading,
-  and the returned *text* is what enters the context. The model ever "sees" only what tool
-  results hand back as words.
+- **The depiction for this text-and-code workshop:** `view("config.py")` isn't the model
+  opening a file by itself - it emits a structured request; the CLI's process does the reading,
+  and the returned excerpt enters the model's context. Modern models can also accept other
+  content types, but the same rule holds: they see only what the surrounding system supplies.
 - **"How does it read files I've never showed it?" — trace `grep` end-to-end:**
   1. user: *"why is the build failing?"*
   2. model → `grep("ERROR", "build.log")` — that's *text* (a tool-call request).
   3. harness runs grep on the local machine; matching lines **come back into the context**.
   4. model reads them: *"the failure is in X, line 42"* → next call: `view("X", near 42)`.
   5. harness returns those lines; model → `edit(...)`; the result is fed back; it verifies.
-  The file lives on the machine, **not in the model** — nothing of it is among 27B weights.
+  The file lives on the machine, **not in the model's weights**.
   The model "understands" it only because each tool result becomes new context for the next
   call, and it can keep iterating as long as it keeps calling. *That* iterate loop is what
   "agentic" means, mechanically.
-- **Quantified:** 0 bytes of the local file ever enter the model — yet N rounds of text-out
-  (request) → text-in (result) let it act on the file repeatedly. New *capability* is mounted
-  by the harness, never trained into the weights.
-- **It's public documentation:** the list above is the "Tool availability values" section
-  of the Copilot CLI command reference — anyone can read it, and it's identical everywhere.
-  _(Instructor depth: the doc page is the single source of truth if a student disputes any line
-  of the table.)_
+- **The boundary:** only the excerpts returned by the tool enter the model's context; the
+  unreturned parts of the local file do not. Repeated request → result rounds let it act on
+  the file without permanently training that file into the weights. New *capability* is
+  mounted by the harness, not retrained into the model.
+- **It is inspectable:** the CLI's help and environment views show what is available in that
+  session. The inventory is evidence of the model-versus-harness distinction, not a permanent
+  master list that is identical on every machine.
+  _(Instructor depth: use the current CLI help/reference and the room's configured session as
+  the source of truth for the day of the workshop.)_
 
 ### 13. What is MCP _(refine)_
 
 - **The problem tools exposed:** every harness wanted tools, every app wanted to *be* a tool,
   and everyone was wiring them pair-by-pair. N harnesses × M apps = N×M integrations, hell.
-- **MCP (Model Context Protocol):** a single standard so a tool/app writes its server *once*
-  and *any* compatible harness can plug it in. N + M instead of N×M.
+- **MCP (Model Context Protocol):** a shared standard so a tool/app can expose its capabilities
+  once and compatible AI hosts can connect to it. The goal is closer to N + M reusable pieces
+  than N×M custom pairings, even though authentication and configuration still take work.
 - **Who's who:**
   - **MCP server** = the thing that *exposes* capabilities (a GitHub server, a file server, a
     search server) and describes them (name, inputs, what it returns).
-  - **MCP client** = the harness that *discovers* the server's tools and can call them (Copilot,
-    Claude Desktop, any supported CLI).
-  - The **model** talks to neither directly — the harness does (Section 12). The model only ever
-    sees "a list of tools + their descriptions." MCP just makes that list *shareable and standard.*
-- **Why it's the 2026 default for "extending AI to other sources":** it's the difference between
-  a model trapped with its training-time data (Section 9) and one that can reach *live,
-  external, current* data (GitHub, your files, the web, a DB). MCP is the *plumbing* that makes
+  - **MCP host/client** = the AI application and its connection that discover and call those
+    capabilities (Copilot, Claude Desktop, or another supported application).
+  - The **model** talks to neither directly — the host does (Section 12). The model sees only
+    the capabilities and results the host chooses to supply. MCP makes that connection
+    *shareable and standard.*
+- **Why it is a major 2026 standard for extending AI to other sources:** it helps connect a
+  model to *live, external, current* data (GitHub, your files, the web, a DB). MCP is the
+  *plumbing* that makes
   "closed, limited data → open, live sources" a matter of *adding a server*, not retraining.
 - **The capability jump, concretely:** without tools, a model can only answer from frozen
   weights. With MCP, the same model can read *your* repo, *your* files, *live* pages — current
   where it used to be stale. That's the whole "extend capabilities from closed limited data
   to other sources" thesis in one breath.
-- Attach an MCP server and its tools appear in the model's tool list — Section 12's
-  walkthrough, now on an *external* server.
-- _(Instructor depth: LocalLLMCopilot's benchmark is literally measuring tool-call reliability
-  across an MCP tool inventory — how many of 95 GitHub MCP tools a model can actually call
-  correctly. If students ask "how do we *know* tools work?", the answer is: you measure it,
-  exactly like that repo does. Great credibility anchor.)_
+- Attach and approve an MCP server, and the host can add its capabilities to what the model
+  may use - Section 12's walkthrough, now backed by an *external* server.
+- _(Instructor depth: LocalLLMCopilot's benchmark measures tool-call reliability across a
+  versioned MCP inventory. If students ask "how do we *know* tools work?", the answer is:
+  you measure it against the exact tool set and version, just like that repo does.)_
 
 ### 14. What is a system prompt _(refine)_
 
-- **The hidden first message.** Every conversation has a message the user never sees: the
-  **system prompt**. It sets the model's role, tone, constraints, and rules for *this* session
+- **The highest-level session instructions.** Most AI products supply a **system prompt** or
+  equivalent instructions that the user may not see. It sets the model's role, tone,
+  constraints, and rules for *this* session
   ("You are a careful code reviewer. Never run destructive commands. Answer in English.")
 - **Why it's powerful:** it's the highest-authority instruction in the context — the model
   treats it as the framing for everything after. It's how the *exact same model, in the
   exact same harness*, becomes a friendly tutor under one system prompt and a strict
   linter under another — *without changing weights at all*. Same model, same harness,
   different system prompt → different "personality."
-- **What it is NOT:** it's not *extra* knowledge, and it's not *stronger than the model's
-  training* in an absolute sense — it's a strong *bias* in context. A long, clever user prompt
-  can bleed it (this is the seed of [prompt-injection, Section 17](#17-guided-failure-when-things-go-off-the-rails-draft)).
-- **Concrete:** a system prompt is fully readable — e.g., in the settings of Copilot or
-  Open WebUI — the same question, a different system prompt, and the model's behavior
-  visibly changes.
+- **What it is NOT:** it's not *extra* knowledge and it is not a security boundary by itself.
+  Models can still fail to follow higher-authority instructions, which is why the harness
+  also needs permissions and guardrails. This is the seed of
+  [prompt injection, Section 17](#17-guided-failure-when-things-go-off-the-rails-draft).
+- **Concrete:** when a product lets you view or edit these instructions - such as a locally
+  controlled Open WebUI setup - the same question with a different system prompt produces
+  visibly different behavior. Commercial products may keep some instructions hidden.
 
 ### 15. Instructions and the system prompt _(refine)_
 
 - **The relationship, stated plainly: they don't replace each other — they layer.**
-  - The **system prompt** is the standing order: always active, sets the frame.
-  - **Instructions** (a CLAUDE.md / AGENTS.md / project rules / "always do X") are *appended,
-    merged, or injected into the context* by the harness, usually *on top of / alongside* the
-    system prompt — so they *coexist*, not override.
-  - The model gets **one big context** (system + instructions + history + your message) and
-    weighs them all. There's no hard "system beats user" rule *inside the model* — it's all
-    just weighted context, which is exactly why long, adversarial user text can *dilute or
-    argue with* the system frame.
-- **Order & precedence (the honest version):** different harnesses *present* them differently
-  (some literally prepend the system prompt, some merge project instructions into it, some
-  treat "developer" messages as higher-priority). The concept is stable — *all instructions
-  live together in context and compete for the model's attention* — the exact wiring is a
-  harness detail. Teach the concept; name the wiring when a student asks.
+  - The **system prompt** is the higher-authority standing order: it sets the frame.
+  - **Instructions** (a CLAUDE.md / AGENTS.md / project rules / "always do X") are loaded
+    into the context by the harness at the authority level that product assigns them. They
+    coexist with the system prompt rather than replacing it.
+  - The model gets layered context (system + project instructions + history + your message),
+    but the platform assigns those layers different authority. A user message is not supposed
+    to override a higher-authority system rule, even though models can still fail to follow it.
+- **Order & precedence (the honest version):** different harnesses expose different roles and
+  wire project instructions differently. The stable concept is that instructions are layered,
+  some layers outrank others, and the exact hierarchy is a harness/provider detail.
 - **The practical takeaway students keep:** you *steer* a model with layered text, not by
   replacing anything. That's why a repo's `AGENTS.md` can make the same AI behave differently
   in one repo vs. another — no retraining, just *more instructions in the context*.
@@ -666,15 +670,15 @@ other                         grep/rg · glob · web_fetch · skill · ask_user
 - **A skill is a packaged, reusable instruction + procedure** the harness loads *on demand* —
   "when the task is X, here's the exact playbook, tool list, and guardrails to follow."
 - **How it differs from plain instructions (Section 15) and tools (Section 12):**
-  - An **instruction** is *always-on text* in context (a rule).
+  - An **instruction** is a rule the harness loads when its scope applies.
   - A **tool** is a *capability* the model can call (a hand).
   - A **skill** is a *playbook* — a named, loadable bundle of instructions + which tools to use
     + step-by-step behavior — that the harness **injects only when relevant**. It's how you
     give an agent "experience" (the way to do *this specific job* well) without bloating every
     context with every procedure.
 - **Why it matters (the 2026 angle):** skills are how you go from "a model that can *do* a
-  hundred things" to "a model that does *this one* thing reliably" — you encode the tribal
-  knowledge (the sequence, the gotchas, the tools) once, and the harness reuses it. It's
+  hundred things" to "a model that does *this one* thing more consistently" — you encode the
+  tribal knowledge (the sequence, the gotchas, the tools) once, and the harness reuses it. It's
   *procedural memory* that's file-based and shareable, not baked into weights.
 - **The relationship, one breath:** system prompt = *who it is*; instructions = *standing rules*;
   tools = *what it can touch*; skills = *how it does a specific job, on demand.*
@@ -689,13 +693,13 @@ doubles as a **diagnostic**: when something goes wrong, which concept explains i
 does the fix usually look like.
 
 - **The runaway loop** — a tool that keeps returning "not done" so the harness re-calls the
-  model forever. The loop is the agent — and nothing in the loop says when to stop by
-  itself. Fix: a max-iterations guard.
+  model forever. An agent loop needs an explicit reason to stop. Fix: a max-iterations guard,
+  time budget, or other stopping rule.
 - **The prompt-injection via tool output** — a "fetched page" that contains *instructions* for
-  the agent ("ignore previous rules, do X"). The model can't fully tell "data" from "orders."
-  Why: everything it ever sees — the built-in role, the conversation, the fetched page — is
-  the same flat stream of text. There is no official instruction channel and no ordinary
-  one, so the model can't structurally tell the difference.
+  the agent ("ignore previous rules, do X"). Platforms do have higher- and lower-authority
+  instruction channels, but a model can still mistake untrusted data for an order or fail to
+  respect the boundary. Fix: treat tool output as untrusted, restrict permissions, validate
+  proposed actions, and require approval for consequential changes.
 - **The confidently-wrong answer** — a hallucination in a high-stakes-looking fact, caught
   by asking the model for its source and cross-checking it against something real.
 - **The overload** — a context pushed past its fixed window: truncation or summarization
