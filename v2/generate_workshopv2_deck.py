@@ -686,7 +686,7 @@ def vocabulary_scoring_slide(prs, index, notes):
     add_notes(slide, notes)
 
 
-def three_cards_slide(prs, index, kicker, title, cards, accent, notes):
+def three_cards_slide(prs, index, kicker, title, cards, accent, notes, bottom=None):
     slide = new_slide(prs, accent, index)
     add_kicker(slide, kicker, accent, str(index))
     add_title(slide, title)
@@ -706,6 +706,8 @@ def three_cards_slide(prs, index, kicker, title, cards, accent, notes):
             color,
             badge=str(i + 1),
         )
+    if bottom:
+        add_text(slide, bottom, 1.1, 6.3, 11.1, 0.34, size=15, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -848,7 +850,7 @@ def bubbles_slide(prs, index, kicker, title, bubbles, accent, notes, center=None
     add_notes(slide, notes)
 
 
-def stack_slide(prs, index, kicker, title, layers, accent, notes):
+def stack_slide(prs, index, kicker, title, layers, accent, notes, bottom=None):
     slide = new_slide(prs, accent, index)
     add_kicker(slide, kicker, accent, str(index))
     add_title(slide, title)
@@ -859,6 +861,8 @@ def stack_slide(prs, index, kicker, title, layers, accent, notes):
         add_box(slide, x, y, width, 0.66, fill=PANEL, line=color)
         add_text(slide, name, x + 0.28, y + 0.12, 2.5, 0.34, size=15, color=color, bold=True)
         add_text(slide, description, x + 2.85, y + 0.12, width - 3.12, 0.34, size=13, color=TEXT)
+    if bottom:
+        add_text(slide, bottom, 1.15, 6.35, 11.05, 0.3, size=14, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -1230,21 +1234,72 @@ def tool_call_slide(prs, index, notes):
 def mcp_slide(prs, index, notes):
     slide = new_slide(prs, CORAL, index)
     add_kicker(slide, "MCP", CORAL, str(index))
-    add_title(slide, "One shared plug for many capabilities")
-    add_circle(slide, 5.2, 2.33, 2.8, fill=PANEL_2, line=CORAL)
-    add_text(slide, "AI HOST", 5.2, 2.72, 2.8, 0.5, size=24, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
-    add_text(slide, "+ MCP client", 5.2, 3.33, 2.8, 0.4, size=13, color=CORAL, bold=True, align=PP_ALIGN.CENTER)
-    items = [
-        ("GITHUB", 0.8, 2.2, PURPLE),
-        ("FILES", 1.55, 4.9, CYAN),
-        ("DATABASE", 9.75, 2.2, GREEN),
-        ("BROWSER", 9.05, 4.9, AMBER),
+    add_title(slide, "MCP servers expose defined capabilities")
+
+    center_x = 6.666
+    center_y = 4.02
+    server_width = 3.0
+    server_height = 1.02
+    servers = [
+        ("LOCAL FILES", "MCP server - local", 0.72, 2.22, CYAN),
+        ("GITHUB", "MCP server - remote", 9.61, 2.22, PURPLE),
+        ("DATABASE", "MCP server - local or remote", 0.72, 4.78, GREEN),
+        ("SEARCH", "MCP server - remote", 9.61, 4.78, AMBER),
     ]
-    for label, x, y, color in items:
-        add_box(slide, x, y, 2.75, 1.02, fill=color)
-        add_text(slide, label, x, y, 2.75, 1.02, size=16, color=INK, bold=True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
-        add_arrow(slide, x + 1.37, y + 0.51, 6.6, 3.73, color, 1.8)
-    add_text(slide, "Servers expose tools, resources, and prompts. The host chooses what the model may use.", 2.0, 6.28, 9.35, 0.5, size=16, color=TEXT, align=PP_ALIGN.CENTER)
+
+    for _, _, x, y, color in servers:
+        connector = slide.shapes.add_connector(
+            MSO_CONNECTOR.STRAIGHT,
+            Inches(center_x),
+            Inches(center_y),
+            Inches(x + server_width / 2),
+            Inches(y + server_height / 2),
+        )
+        set_line(connector, color, 1.5)
+
+    add_circle(slide, center_x - 1.18, center_y - 1.18, 2.36, fill=PANEL_2, line=CORAL)
+    add_text(
+        slide,
+        "AI HOST",
+        center_x - 0.95,
+        center_y - 0.62,
+        1.9,
+        0.42,
+        size=21,
+        color=WHITE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
+    add_text(
+        slide,
+        "MCP CLIENTS",
+        center_x - 0.95,
+        center_y + 0.02,
+        1.9,
+        0.34,
+        size=12,
+        color=CORAL,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
+
+    for label, detail, x, y, color in servers:
+        add_box(slide, x, y, server_width, server_height, fill=color)
+        add_text(slide, label, x, y + 0.17, server_width, 0.34, size=15, color=INK, bold=True, align=PP_ALIGN.CENTER)
+        add_text(slide, detail, x, y + 0.57, server_width, 0.24, size=9, color=INK, bold=True, align=PP_ALIGN.CENTER)
+
+    add_text(
+        slide,
+        "Each server advertises only the tools, resources, and prompts it provides.",
+        1.3,
+        6.25,
+        10.73,
+        0.35,
+        size=15,
+        color=TEXT,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -1887,30 +1942,71 @@ def build_deck(output: Path) -> Path:
         prs,
         index,
         "Why MCP?",
-        "Stop rebuilding every connection pair-by-pair.",
-        "MCP is a shared protocol for exposing capabilities to compatible AI hosts.",
+        "MCP is a standard connection to external capabilities.",
+        "A local or remote MCP server exposes only the tools, resources, and prompts it was built to provide. An AI host discovers and uses them through an MCP client.",
         CORAL,
-        "Use N x M custom integrations versus reusable hosts and servers as an idealized diagram, not a literal guarantee.",
+        "Keep the protocol, server, and exposed capabilities distinct.\n\n"
+        "MCP: the shared protocol defining how compatible clients and servers discover "
+        "capabilities and exchange requests, results, and context. MCP does not dictate how "
+        "the AI application uses the model or the returned information.\n\n"
+        "MCP SERVER: a program that can run locally or remotely. It exposes a deliberately "
+        "defined set of capabilities. Server-side primitives include tools for actions, "
+        "resources for data, and prompts for reusable interaction templates.\n\n"
+        "MCP HOST/CLIENT: the AI application is the host and creates a client connection to "
+        "each server. The host decides which servers to connect, what permissions apply, which "
+        "capabilities reach the model, and whether a requested operation runs.\n\n"
+        "Do not require the phrase 'specific endpoint' for every server. Local servers commonly "
+        "communicate through standard input/output, while remote servers commonly use HTTP. "
+        "Names, authentication, configuration, and transport still matter, but they are "
+        "implementation details beneath the main classroom idea.\n\n"
+        "The pair-by-pair integration problem is a real developer benefit of standardization, "
+        "but it is supporting detail rather than the clearest first answer to 'Why MCP?'",
     )
     index += 1
 
-    mcp_slide(prs, index, "MCP separates the AI host/client connection from servers that expose tools, resources, and prompts.")
+    mcp_slide(
+        prs,
+        index,
+        "This is the concrete MCP server architecture promised by the previous slide.\n\n"
+        "The AI application is the MCP host. It creates a separate MCP client connection for "
+        "each server. The servers are programs that may run locally or remotely and expose "
+        "their own deliberately bounded capabilities.\n\n"
+        "The examples are categories, not claims that every product connects to these exact "
+        "servers. A local filesystem server may communicate through standard input/output. A "
+        "remote GitHub or search server may use HTTP and authentication.\n\n"
+        "Each server advertises what it provides. The host discovers those tools, resources, "
+        "and prompts, applies its own permissions and product rules, and decides what reaches "
+        "the model.",
+    )
     index += 1
 
     stack_slide(
         prs,
         index,
         "Instructions",
-        "The layers that steer one model",
+        "The harness assembles instruction layers for each call",
         [
-            ("SYSTEM", "Highest-level role, boundaries, and product rules.", CYAN),
-            ("PROJECT", "Repository instructions such as AGENTS.md or CLAUDE.md.", PURPLE),
-            ("HISTORY", "Prior conversation and returned tool results.", BLUE),
-            ("USER", "The current request and constraints.", AMBER),
-            ("UNTRUSTED DATA", "Web pages, files, and external text are data - not authority.", CORAL),
+            ("SYSTEM / PRODUCT", "Built-in role, boundaries, and tool rules. Usually controlled by the product.", CYAN),
+            ("PERSONAL", "Your standing preferences, when the product supports them.", BLUE),
+            ("REPOSITORY", ".github/copilot-instructions.md, AGENTS.md, CLAUDE.md, or scoped project rules.", PURPLE),
+            ("SESSION CONTEXT", "Prior conversation and returned tool results supplied again.", GREEN),
+            ("CURRENT REQUEST", "The task, constraints, and information you provide now.", AMBER),
         ],
         CORAL,
-        "Providers expose different role names and hierarchies. The stable idea is layered authority, not one flat competition for attention.",
+        "The harness selects the applicable instruction and context sources, then supplies them "
+        "with the model call. They are external text, not changes to the model's weights.\n\n"
+        "GitHub Copilot example: repository-wide instructions can live in "
+        ".github/copilot-instructions.md. GitHub also supports path-specific instruction files "
+        "and agent instruction files such as AGENTS.md; current support varies by Copilot feature. "
+        "Other products use conventions such as CLAUDE.md. Personal instructions are available "
+        "in some products and environments.\n\n"
+        "Do not present the visual order as one universal provider hierarchy. The stable idea is "
+        "that the product-controlled system layer has higher authority, while personal, repository, "
+        "session, and current-request material are added according to product-specific scope and "
+        "precedence rules.\n\n"
+        "History and tool results are context rather than standing instruction files, but they are "
+        "shown because they also shape the next response.",
+        "These layers steer a call. They do not change the model's weights.",
     )
     index += 1
 
@@ -1918,14 +2014,26 @@ def build_deck(output: Path) -> Path:
         prs,
         index,
         "System prompt",
-        "Same weights. Different job.",
+        "The system prompt sets the product's operating frame",
         [
-            ("TUTOR", "Explain patiently. Ask guiding questions. Adapt to the learner.", CYAN),
-            ("REVIEWER", "Find concrete defects. Demand evidence. Ignore style noise.", PURPLE),
-            ("OPERATOR", "Use tools carefully. Respect permissions. Verify completion.", CORAL),
+            ("PRODUCT-CONTROLLED", "Defines the role, boundaries, tool rules, and expected behavior before your request.", CYAN),
+            ("HIGHER AUTHORITY", "Personal, repository, and user instructions layer beneath it rather than replacing it.", PURPLE),
+            ("MAY VARY BY MODE", "A tutor, reviewer, or operator can use a different frame selected by the harness.", CORAL),
         ],
         CORAL,
-        "A system prompt changes the frame without retraining the model. Some products expose it; others keep parts hidden.",
+        "Treat the system prompt as the product's highest-authority framing for a model call. "
+        "Users usually cannot replace it with an ordinary message, and repository instruction "
+        "files do not sit above it.\n\n"
+        "It is not necessarily one immutable universal string. A product may assemble or select "
+        "different system-level instructions based on the chosen mode, agent, enabled tools, "
+        "model, or safety configuration. That change is made by the harness or provider, not "
+        "because a user message overruled the system prompt.\n\n"
+        "For a single configured mode, it is reasonable to teach that the operating frame is "
+        "already present before the user's request. Hidden sections or conditional assembly are "
+        "implementation details.\n\n"
+        "System instructions steer behavior but are not a security boundary by themselves. The "
+        "harness still needs permissions and deterministic controls for real enforcement.",
+        "It steers the same trained model. It does not rewrite the weights.",
     )
     index += 1
 

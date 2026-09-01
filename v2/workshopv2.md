@@ -645,6 +645,13 @@ specialized workflows         skills · code review · user approval
 
 ### 13. What is MCP _(refine)_
 
+- **MCP is the shared protocol; an MCP server is the program exposing capabilities.** A
+  compatible AI host creates an MCP client connection to a local or remote server, discovers
+  what it offers, and decides what may be used.
+- **An MCP server exposes only what it was built and configured to provide:** tools for
+  actions, resources for data, and prompts for reusable interaction templates. The server
+  may wrap local files, a database, a remote API, or another service; MCP standardizes the
+  connection rather than defining the server's business logic.
 - **The problem tools exposed:** every harness wanted tools, every app wanted to *be* a tool,
   and everyone was wiring them pair-by-pair. N harnesses × M apps = N×M integrations, hell.
 - **MCP (Model Context Protocol):** a shared standard so a tool/app can expose its capabilities
@@ -674,10 +681,14 @@ specialized workflows         skills · code review · user approval
 
 ### 14. What is a system prompt _(refine)_
 
-- **The highest-level session instructions.** Most AI products supply a **system prompt** or
-  equivalent instructions that the user may not see. It sets the model's role, tone,
-  constraints, and rules for *this* session
+- **The product-controlled operating frame.** Most AI products supply a **system prompt** or
+  equivalent highest-authority instructions that the user may not see. It sets the model's
+  role, tone, constraints, and rules for a model call
   ("You are a careful code reviewer. Never run destructive commands. Answer in English.")
+- It is not necessarily one immutable string shared by every mode. The harness or provider
+  may select or assemble different system-level instructions for a tutor, reviewer, operator,
+  enabled tool set, or safety configuration. That is a product decision, not a user message
+  overriding the system prompt.
 - **Why it's powerful:** it's the highest-authority instruction in the context — the model
   treats it as the framing for everything after. It's how the *exact same model, in the
   exact same harness*, becomes a friendly tutor under one system prompt and a strict
@@ -695,12 +706,15 @@ specialized workflows         skills · code review · user approval
 
 - **The relationship, stated plainly: they don't replace each other — they layer.**
   - The **system prompt** is the higher-authority standing order: it sets the frame.
-  - **Instructions** (a CLAUDE.md / AGENTS.md / project rules / "always do X") are loaded
-    into the context by the harness at the authority level that product assigns them. They
-    coexist with the system prompt rather than replacing it.
-  - The model gets layered context (system + project instructions + history + your message),
-    but the platform assigns those layers different authority. A user message is not supposed
-    to override a higher-authority system rule, even though models can still fail to follow it.
+  - **Personal instructions** are your standing preferences when a product supports them.
+  - **Repository instructions** capture team and project rules. GitHub Copilot supports
+    `.github/copilot-instructions.md`, path-specific instruction files, and agent instruction
+    files such as `AGENTS.md`; other products use conventions such as `CLAUDE.md`.
+  - **Session context** includes conversation history and returned tool results. It is not a
+    standing instruction file, but it still shapes the next response.
+  - **The current request** supplies the task and constraints for this turn.
+  The harness selects the applicable layers and supplies them together. They coexist with
+  the system prompt rather than replacing it, and none of them retrain the weights.
 - **Order & precedence (the honest version):** different harnesses expose different roles and
   wire project instructions differently. The stable concept is that instructions are layered,
   some layers outrank others, and the exact hierarchy is a harness/provider detail.
