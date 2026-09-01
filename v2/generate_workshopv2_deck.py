@@ -1008,22 +1008,93 @@ def hallucination_slide(prs, index, notes):
 def tool_call_slide(prs, index, notes):
     slide = new_slide(prs, CORAL, index)
     add_kicker(slide, "Tools", CORAL, str(index))
-    add_title(slide, "A tool call, end to end")
+    add_title(slide, "One tool-enabled chat turn, end to end")
+    add_text(
+        slide,
+        "EXAMPLE SCENARIO: A CHATBOT ANSWERS A CURRENT-EVENT QUESTION",
+        0.75,
+        1.84,
+        6.4,
+        0.28,
+        size=10,
+        color=CORAL,
+        bold=True,
+    )
+
     nodes = [
-        ("MODEL", 'web_search("FRC 2026")', CYAN),
-        ("HARNESS", "Checks permission\nand runs it", PURPLE),
-        ("TOOL", "Returns current\nsearch results", CORAL),
-        ("MODEL", "Reads result\nand answers", GREEN),
+        ("USER / UI", '"Who won today?"', BLUE),
+        ("HARNESS", "Supplies prompt + available tool definitions", CORAL),
+        ("MODEL", 'Returns a request:\nweb_search(...)', CYAN),
+        ("HARNESS", "Checks permission and calls the tool", CORAL),
+        ("SEARCH TOOL", "Queries a current web source", AMBER),
+        ("HARNESS", "Adds the result to context; calls model again", CORAL),
+        ("MODEL", "Reads the result and generates an answer", CYAN),
+        ("USER / UI", "Harness displays the final response", GREEN),
     ]
-    for i, (head, body, color) in enumerate(nodes):
-        x = 0.62 + i * 3.18
-        add_circle(slide, x + 0.72, 2.42, 1.4, fill=color)
-        add_text(slide, head, x + 0.72, 2.42, 1.4, 1.4, size=14, color=INK, bold=True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
-        add_text(slide, body, x, 4.05, 2.85, 1.08, size=14, color=TEXT, align=PP_ALIGN.CENTER, font=FONT_MONO if i == 0 else FONT_BODY)
-        if i < len(nodes) - 1:
-            add_arrow(slide, x + 2.2, 3.12, x + 3.02, 3.12, color, 2)
-    add_box(slide, 1.15, 5.63, 11.05, 0.72, fill=PANEL, line=CORAL)
-    add_text(slide, "The model proposes. The harness permits and acts.", 1.35, 5.82, 10.65, 0.34, size=18, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+
+    positions = [
+        (0.55, 2.27),
+        (3.6, 2.27),
+        (6.65, 2.27),
+        (9.7, 2.27),
+        (9.7, 4.27),
+        (6.65, 4.27),
+        (3.6, 4.27),
+        (0.55, 4.27),
+    ]
+    for i, ((head, body, color), (x, y)) in enumerate(zip(nodes, positions)):
+        add_box(slide, x, y, 2.72, 1.46, fill=PANEL, line=color)
+        add_box(slide, x + 0.18, y + 0.18, 0.4, 0.36, fill=color, radius=True)
+        add_text(
+            slide,
+            str(i + 1),
+            x + 0.18,
+            y + 0.18,
+            0.4,
+            0.36,
+            size=10,
+            color=INK,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+        add_text(slide, head, x + 0.7, y + 0.2, 1.77, 0.3, size=10, color=color, bold=True)
+        add_text(
+            slide,
+            body,
+            x + 0.2,
+            y + 0.68,
+            2.32,
+            0.58,
+            size=11,
+            color=WHITE,
+            bold=True,
+            font=FONT_MONO if i == 2 else FONT_BODY,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+
+    for i in range(3):
+        x = positions[i][0]
+        add_arrow(slide, x + 2.77, 3.0, x + 3.0, 3.0, nodes[i][2], 1.6)
+    add_arrow(slide, 11.06, 3.78, 11.06, 4.18, CORAL, 1.6)
+    for i in range(4, 7):
+        x = positions[i][0]
+        add_arrow(slide, x - 0.05, 5.0, x - 0.28, 5.0, nodes[i][2], 1.6)
+
+    add_box(slide, 0.95, 6.04, 11.45, 0.55, fill=INK_2, line=CORAL)
+    add_text(
+        slide,
+        "Tools are available only when the harness exposes them; the model requests, but the harness executes.",
+        1.15,
+        6.16,
+        11.05,
+        0.28,
+        size=13,
+        color=WHITE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -1611,7 +1682,27 @@ def build_deck(output: Path) -> Path:
     )
     index += 1
 
-    tool_call_slide(prs, index, "Trace the request and response. The model does not execute the search itself.")
+    tool_call_slide(
+        prs,
+        index,
+        "This is one example of a model-requested tool call, not the only implementation.\n\n"
+        "1. The user submits a request through the application's interface.\n"
+        "2. The harness sends the prompt to the model together with descriptions of the tools "
+        "available for that call.\n"
+        "3. A tool-capable model may return a structured tool request such as web_search(...). "
+        "It does not emit tool calls by default in every environment, and it does not reliably "
+        "'know that it does not know.' Tool selection is another model prediction shaped by the "
+        "prompt, instructions, available tool definitions, and product configuration.\n"
+        "4. The harness validates permissions and arguments, then invokes the tool.\n"
+        "5. The tool or connected service performs the actual search.\n"
+        "6. The harness receives the result, adds it to runtime context, and calls the model again.\n"
+        "7. The model generates an answer using the returned evidence.\n"
+        "8. The harness displays that answer in the user interface.\n\n"
+        "The structured tool request may be represented as a dedicated API field rather than "
+        "literal text. Some harnesses can also force a tool, choose tools with deterministic "
+        "application logic, or skip the model-request step entirely. The invariant is that the "
+        "model does not execute the external operation itself.",
+    )
     index += 1
 
     bubbles_slide(

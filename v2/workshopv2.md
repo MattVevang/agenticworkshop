@@ -565,15 +565,24 @@ once per token. That is the useful mental model for how an answer is generated.
 
 ### 12. What is a harness tool _(refine)_
 
-- **A tool is a function the model can request.** The model never *executes* anything — it
-  outputs a structured request (often represented like `tool_name(args)`). The **harness**
-  decides whether to allow it, runs it, gets the
-  result, and **feeds the result back as context** for the next model call.
-- Walk one tool call by hand, token by token:
-  1. Model outputs `web_search("FRC 2026 rookie season results")`.
-  2. Harness intercepts it, doesn't send it to a user — it *runs* it.
-  3. Harness appends the search result to the conversation.
-  4. Model reads its own "history" (which now includes the result) and answers.
+- **A tool is a function the model can request when the harness exposes it.** The harness
+  supplies descriptions of available tools with the model call. A tool-capable model may
+  then return a structured request (often represented like `tool_name(args)`). It does not
+  automatically emit tool commands in every environment, and it never executes the external
+  operation itself.
+- Walk one model-requested tool call end to end:
+  1. User asks a current-events question through the application interface.
+  2. Harness sends the prompt plus available tool definitions to the model.
+  3. Model returns a structured request such as
+     `web_search("FRC 2026 rookie season results")`.
+  4. Harness checks permissions and arguments, then invokes the tool.
+  5. Tool searches the external service and returns results to the harness.
+  6. Harness appends those results to the runtime context and calls the model again.
+  7. Model reads the supplied results and generates an answer.
+  8. Harness displays the answer to the user.
+- Tool selection is itself a model prediction shaped by the prompt, instructions, supplied
+  tool definitions, and product configuration. A harness may instead force a particular
+  tool or choose one through ordinary deterministic application logic.
 - **The mental model students keep:** tools are how a brain with no hands gets hands. The model
   proposes; the harness permits and acts. The loop from Section 11 is where this lives.
 - **What a tool is NOT:** it's not the model "knowing" a thing. A tool is just a pipe to the
