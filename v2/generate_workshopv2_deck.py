@@ -1863,11 +1863,23 @@ def build_deck(output: Path) -> Path:
     statement_slide(
         prs,
         index,
-        "The file boundary",
-        "The model sees only what the surrounding system supplies.",
-        "Returned excerpts enter context. Unreturned file content stays outside. None of it becomes permanently trained into the weights.",
+        "The context boundary",
+        "The model sees only what the harness supplies for this call.",
+        "A tool may access more than it returns. Only returned results enter context. The weights stay unchanged; future calls see that data only if the harness supplies it again.",
         CORAL,
-        "This corrects the common idea that the model somehow has the local repository inside it.",
+        "Separate access, visibility, and persistence.\n\n"
+        "ACCESS: a tool running through the harness may read an entire file, query a database, "
+        "or fetch a web page. That does not mean the model automatically sees all of it.\n\n"
+        "VISIBILITY: the model sees only the excerpt, result, or summary the harness places into "
+        "the context for that model call. Unreturned file content and unsupplied external data "
+        "remain outside the model's view.\n\n"
+        "PERSISTENCE: ordinary tool use and conversation do not rewrite the trained weights. A "
+        "later call or new session can receive saved history, memory, instructions, or retrieved "
+        "data, but only because the harness stored and supplied those items again. Updating an "
+        "instruction file changes future context assembled by the harness; it does not retrain "
+        "the model.\n\n"
+        "Avoid saying every new session must be blank. Products may restore external state. The "
+        "stable claim is that the base model itself did not retain the earlier tool result.",
     )
     index += 1
 

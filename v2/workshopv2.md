@@ -628,10 +628,15 @@ specialized workflows         skills · code review · user approval
   The model "understands" it only because each tool result becomes new context for the next
   call, and it can keep iterating as long as it keeps calling. *That* iterate loop is what
   "agentic" means, mechanically.
-- **The boundary:** only the excerpts returned by the tool enter the model's context; the
-  unreturned parts of the local file do not. Repeated request → result rounds let it act on
-  the file without permanently training that file into the weights. New *capability* is
-  mounted by the harness, not retrained into the model.
+- **The boundary has three parts:**
+  - **Access:** a harness tool may read an entire file, query a database, or fetch a page.
+  - **Visibility:** the model sees only the result, excerpt, or summary the harness supplies
+    in context; unreturned data stays outside its view.
+  - **Persistence:** ordinary tool use does not change the trained weights. A future call or
+    new session sees that information only if the harness stored and supplies it again through
+    history, memory, instructions, retrieval, or another tool call.
+  Updating an instruction file changes what the harness supplies later; it does not retrain
+  the model. New *capability* is mounted by the harness, not learned by the weights.
 - **It is inspectable:** the CLI's help and environment views show what is available in that
   session. The inventory is evidence of the model-versus-harness distinction, not a permanent
   master list that is identical on every machine.
