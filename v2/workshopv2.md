@@ -742,15 +742,19 @@ specialized workflows         skills · code review · user approval
   *procedural memory* that's file-based and shareable, not baked into weights.
 - **The relationship, one breath:** system prompt = *who it is*; instructions = *standing rules*;
   tools = *what it can touch*; skills = *how it does a specific job, on demand.*
-- _(Refine: pull 1–2 real skill examples from Copilot's available-skill list so the students see
-  the actual format, not just an abstraction. Decide at refine which 2.)_
+- **Concrete examples for the slide:**
+  - Instruction lines: `"Use PowerShell 7."` and `"Run tests before committing."`
+  - Illustrative tool requests: `search_files("*.py")` and `run_tests("unit")`. Actual names
+    and arguments are defined by each harness or connected server.
+  - Skill playbooks: review a pull request or build and inspect a presentation.
+  The examples are intentionally generic because products package and name skills differently.
 
-### 17. Guided failure: when things go off the rails _(draft)_
+### 17. Reliability by design: recognize what can go wrong _(draft)_
 
-The ways things actually go off the rails — and why. These are real failure modes students
-will meet in the wild, outside this room; each maps to a concept from earlier, so the list
-doubles as a **diagnostic**: when something goes wrong, which concept explains it, and what
-does the fix usually look like.
+Reliability does not come from assuming a capable system will always be right. It comes from
+anticipating uncertainty and adding boundaries, checks, recovery paths, and accountable humans.
+The failure modes below are diagnostic patterns students will meet in the wild; each maps to
+a concept from earlier and a practical control.
 
 - **The runaway loop** — a tool that keeps returning "not done" so the harness re-calls the
   model forever. An agent loop needs an explicit reason to stop. Fix: a max-iterations guard,

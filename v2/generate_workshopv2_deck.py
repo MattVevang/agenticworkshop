@@ -694,7 +694,12 @@ def three_cards_slide(prs, index, kicker, title, cards, accent, notes, bottom=No
     card_gap = 0.36
     group_width = card_width * 3 + card_gap * 2
     group_left = (13.333 - group_width) / 2
-    for i, (head, body, color) in enumerate(cards):
+    for i, card in enumerate(cards):
+        if len(card) == 4:
+            head, body, detail, color = card
+        else:
+            head, body, color = card
+            detail = None
         add_card(
             slide,
             group_left + i * (card_width + card_gap),
@@ -705,6 +710,7 @@ def three_cards_slide(prs, index, kicker, title, cards, accent, notes, bottom=No
             body,
             color,
             badge=str(i + 1),
+            detail=detail,
         )
     if bottom:
         add_text(slide, bottom, 1.1, 6.3, 11.1, 0.34, size=15, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
@@ -868,8 +874,8 @@ def stack_slide(prs, index, kicker, title, layers, accent, notes, bottom=None):
 
 
 def token_slide(prs, index, notes):
-    slide = new_slide(prs, PURPLE, index)
-    add_kicker(slide, "Tokens", PURPLE, str(index))
+    slide = new_slide(prs, CYAN, index)
+    add_kicker(slide, "Tokens", CYAN, str(index))
     add_title(slide, "The model does not see words the way you do")
     sentence = ["The", "driver", "said", "'", "let", "'s", "go", "'", "!"]
     colors = [CYAN, PURPLE, BLUE, CORAL, AMBER, GREEN, CYAN, CORAL, PURPLE]
@@ -1380,7 +1386,7 @@ def build_deck(output: Path) -> Path:
     title_slide(
         prs,
         "How modern AI systems actually work",
-        "Models, context, tools, agents, and the failure modes between them",
+        "Models, context, tools, agents, and the controls that make them useful",
         "Welcome the team. Frame this as a mental-model workshop, not a product tutorial.\n"
         "The products will change. These concepts will remain useful.\n"
         "Source: workshopv2.md",
@@ -1396,7 +1402,7 @@ def build_deck(output: Path) -> Path:
             ("THE MODEL", "Weights, training, tokens, and generation.", CYAN),
             ("CONTEXT", "Working memory, current information, and hallucinations.", PURPLE),
             ("AGENTIC", "Harnesses, tools, MCP, instructions, and skills.", CORAL),
-            ("TRUST + CONTROL", "Failure modes, limits, verification, and human responsibility.", AMBER),
+            ("TRUST + CONTROL", "Boundaries, verification, failure recovery, and human responsibility.", AMBER),
         ],
         CYAN,
         "PRESENTER LEGEND - THE FOUR ACTS\n\n"
@@ -2041,29 +2047,61 @@ def build_deck(output: Path) -> Path:
         prs,
         index,
         "Skills",
-        "Instructions, tools, and skills are different",
+        "Instructions, tools, and skills do different jobs",
         [
-            ("INSTRUCTION", "A rule loaded when its scope applies.", PURPLE),
-            ("TOOL", "A capability the harness can execute.", CORAL),
-            ("SKILL", "A reusable playbook for doing a specific job more consistently.", GREEN),
+            (
+                "INSTRUCTION",
+                "A standing rule the harness loads when its scope applies.",
+                '"Use PowerShell 7."\n"Run tests before committing."',
+                PURPLE,
+            ),
+            (
+                "TOOL",
+                "An executable capability the harness owns and may expose to the model.",
+                'search_files("*.py")\nrun_tests("unit")',
+                CORAL,
+            ),
+            (
+                "SKILL",
+                "A reusable playbook combining procedure, guidance, and often tools or scripts.",
+                "review a pull request\nbuild a presentation",
+                GREEN,
+            ),
         ],
         CORAL,
-        "A skill can package procedural guidance plus optional scripts and resources. It can be loaded automatically or explicitly.",
+        "Use the examples to keep the three categories separate.\n\n"
+        "INSTRUCTION: text that steers behavior. It does not perform an action by itself. "
+        "Personal or repository instruction files can contain concise standing rules such as "
+        "'Use PowerShell 7' or 'Run tests before committing.'\n\n"
+        "TOOL: an executable capability owned by the harness. Searching files, calling an API, "
+        "running tests, and editing code are capabilities, not instructions about when or how "
+        "to combine them. The function-style names on the slide are illustrative; every harness "
+        "defines its own actual tool names and argument schemas.\n\n"
+        "SKILL: a reusable task-specific playbook. A pull-request review skill might define the "
+        "review sequence, evidence requirements, and tools to use. A presentation skill might "
+        "define how to structure slides, generate the file, and inspect the rendered result.\n\n"
+        "Products use the word 'skill' differently, so teach the durable distinction: a rule "
+        "steers, a tool acts, and a skill coordinates a repeatable job.",
+        "Rules steer. Tools act. Skills coordinate.",
     )
     index += 1
 
     act_slide(
         prs,
         4,
-        "Failure is part of the system",
-        "Agentic tools need limits, boundaries, verification, and accountable humans",
+        "Reliability is something you build",
+        "Boundaries, verification, and accountable humans turn capability into dependable results",
         AMBER,
         "ACT 4 - TRUST + CONTROL\n"
         "This title is the workshop's editorial grouping, not an industry term. The act asks: "
         "now that the system can act, what makes it safe enough to trust with real work?\n"
-        "The answer is not blind trust. It is control through permissions, stopping rules, "
-        "validation, verification, and accountable humans.\n"
-        "Failure modes are diagnostic patterns, not reasons to panic.",
+        "The answer is reliability by design: permissions, stopping rules, validation, "
+        "verification, recovery paths, and accountable humans.\n\n"
+        "Frame this as ordinary engineering rather than evidence that AI is uniquely hopeless. "
+        "Robots use limit switches, sensor checks, test stands, driver control, and emergency "
+        "stops because capable systems deserve safeguards. AI systems deserve the same mindset.\n\n"
+        "Failure modes on the next slide are diagnostic patterns that help people build better "
+        "controls, not reasons to panic or avoid the technology.",
     )
     index += 1
 
