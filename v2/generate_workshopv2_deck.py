@@ -690,8 +690,22 @@ def three_cards_slide(prs, index, kicker, title, cards, accent, notes):
     slide = new_slide(prs, accent, index)
     add_kicker(slide, kicker, accent, str(index))
     add_title(slide, title)
+    card_width = 3.82
+    card_gap = 0.36
+    group_width = card_width * 3 + card_gap * 2
+    group_left = (13.333 - group_width) / 2
     for i, (head, body, color) in enumerate(cards):
-        add_card(slide, 0.62 + i * 4.18, 2.35, 3.82, 3.72, head, body, color, badge=str(i + 1))
+        add_card(
+            slide,
+            group_left + i * (card_width + card_gap),
+            2.35,
+            card_width,
+            3.72,
+            head,
+            body,
+            color,
+            badge=str(i + 1),
+        )
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -746,8 +760,21 @@ def flow_slide(prs, index, kicker, title, steps, accent, notes, bottom=None, lab
         if i < count - 1:
             add_arrow(slide, x + width + 0.02, y + 1.37, x + width + gap - 0.04, y + 1.37, MUTED, 1.5)
     if bottom:
-        add_box(slide, 1.15, 5.72, 11.05, 0.62, fill=INK_2, line=accent)
-        add_text(slide, bottom, 1.35, 5.85, 10.65, 0.35, size=15, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        bottom_width = 11.05
+        bottom_left = (13.333 - bottom_width) / 2
+        add_box(slide, bottom_left, 5.72, bottom_width, 0.62, fill=INK_2, line=accent)
+        add_text(
+            slide,
+            bottom,
+            bottom_left + 0.2,
+            5.85,
+            bottom_width - 0.4,
+            0.35,
+            size=15,
+            color=WHITE,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -874,19 +901,40 @@ def context_window_slide(prs, index, notes):
     slide = new_slide(prs, PURPLE, index)
     add_kicker(slide, "Context", PURPLE, str(index))
     add_title(slide, "A finite desk, not permanent memory")
-    add_box(slide, 0.85, 2.15, 11.6, 3.65, fill=PANEL, line=PURPLE)
-    add_text(slide, "CONTEXT WINDOW", 1.15, 2.42, 3.1, 0.35, size=12, color=PURPLE, bold=True)
+    container_width = 11.6
+    container_left = (13.333 - container_width) / 2
+    add_box(slide, container_left, 2.15, container_width, 3.65, fill=PANEL, line=PURPLE)
+    add_text(slide, "CONTEXT WINDOW", container_left + 0.3, 2.42, 3.1, 0.35, size=12, color=PURPLE, bold=True)
+    item_gap = 0.17
+    item_widths = [1.65, 2.2, 1.65, 1.65, 2.15]
+    item_group_width = sum(item_widths) + item_gap * (len(item_widths) - 1)
+    item_x = container_left + (container_width - item_group_width) / 2
     labels = [
-        ("SYSTEM", 1.18, 3.08, 1.65, CYAN),
-        ("HISTORY", 3.0, 3.08, 2.2, BLUE),
-        ("FILES", 5.37, 3.08, 1.65, GREEN),
-        ("TOOLS", 7.19, 3.08, 1.65, CORAL),
-        ("YOUR ASK", 9.01, 3.08, 2.15, AMBER),
+        ("SYSTEM", item_widths[0], CYAN),
+        ("HISTORY", item_widths[1], BLUE),
+        ("FILES", item_widths[2], GREEN),
+        ("TOOLS", item_widths[3], CORAL),
+        ("YOUR ASK", item_widths[4], AMBER),
     ]
-    for label, x, y, width, color in labels:
-        add_box(slide, x, y, width, 1.15, fill=color)
-        add_text(slide, label, x, y, width, 1.15, size=14, color=INK, bold=True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
-    add_text(slide, "When the desk fills: compress, retrieve selectively, or drop older detail.", 1.15, 4.75, 10.9, 0.52, size=18, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+    for label, width, color in labels:
+        add_box(slide, item_x, 3.08, width, 1.15, fill=color)
+        add_text(
+            slide,
+            label,
+            item_x,
+            3.08,
+            width,
+            1.15,
+            size=14,
+            color=INK,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+        item_x += width + item_gap
+    summary_width = 10.9
+    summary_left = (13.333 - summary_width) / 2
+    add_text(slide, "When the desk fills: compress, retrieve selectively, or drop older detail.", summary_left, 4.75, summary_width, 0.52, size=18, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -902,16 +950,33 @@ def bob_slide(prs, index, notes):
         ("4", "You ask again", '"What is my name?"', AMBER),
         ("5", "No evidence", "Bob is no longer in the supplied context.", CORAL),
     ]
+    stage_width = 2.14
+    stage_step = 2.52
+    stage_group_width = stage_width + stage_step * (len(stages) - 1)
+    stage_left = (13.333 - stage_group_width) / 2
     for i, (num, head, body, color) in enumerate(stages):
-        x = 0.6 + i * 2.52
+        x = stage_left + i * stage_step
         add_circle(slide, x + 0.72, 2.55, 0.68, fill=color)
         add_text(slide, num, x + 0.72, 2.55, 0.68, 0.68, size=16, color=INK, bold=True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
         add_text(slide, head, x, 3.42, 2.14, 0.42, size=16, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
         add_text(slide, body, x, 3.98, 2.14, 1.25, size=12, color=TEXT, align=PP_ALIGN.CENTER)
         if i < len(stages) - 1:
             add_arrow(slide, x + 1.63, 2.9, x + 2.42, 2.9, MUTED, 1.4)
-    add_box(slide, 2.05, 5.73, 9.25, 0.58, fill=INK_2, line=PURPLE)
-    add_text(slide, '"Remembering" means the system supplied the information again.', 2.2, 5.86, 8.95, 0.3, size=16, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+    support_width = 9.25
+    support_left = (13.333 - support_width) / 2
+    add_box(slide, support_left, 5.73, support_width, 0.58, fill=INK_2, line=PURPLE)
+    add_text(
+        slide,
+        '"Remembering" means the system supplied the information again.',
+        support_left + 0.15,
+        5.86,
+        support_width - 0.3,
+        0.3,
+        size=16,
+        color=WHITE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -947,8 +1012,12 @@ def current_information_slide(prs, index, notes):
             GREEN,
         ),
     ]
+    card_width = 2.7
+    card_step = 3.05
+    group_width = card_width + card_step * (len(stages) - 1)
+    group_left = (13.333 - group_width) / 2
     for i, (label, heading, body, color) in enumerate(stages):
-        x = 0.55 + i * 3.05
+        x = group_left + i * card_step
         add_box(slide, x, 2.25, 2.7, 3.05, fill=PANEL, line=color)
         add_text(slide, label, x + 0.25, 2.55, 2.2, 0.28, size=10, color=color, bold=True)
         add_text(slide, heading, x + 0.25, 3.02, 2.2, 0.72, size=17, color=WHITE, bold=True)
@@ -969,7 +1038,7 @@ def current_information_slide(prs, index, notes):
                 align=PP_ALIGN.CENTER,
             )
 
-    add_box(slide, 1.0, 5.75, 11.35, 0.66, fill=INK_2, line=PURPLE)
+    add_box(slide, group_left, 5.75, group_width, 0.66, fill=INK_2, line=PURPLE)
     add_rich_text(
         slide,
         [
@@ -979,9 +1048,9 @@ def current_information_slide(prs, index, notes):
             (" + ", TEXT, False),
             ("FRESH SUPPLIED EVIDENCE", GREEN, True),
         ],
-        1.25,
+        group_left + 0.25,
         5.92,
-        10.85,
+        group_width - 0.5,
         0.3,
         size=15,
         align=PP_ALIGN.CENTER,
@@ -1023,12 +1092,16 @@ def hallucination_slide(prs, index, notes):
             CORAL,
         ),
     ]
+    card_width = 3.82
+    card_gap = 0.36
+    group_width = card_width * 3 + card_gap * 2
+    group_left = (13.333 - group_width) / 2
     for i, (heading, body, color) in enumerate(cards):
         add_card(
             slide,
-            0.62 + i * 4.18,
+            group_left + i * (card_width + card_gap),
             2.42,
-            3.82,
+            card_width,
             3.12,
             heading,
             body,
@@ -1060,18 +1133,6 @@ def tool_call_slide(prs, index, notes):
     slide = new_slide(prs, CORAL, index)
     add_kicker(slide, "Tools", CORAL, str(index))
     add_title(slide, "One tool-enabled chat turn, end to end")
-    add_text(
-        slide,
-        "EXAMPLE SCENARIO: A CHATBOT ANSWERS A CURRENT-EVENT QUESTION",
-        0.75,
-        1.84,
-        6.4,
-        0.28,
-        size=10,
-        color=CORAL,
-        bold=True,
-    )
-
     nodes = [
         ("USER / UI", '"Who won today?"', BLUE),
         ("HARNESS", "Supplies prompt + available tool definitions", CORAL),
@@ -1083,18 +1144,33 @@ def tool_call_slide(prs, index, notes):
         ("USER / UI", "Harness displays the final response", GREEN),
     ]
 
+    card_width = 2.72
+    card_step = 3.05
+    group_width = card_width + card_step * 3
+    group_left = (13.333 - group_width) / 2
+    add_text(
+        slide,
+        "EXAMPLE SCENARIO: A CHATBOT ANSWERS A CURRENT-EVENT QUESTION",
+        group_left,
+        1.84,
+        6.4,
+        0.28,
+        size=10,
+        color=CORAL,
+        bold=True,
+    )
     positions = [
-        (0.55, 2.27),
-        (3.6, 2.27),
-        (6.65, 2.27),
-        (9.7, 2.27),
-        (9.7, 4.27),
-        (6.65, 4.27),
-        (3.6, 4.27),
-        (0.55, 4.27),
+        (group_left, 2.27),
+        (group_left + card_step, 2.27),
+        (group_left + card_step * 2, 2.27),
+        (group_left + card_step * 3, 2.27),
+        (group_left + card_step * 3, 4.27),
+        (group_left + card_step * 2, 4.27),
+        (group_left + card_step, 4.27),
+        (group_left, 4.27),
     ]
     for i, ((head, body, color), (x, y)) in enumerate(zip(nodes, positions)):
-        add_box(slide, x, y, 2.72, 1.46, fill=PANEL, line=color)
+        add_box(slide, x, y, card_width, 1.46, fill=PANEL, line=color)
         add_box(slide, x + 0.18, y + 0.18, 0.4, 0.36, fill=color, radius=True)
         add_text(
             slide,
@@ -1128,18 +1204,19 @@ def tool_call_slide(prs, index, notes):
     for i in range(3):
         x = positions[i][0]
         add_arrow(slide, x + 2.77, 3.0, x + 3.0, 3.0, nodes[i][2], 1.6)
-    add_arrow(slide, 11.06, 3.78, 11.06, 4.18, CORAL, 1.6)
+    turn_x = positions[3][0] + card_width / 2
+    add_arrow(slide, turn_x, 3.78, turn_x, 4.18, CORAL, 1.6)
     for i in range(4, 7):
         x = positions[i][0]
         add_arrow(slide, x - 0.05, 5.0, x - 0.28, 5.0, nodes[i][2], 1.6)
 
-    add_box(slide, 0.95, 6.04, 11.45, 0.55, fill=INK_2, line=CORAL)
+    add_box(slide, group_left, 6.04, group_width, 0.55, fill=INK_2, line=CORAL)
     add_text(
         slide,
         "Tools are available only when the harness exposes them; the model requests, but the harness executes.",
-        1.15,
+        group_left + 0.2,
         6.16,
-        11.05,
+        group_width - 0.4,
         0.28,
         size=13,
         color=WHITE,
