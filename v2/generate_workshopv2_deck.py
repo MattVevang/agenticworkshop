@@ -185,8 +185,8 @@ def add_background(slide, accent: RGBColor = CYAN, variant: int = 0) -> None:
 
     # Restrained, single-accent geometry keeps the canvas modern without
     # competing with diagrams and text.
-    add_box(slide, 11.75, -0.35, 1.95, 2.25, fill=accent, radius=True, transparency=80)
-    add_box(slide, -0.45, 7.15, 2.4, 0.55, fill=accent, radius=True, transparency=88)
+    add_box(slide, 11.62, 0.15, 1.55, 1.9, fill=accent, radius=True, transparency=80)
+    add_box(slide, 0.15, 6.95, 1.8, 0.4, fill=accent, radius=True, transparency=88)
     add_box(slide, 0, 0, 0.1, 7.5, fill=accent, radius=False, transparency=8)
     divider = slide.shapes.add_connector(
         MSO_CONNECTOR.STRAIGHT,
@@ -1428,11 +1428,12 @@ def closing_slide(prs, notes):
     add_text(slide, "Stay curious.", 0.7, 1.0, 8.7, 0.9, size=52, color=CYAN, bold=True, font=FONT_HEAD)
     add_text(slide, "Stay skeptical.", 0.7, 2.05, 8.7, 0.9, size=52, color=PURPLE, bold=True, font=FONT_HEAD)
     add_text(slide, "Build boldly.", 0.7, 3.1, 8.7, 0.9, size=52, color=CORAL, bold=True, font=FONT_HEAD)
-    add_box(slide, 8.75, 1.15, 3.75, 4.7, fill=PANEL, line=AMBER)
-    add_text(slide, "BEFORE YOU TRUST IT", 9.15, 1.58, 2.95, 0.45, size=12, color=AMBER, bold=True, align=PP_ALIGN.CENTER)
+    panel_x = 7.7
+    add_box(slide, panel_x, 1.15, 3.75, 4.7, fill=PANEL, line=AMBER)
+    add_text(slide, "BEFORE YOU TRUST IT", panel_x + 0.4, 1.58, 2.95, 0.45, size=12, color=AMBER, bold=True, align=PP_ALIGN.CENTER)
     for i, text in enumerate(["Check the source", "Run the code", "Test the output", "Own the decision"]):
-        add_circle(slide, 9.15, 2.38 + i * 0.78, 0.35, fill=[CYAN, PURPLE, CORAL, AMBER][i])
-        add_text(slide, text, 9.68, 2.27 + i * 0.78, 2.3, 0.45, size=15, color=WHITE, bold=True)
+        add_circle(slide, panel_x + 0.4, 2.38 + i * 0.78, 0.35, fill=[CYAN, PURPLE, CORAL, AMBER][i])
+        add_text(slide, text, panel_x + 0.93, 2.27 + i * 0.78, 2.3, 0.45, size=15, color=WHITE, bold=True)
     add_text(slide, "Questions?", 0.75, 5.55, 5.0, 0.75, size=35, color=AMBER, bold=True, font=FONT_HEAD)
     add_text(slide, "AI Foundations for FIRST Robotics students", 0.78, 6.65, 6.2, 0.3, size=11, color=MUTED)
     add_notes(slide, notes)
