@@ -599,6 +599,10 @@ once per token. That is the useful mental model for how an answer is generated.
 - **Receipts, not abstraction:** the Copilot CLI exposes a real tool inventory. The exact
   names vary by version and configuration, but the capabilities fall into a few recognizable
   families - each one something the model itself cannot perform:
+- **The inventory belongs to the harness, not the model.** The harness decides which tools
+  exist, which descriptions the model receives, what permissions apply, and which requested
+  operations actually execute. The model may request an exposed capability; the harness owns
+  and runs it.
 
 ```
 family                        representative tools

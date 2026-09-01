@@ -752,20 +752,71 @@ def flow_slide(prs, index, kicker, title, steps, accent, notes, bottom=None, lab
     add_notes(slide, notes)
 
 
-def bubbles_slide(prs, index, kicker, title, bubbles, accent, notes, center=None):
+def bubbles_slide(prs, index, kicker, title, bubbles, accent, notes, center=None, bottom=None):
     slide = new_slide(prs, accent, index)
     add_kicker(slide, kicker, accent, str(index))
     add_title(slide, title)
+
+    center_x = 6.666
+    center_y = 3.925
+    center_diameter = 2.2
+    outer_diameter = 1.9
+    outer_centers = [
+        (2.45, 2.9),
+        (10.882, 2.9),
+        (2.45, 4.95),
+        (10.882, 4.95),
+    ]
+
     if center:
-        add_circle(slide, 5.35, 2.66, 2.55, fill=PANEL_2, line=accent)
-        add_text(slide, center, 5.53, 3.32, 2.18, 0.85, size=20, color=WHITE, bold=True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
-    positions = [(1.05, 2.5), (9.45, 2.35), (1.85, 4.85), (8.65, 4.85)]
-    for (label, body, color), (x, y) in zip(bubbles, positions):
-        add_circle(slide, x, y, 2.05, fill=color, transparency=8)
-        add_text(slide, label, x + 0.18, y + 0.34, 1.69, 0.38, size=14, color=INK, bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, body, x + 0.2, y + 0.8, 1.65, 0.88, size=10.5, color=INK, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
-        if center:
-            add_arrow(slide, x + 1.02, y + 1.02, 6.62, 3.92, color, 1.3)
+        for (_, _, color), (outer_x, outer_y) in zip(bubbles, outer_centers):
+            connector = slide.shapes.add_connector(
+                MSO_CONNECTOR.STRAIGHT,
+                Inches(center_x),
+                Inches(center_y),
+                Inches(outer_x),
+                Inches(outer_y),
+            )
+            set_line(connector, color, 1.3)
+
+        center_left = center_x - center_diameter / 2
+        center_top = center_y - center_diameter / 2
+        add_circle(slide, center_left, center_top, center_diameter, fill=PANEL_2, line=accent)
+        add_text(
+            slide,
+            center,
+            center_left + 0.18,
+            center_top + 0.53,
+            center_diameter - 0.36,
+            1.08,
+            size=18,
+            color=WHITE,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+
+    for (label, body, color), (outer_x, outer_y) in zip(bubbles, outer_centers):
+        x = outer_x - outer_diameter / 2
+        y = outer_y - outer_diameter / 2
+        add_circle(slide, x, y, outer_diameter, fill=color, transparency=8)
+        add_text(slide, label, x + 0.16, y + 0.28, outer_diameter - 0.32, 0.36, size=13, color=INK, bold=True, align=PP_ALIGN.CENTER)
+        add_text(
+            slide,
+            body,
+            x + 0.18,
+            y + 0.72,
+            outer_diameter - 0.36,
+            0.78,
+            size=9.5,
+            color=INK,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+
+    if bottom:
+        add_text(slide, bottom, 1.1, 6.22, 11.1, 0.32, size=14, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -1719,8 +1770,16 @@ def build_deck(output: Path) -> Path:
         CORAL,
         "This slide is the self-contained representative inventory. Exact tools vary by "
         "version, permissions, enabled features, and MCP servers, so do not present it as "
-        "a permanent exhaustive list.",
-        center="MODEL\nREQUESTS",
+        "a permanent exhaustive list.\n\n"
+        "The inventory belongs to the harness. The harness decides which capabilities exist, "
+        "which descriptions are exposed to the model for a call, what permissions apply, and "
+        "which requested operations actually run.\n\n"
+        "The model may return a structured request for an exposed capability, as shown on the "
+        "previous slide. It does not own or execute the file search, shell command, web request, "
+        "or delegated task. A harness may also invoke capabilities through deterministic logic "
+        "without asking the model to choose one.",
+        center="HARNESS\nTOOL SET",
+        bottom="The harness exposes the menu. The model may request. The harness executes.",
     )
     index += 1
 
