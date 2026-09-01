@@ -1428,7 +1428,7 @@ def closing_slide(prs, notes):
     add_text(slide, "Stay curious.", 0.7, 1.0, 8.7, 0.9, size=52, color=CYAN, bold=True, font=FONT_HEAD)
     add_text(slide, "Stay skeptical.", 0.7, 2.05, 8.7, 0.9, size=52, color=PURPLE, bold=True, font=FONT_HEAD)
     add_text(slide, "Build boldly.", 0.7, 3.1, 8.7, 0.9, size=52, color=CORAL, bold=True, font=FONT_HEAD)
-    panel_x = 7.7
+    panel_x = 6.65
     add_box(slide, panel_x, 1.15, 3.75, 4.7, fill=PANEL, line=AMBER)
     add_text(slide, "BEFORE YOU TRUST IT", panel_x + 0.4, 1.58, 2.95, 0.45, size=12, color=AMBER, bold=True, align=PP_ALIGN.CENTER)
     for i, text in enumerate(["Check the source", "Run the code", "Test the output", "Own the decision"]):
