@@ -198,6 +198,40 @@ def add_background(slide, accent: RGBColor = CYAN, variant: int = 0) -> None:
     set_line(divider, accent, 0.7, 80)
 
 
+def add_finale_background(slide) -> None:
+    bg = slide.background
+    bg.fill.solid()
+    bg.fill.fore_color.rgb = INK
+
+    colors = [CYAN, PURPLE, CORAL, AMBER]
+    segment_height = 7.5 / len(colors)
+    for i, color in enumerate(colors):
+        add_box(slide, 0, i * segment_height, 0.1, segment_height, fill=color, radius=False)
+
+    segment_width = (12.7 - 0.62) / len(colors)
+    for i, color in enumerate(colors):
+        divider = slide.shapes.add_connector(
+            MSO_CONNECTOR.STRAIGHT,
+            Inches(0.62 + i * segment_width),
+            Inches(6.88),
+            Inches(0.62 + (i + 1) * segment_width),
+            Inches(6.88),
+        )
+        set_line(divider, color, 1.1, 35)
+
+    for i, color in enumerate(colors):
+        add_box(
+            slide,
+            11.62,
+            0.15 + i * 0.48,
+            1.55,
+            0.58,
+            fill=color,
+            radius=True,
+            transparency=82,
+        )
+
+
 def add_kicker(slide, text: str, color: RGBColor, number: str | None = None) -> None:
     if number:
         add_box(slide, 0.55, 0.42, 0.5, 0.38, fill=color, radius=True)
@@ -1331,42 +1365,75 @@ def failure_slide(prs, index, notes):
 
 
 def recap_slide(prs, index, notes):
-    slide = new_slide(prs, CYAN, index)
-    add_kicker(slide, "Takeaway", CYAN, str(index))
-    add_title(slide, "The whole system in one picture")
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    add_finale_background(slide)
+    add_kicker(slide, "Four-act recap", WHITE, str(index))
+    add_title(slide, "Four acts. One complete system.")
     pieces = [
-        ("MODEL", "Predicts the next token", CYAN),
-        ("CONTEXT", "Supplies the working information", PURPLE),
-        ("HARNESS", "Builds the loop and enforces rules", BLUE),
-        ("TOOLS", "Connect the loop to the world", CORAL),
-        ("HUMAN", "Chooses goals and verifies results", AMBER),
+        ("THE MODEL", "Learned parameters predict one token at a time.", CYAN),
+        ("CONTEXT + TRUTH", "Runtime information shapes the answer; evidence determines trust.", PURPLE),
+        ("HARNESS + TOOLS", "The harness builds the loop and connects approved capabilities.", CORAL),
+        ("TRUST + CONTROL", "Boundaries, verification, and accountable humans build reliability.", AMBER),
     ]
-    x = 0.55
+    card_gap = 0.22
+    group_left = 0.62
+    group_width = 12.09
+    card_width = (group_width - card_gap * 3) / 4
     for i, (head, body, color) in enumerate(pieces):
-        add_box(slide, x, 2.55, 2.28, 2.62, fill=PANEL, line=color)
-        add_circle(slide, x + 0.76, 2.9, 0.76, fill=color)
-        add_text(slide, str(i + 1), x + 0.76, 2.9, 0.76, 0.76, size=16, color=INK, bold=True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE)
-        add_text(slide, head, x + 0.2, 3.87, 1.88, 0.35, size=14, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
-        add_text(slide, body, x + 0.2, 4.32, 1.88, 0.62, size=11, color=TEXT, align=PP_ALIGN.CENTER)
-        if i < len(pieces) - 1:
-            add_arrow(slide, x + 2.29, 3.86, x + 2.56, 3.86, MUTED, 1.3)
-        x += 2.58
-    add_text(slide, "The product you experience is all five - not the model alone.", 1.2, 5.85, 10.9, 0.55, size=21, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        x = group_left + i * (card_width + card_gap)
+        add_box(slide, x, 2.35, card_width, 3.22, fill=PANEL, line=color)
+        add_box(slide, x + 0.25, 2.65, 0.68, 0.5, fill=color, radius=True)
+        add_text(
+            slide,
+            f"ACT {i + 1}",
+            x + 0.25,
+            2.65,
+            0.68,
+            0.5,
+            size=10,
+            color=INK,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+        add_text(slide, head, x + 0.25, 3.4, card_width - 0.5, 0.62, size=17, color=WHITE, bold=True)
+        add_text(slide, body, x + 0.25, 4.28, card_width - 0.5, 0.88, size=13, color=TEXT)
+
+    add_rich_text(
+        slide,
+        [
+            ("MODEL", CYAN, True),
+            (" + ", TEXT, False),
+            ("CONTEXT", PURPLE, True),
+            (" + ", TEXT, False),
+            ("HARNESS / TOOLS", CORAL, True),
+            (" + ", TEXT, False),
+            ("HUMAN CONTROLS", AMBER, True),
+            (" = THE PRODUCT EXPERIENCE", WHITE, True),
+        ],
+        0.85,
+        5.98,
+        11.65,
+        0.38,
+        size=14,
+        align=PP_ALIGN.CENTER,
+    )
     add_footer(slide, index)
     add_notes(slide, notes)
 
 
 def closing_slide(prs, notes):
-    slide = new_slide(prs, CYAN, 1)
-    add_text(slide, "Stay curious.", 0.7, 1.0, 8.7, 0.9, size=52, color=WHITE, bold=True, font=FONT_HEAD)
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    add_finale_background(slide)
+    add_text(slide, "Stay curious.", 0.7, 1.0, 8.7, 0.9, size=52, color=CYAN, bold=True, font=FONT_HEAD)
     add_text(slide, "Stay skeptical.", 0.7, 2.05, 8.7, 0.9, size=52, color=PURPLE, bold=True, font=FONT_HEAD)
     add_text(slide, "Build boldly.", 0.7, 3.1, 8.7, 0.9, size=52, color=CORAL, bold=True, font=FONT_HEAD)
-    add_box(slide, 8.75, 1.15, 3.75, 4.7, fill=PANEL, line=CYAN)
-    add_text(slide, "BEFORE YOU TRUST IT", 9.15, 1.58, 2.95, 0.45, size=12, color=CYAN, bold=True, align=PP_ALIGN.CENTER)
+    add_box(slide, 8.75, 1.15, 3.75, 4.7, fill=PANEL, line=AMBER)
+    add_text(slide, "BEFORE YOU TRUST IT", 9.15, 1.58, 2.95, 0.45, size=12, color=AMBER, bold=True, align=PP_ALIGN.CENTER)
     for i, text in enumerate(["Check the source", "Run the code", "Test the output", "Own the decision"]):
-        add_circle(slide, 9.15, 2.38 + i * 0.78, 0.35, fill=[CYAN, GREEN, PURPLE, AMBER][i])
+        add_circle(slide, 9.15, 2.38 + i * 0.78, 0.35, fill=[CYAN, PURPLE, CORAL, AMBER][i])
         add_text(slide, text, 9.68, 2.27 + i * 0.78, 2.3, 0.45, size=15, color=WHITE, bold=True)
-    add_text(slide, "Questions?", 0.75, 5.55, 5.0, 0.75, size=35, color=TEXT, bold=True, font=FONT_HEAD)
+    add_text(slide, "Questions?", 0.75, 5.55, 5.0, 0.75, size=35, color=AMBER, bold=True, font=FONT_HEAD)
     add_text(slide, "AI Foundations for FIRST Robotics students", 0.78, 6.65, 6.2, 0.3, size=11, color=MUTED)
     add_notes(slide, notes)
 
@@ -1419,10 +1486,14 @@ def build_deck(output: Path) -> Path:
         "ACT 3 - AGENTIC SYSTEMS (slides 26-36)\n"
         "What surrounds the model: the harness, repeated agent loop, tools, file boundaries, "
         "MCP, instruction layers, system prompts, and reusable skills.\n\n"
-        "ACT 4 - TRUST + CONTROL (slides 37-41)\n"
+        "ACT 4 - TRUST + CONTROL (slides 37-40)\n"
         "This is an editorial umbrella for operating capable systems responsibly. It covers "
         "failure modes, prompt injection, permissions, stopping limits, verification, and "
         "human accountability. 'Trust + Control' is not a named protocol or product feature.\n\n"
+        "FINALE (slides 41-42)\n"
+        "Slide 41 brings the four teaching acts back together. Act 3 intentionally groups "
+        "the harness with its tools, while Act 4 includes the accountable human who sets "
+        "boundaries and verifies consequential results.\n\n"
         "Use this slide as your navigation legend throughout the presentation.",
         "The product you experience is the complete system - not the model alone.",
     )
@@ -2137,7 +2208,15 @@ def build_deck(output: Path) -> Path:
     )
     index += 1
 
-    recap_slide(prs, index, "Return to the model-versus-product thesis. The user experience is the complete system, not the weights alone.")
+    recap_slide(
+        prs,
+        index,
+        "Return to the model-versus-product thesis through the four teaching acts. These are "
+        "chapters, not a claim that every AI product has exactly four components. Act 3 groups "
+        "the harness with the tools it exposes and executes. Act 4 groups safeguards with the "
+        "accountable human who chooses goals, approvals, and acceptable evidence. Together, "
+        "the four acts describe the complete product experience - not the model alone.",
+    )
     index += 1
 
     closing_slide(
