@@ -250,6 +250,7 @@ def add_card(
     badge: str | None = None,
     title_size: float = 18,
     body_size: float = 13,
+    detail: str | None = None,
 ):
     add_box(slide, x, y, w, h, fill=PANEL, line=accent)
     add_box(slide, x, y, 0.08, h, fill=accent, radius=False)
@@ -274,7 +275,22 @@ def add_card(
         title_x = x + 0.32
         title_w = w - 0.55
     add_text(slide, title, title_x, y + 0.27, title_w, 0.48, size=title_size, color=WHITE, bold=True, font=FONT_HEAD)
-    add_text(slide, body, x + 0.32, y + 0.92, w - 0.58, h - 1.12, size=body_size, color=TEXT)
+    body_height = h - 1.92 if detail else h - 1.12
+    add_text(slide, body, x + 0.32, y + 0.92, w - 0.58, body_height, size=body_size, color=TEXT)
+    if detail:
+        add_text(slide, "EXAMPLE", x + 0.32, y + h - 0.86, w - 0.58, 0.2, size=8, color=accent, bold=True)
+        add_text(
+            slide,
+            detail,
+            x + 0.32,
+            y + h - 0.61,
+            w - 0.58,
+            0.38,
+            size=9,
+            color=WHITE,
+            bold=True,
+            font=FONT_MONO,
+        )
 
 
 def add_arrow(slide, x1: float, y1: float, x2: float, y2: float, color=CYAN, width=2.5):
@@ -332,18 +348,111 @@ def statement_slide(prs, index, kicker, statement, support, accent, notes):
     add_notes(slide, notes)
 
 
+def weights_definition_slide(prs, index, notes):
+    slide = new_slide(prs, CYAN, index)
+    add_kicker(slide, "Weights + parameters", CYAN, str(index))
+    add_title(slide, "Weights are the model's learned settings")
+    add_rich_text(
+        slide,
+        [
+            ("WEIGHT", CYAN, True),
+            (" = a parameter controlling influence     ", TEXT, False),
+            ("PARAMETER", PURPLE, True),
+            (" = any learned number     ", TEXT, False),
+            ("TOKEN", AMBER, True),
+            (" = a numbered piece of text", TEXT, False),
+        ],
+        0.75,
+        1.72,
+        11.75,
+        0.35,
+        size=13,
+    )
+
+    cards = [
+        (
+            "ARCHITECTURE",
+            "FIXED MACHINERY",
+            "Defines which mathematical operations happen and how signals move through the model.",
+            "Think: engine design",
+            CYAN,
+        ),
+        (
+            "PARAMETERS",
+            "LEARNED SETTINGS",
+            "Training adjusts billions of numbers until useful language patterns emerge.",
+            "Most are weights",
+            PURPLE,
+        ),
+        (
+            "TOKEN SCORES",
+            "RUNTIME RESULT",
+            "The machinery uses those learned settings to score possible next tokens.",
+            'Think: "Paris" 95%',
+            AMBER,
+        ),
+    ]
+    for i, (label, heading, body, analogy, color) in enumerate(cards):
+        x = 0.68 + i * 4.2
+        add_box(slide, x, 2.45, 3.58, 3.55, fill=PANEL, line=color)
+        add_text(slide, label, x + 0.3, 2.78, 2.8, 0.28, size=10, color=color, bold=True)
+        add_text(slide, heading, x + 0.3, 3.24, 2.98, 0.42, size=18, color=WHITE, bold=True)
+        add_text(slide, body, x + 0.3, 3.92, 2.98, 1.0, size=15, color=TEXT)
+        add_box(slide, x + 0.3, 5.24, 2.98, 0.48, fill=INK_2, line=color)
+        add_text(
+            slide,
+            analogy,
+            x + 0.4,
+            5.34,
+            2.78,
+            0.25,
+            size=12,
+            color=color,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
+        if i < len(cards) - 1:
+            add_arrow(slide, x + 3.68, 4.18, x + 4.08, 4.18, MUTED, 1.5)
+
+    add_text(
+        slide,
+        "The architecture is the algorithm. The parameters are what training learns.",
+        1.4,
+        6.33,
+        10.5,
+        0.38,
+        size=17,
+        color=WHITE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
+
+    add_footer(slide, index)
+    add_notes(slide, notes)
+
+
 def weights_artifact_slide(prs, index, notes):
     slide = new_slide(prs, CYAN, index)
-    add_kicker(slide, "Weights", CYAN, str(index))
-    add_title(slide, "The 'brain' is billions of learned numbers")
+    add_kicker(slide, "Model package", CYAN, str(index))
+    add_title(slide, "What one local model package looks like")
+    add_text(
+        slide,
+        "One particular recipe, data mix, and training process produced this artifact.",
+        0.75,
+        1.72,
+        11.4,
+        0.35,
+        size=15,
+        color=TEXT,
+    )
 
-    add_box(slide, 0.65, 2.15, 5.15, 3.75, fill=PANEL, line=CYAN)
-    add_text(slide, "MODEL PACKAGE SNAPSHOT", 1.0, 2.5, 3.5, 0.3, size=11, color=CYAN, bold=True)
+    add_box(slide, 0.65, 2.3, 5.15, 3.75, fill=PANEL, line=CYAN)
+    add_text(slide, "MODEL PACKAGE SNAPSHOT", 1.0, 2.65, 3.5, 0.3, size=11, color=CYAN, bold=True)
     add_text(
         slide,
         "qwen3.8:27b-q4_K_M",
         1.0,
-        3.02,
+        3.17,
         4.45,
         0.55,
         size=22,
@@ -351,13 +460,13 @@ def weights_artifact_slide(prs, index, notes):
         bold=True,
         font=FONT_MONO,
     )
-    add_text(slide, "17 GB", 1.0, 3.85, 2.4, 0.75, size=42, color=CYAN, bold=True, font=FONT_HEAD)
-    add_text(slide, "quantized model file", 3.0, 4.14, 2.25, 0.4, size=14, color=MUTED)
+    add_text(slide, "17 GB", 1.0, 4.0, 2.4, 0.75, size=42, color=CYAN, bold=True, font=FONT_HEAD)
+    add_text(slide, "quantized model file", 3.0, 4.29, 2.25, 0.4, size=14, color=MUTED)
     add_text(
         slide,
-        "~27 billion learned weight values",
+        "~27 billion learned parameters",
         1.0,
-        5.0,
+        5.15,
         4.35,
         0.5,
         size=17,
@@ -371,21 +480,21 @@ def weights_artifact_slide(prs, index, notes):
         ("17 GB", "Package size", "The compressed file stored on disk.", CORAL),
     ]
     for i, (value, label, body, color) in enumerate(details):
-        y = 2.15 + i * 1.25
+        y = 2.3 + i * 1.25
         add_box(slide, 6.15, y, 6.5, 1.02, fill=PANEL, line=color)
         add_text(slide, value, 6.48, y + 0.22, 1.6, 0.42, size=19, color=color, bold=True, font=FONT_MONO)
         add_text(slide, label, 8.15, y + 0.18, 2.35, 0.3, size=14, color=WHITE, bold=True)
         add_text(slide, body, 8.15, y + 0.53, 4.05, 0.28, size=12, color=TEXT)
 
-    add_box(slide, 6.15, 5.9, 6.5, 0.68, fill=INK_2, line=CYAN)
+    add_box(slide, 6.15, 6.02, 6.5, 0.56, fill=INK_2, line=CYAN)
     add_text(
         slide,
         "A package of math values - not 27 billion readable facts.",
         6.42,
-        6.06,
+        6.13,
         5.95,
-        0.32,
-        size=14,
+        0.26,
+        size=13,
         color=WHITE,
         bold=True,
         align=PP_ALIGN.CENTER,
@@ -492,7 +601,9 @@ def vocabulary_scoring_slide(prs, index, notes):
     add_title(slide, "How numbers become coherent text")
 
     add_box(slide, 0.72, 1.95, 4.0, 4.45, fill=PANEL, line=PURPLE)
-    add_text(slide, "FIXED TOKEN VOCABULARY", 1.05, 2.27, 2.8, 0.3, size=11, color=PURPLE, bold=True)
+    add_text(slide, "FIXED TOKEN VOCABULARY", 1.05, 2.24, 2.8, 0.3, size=11, color=PURPLE, bold=True)
+    add_text(slide, "TOKEN ID", 1.08, 2.68, 0.9, 0.24, size=9, color=MUTED, bold=True)
+    add_text(slide, "TEXT PIECE", 2.48, 2.68, 1.3, 0.24, size=9, color=MUTED, bold=True)
     vocab = [
         ("#91", '"what"'),
         ("#522", '"is"'),
@@ -501,11 +612,21 @@ def vocabulary_scoring_slide(prs, index, notes):
         ("#4402", '"Paris"'),
     ]
     for i, (token_id, token_text) in enumerate(vocab):
-        row_y = 2.82 + i * 0.62
+        row_y = 3.02 + i * 0.53
         add_text(slide, token_id, 1.08, row_y, 0.9, 0.32, size=15, color=CYAN, bold=True, font=FONT_MONO)
         add_text(slide, "->", 2.0, row_y, 0.42, 0.32, size=15, color=MUTED, bold=True, font=FONT_MONO)
         add_text(slide, token_text, 2.48, row_y, 1.75, 0.32, size=15, color=WHITE, bold=True, font=FONT_MONO)
-    add_text(slide, "Vocabulary = available pieces,\nnot stored knowledge.", 1.08, 5.7, 3.25, 0.55, size=14, color=TEXT, bold=True)
+    add_text(
+        slide,
+        "IDs are labels - not weights or parameters.",
+        1.08,
+        5.72,
+        3.25,
+        0.42,
+        size=13,
+        color=TEXT,
+        bold=True,
+    )
 
     add_box(slide, 4.98, 1.95, 7.65, 4.45, fill=PANEL, line=CYAN)
     add_text(slide, "QUESTION IN", 5.32, 2.27, 1.8, 0.3, size=11, color=CYAN, bold=True)
@@ -521,7 +642,20 @@ def vocabulary_scoring_slide(prs, index, notes):
         bold=True,
         font=FONT_MONO,
     )
-    add_text(slide, "NEXT-TOKEN SCORES", 5.32, 3.37, 2.2, 0.3, size=11, color=AMBER, bold=True)
+    add_rich_text(
+        slide,
+        [
+            ("ARCHITECTURE", MUTED, True),
+            (" + ", TEXT, False),
+            ("LEARNED PARAMETERS", PURPLE, True),
+            (" -> NEXT-TOKEN SCORES", AMBER, True),
+        ],
+        5.32,
+        3.37,
+        6.8,
+        0.3,
+        size=11,
+    )
 
     scores = [
         ("Paris", "95.0%", 5.1, CYAN),
@@ -578,17 +712,37 @@ def compare_slide(prs, index, kicker, title, left, right, accent, notes):
     add_notes(slide, notes)
 
 
-def flow_slide(prs, index, kicker, title, steps, accent, notes, bottom=None):
+def flow_slide(prs, index, kicker, title, steps, accent, notes, bottom=None, label=None):
     slide = new_slide(prs, accent, index)
     add_kicker(slide, kicker, accent, str(index))
     add_title(slide, title)
+    if label:
+        add_text(slide, label, 0.75, 2.08, 5.4, 0.28, size=10, color=accent, bold=True)
     count = len(steps)
     gap = 0.23
     width = (12.05 - gap * (count - 1)) / count
     y = 2.55
-    for i, (head, body, color) in enumerate(steps):
+    for i, step in enumerate(steps):
+        if len(step) == 4:
+            head, body, detail, color = step
+        else:
+            head, body, color = step
+            detail = None
         x = 0.64 + i * (width + gap)
-        add_card(slide, x, y, width, 2.75, head, body, color, badge=str(i + 1), title_size=16, body_size=12)
+        add_card(
+            slide,
+            x,
+            y,
+            width,
+            2.75,
+            head,
+            body,
+            color,
+            badge=str(i + 1),
+            title_size=16,
+            body_size=12,
+            detail=detail,
+        )
         if i < count - 1:
             add_arrow(slide, x + width + 0.02, y + 1.37, x + width + gap - 0.04, y + 1.37, MUTED, 1.5)
     if bottom:
@@ -707,6 +861,146 @@ def bob_slide(prs, index, notes):
             add_arrow(slide, x + 1.63, 2.9, x + 2.42, 2.9, MUTED, 1.4)
     add_box(slide, 2.05, 5.73, 9.25, 0.58, fill=INK_2, line=PURPLE)
     add_text(slide, '"Remembering" means the system supplied the information again.', 2.2, 5.86, 8.95, 0.3, size=16, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+    add_footer(slide, index)
+    add_notes(slide, notes)
+
+
+def current_information_slide(prs, index, notes):
+    slide = new_slide(prs, PURPLE, index)
+    add_kicker(slide, "Current information", PURPLE, str(index))
+    add_title(slide, "Stale at the core. Fresh at the edges.")
+
+    stages = [
+        (
+            "MODEL CORE",
+            "Uses the same frozen weights",
+            "It reads new evidence without being retrained.",
+            CYAN,
+        ),
+        (
+            "RUNTIME CONTEXT",
+            "Returned evidence is supplied now",
+            "The result becomes input for the next model call.",
+            PURPLE,
+        ),
+        (
+            "HARNESS",
+            "Runs a tool or calls an MCP server",
+            "The surrounding application performs the retrieval.",
+            CORAL,
+        ),
+        (
+            "LIVE SOURCE",
+            "Web, API, database, or files",
+            "May contain information created after training.",
+            GREEN,
+        ),
+    ]
+    for i, (label, heading, body, color) in enumerate(stages):
+        x = 0.55 + i * 3.05
+        add_box(slide, x, 2.25, 2.7, 3.05, fill=PANEL, line=color)
+        add_text(slide, label, x + 0.25, 2.55, 2.2, 0.28, size=10, color=color, bold=True)
+        add_text(slide, heading, x + 0.25, 3.02, 2.2, 0.72, size=17, color=WHITE, bold=True)
+        add_text(slide, body, x + 0.25, 4.02, 2.2, 0.82, size=13, color=TEXT)
+        if i < len(stages) - 1:
+            next_color = stages[i + 1][3]
+            add_text(
+                slide,
+                "<-",
+                x + 2.72,
+                3.62,
+                0.38,
+                0.32,
+                size=17,
+                color=next_color,
+                bold=True,
+                font=FONT_MONO,
+                align=PP_ALIGN.CENTER,
+            )
+
+    add_box(slide, 1.0, 5.75, 11.35, 0.66, fill=INK_2, line=PURPLE)
+    add_rich_text(
+        slide,
+        [
+            ("CURRENT ANSWER", WHITE, True),
+            (" = ", TEXT, False),
+            ("FROZEN WEIGHTS", CYAN, True),
+            (" + ", TEXT, False),
+            ("FRESH SUPPLIED EVIDENCE", GREEN, True),
+        ],
+        1.25,
+        5.92,
+        10.85,
+        0.3,
+        size=15,
+        align=PP_ALIGN.CENTER,
+    )
+
+    add_footer(slide, index)
+    add_notes(slide, notes)
+
+
+def hallucination_slide(prs, index, notes):
+    slide = new_slide(prs, PURPLE, index)
+    add_kicker(slide, "Hallucination", PURPLE, str(index))
+    add_title(slide, "The model does not automatically fact-check itself")
+    add_text(
+        slide,
+        "A hallucination is generated content that is false or unsupported.",
+        0.75,
+        1.72,
+        11.7,
+        0.42,
+        size=17,
+        color=TEXT,
+    )
+
+    cards = [
+        (
+            "SAME PROCESS",
+            "Right or wrong, every answer is built one predicted token at a time.",
+            CYAN,
+        ),
+        (
+            "CHECKS VARY",
+            "Some products add search, citations, tests, or review. Others show the generated answer directly.",
+            PURPLE,
+        ),
+        (
+            "YOUR RULE",
+            "For anything important, confirm it with a trusted source, test, or repeatable calculation.",
+            CORAL,
+        ),
+    ]
+    for i, (heading, body, color) in enumerate(cards):
+        add_card(
+            slide,
+            0.62 + i * 4.18,
+            2.42,
+            3.82,
+            3.12,
+            heading,
+            body,
+            color,
+            badge=str(i + 1),
+            title_size=16,
+            body_size=14,
+        )
+
+    add_box(slide, 1.05, 5.86, 11.2, 0.62, fill=INK_2, line=AMBER)
+    add_text(
+        slide,
+        "No separate check occurred? Treat the answer as unverified.",
+        1.3,
+        6.0,
+        10.7,
+        0.32,
+        size=15,
+        color=WHITE,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
+
     add_footer(slide, index)
     add_notes(slide, notes)
 
@@ -854,18 +1148,18 @@ def build_deck(output: Path) -> Path:
         "PRESENTER LEGEND - THE FOUR ACTS\n\n"
         "These act names are an editorial teaching structure for this workshop, not a "
         "standard industry taxonomy. Each act depends on concepts introduced earlier.\n\n"
-        "ACT 1 - THE MODEL (slides 5-17)\n"
+        "ACT 1 - THE MODEL (slides 5-18)\n"
         "What happens inside the language model: databases as a contrast, prediction, "
         "weights, vocabulary and scoring, temperature, training, quantization, tokens, "
         "inference, and generation.\n\n"
-        "ACT 2 - CONTEXT + TRUTH (slides 18-24)\n"
+        "ACT 2 - CONTEXT + TRUTH (slides 19-25)\n"
         "What information the model receives at runtime, why it appears to remember, how "
         "context is lost, how current information reaches it, and why hallucinations require "
         "verification.\n\n"
-        "ACT 3 - AGENTIC SYSTEMS (slides 25-35)\n"
+        "ACT 3 - AGENTIC SYSTEMS (slides 26-36)\n"
         "What surrounds the model: the harness, repeated agent loop, tools, file boundaries, "
         "MCP, instruction layers, system prompts, and reusable skills.\n\n"
-        "ACT 4 - TRUST + CONTROL (slides 36-40)\n"
+        "ACT 4 - TRUST + CONTROL (slides 37-41)\n"
         "This is an editorial umbrella for operating capable systems responsibly. It covers "
         "failure modes, prompt injection, permissions, stopping limits, verification, and "
         "human accountability. 'Trust + Control' is not a named protocol or product feature.\n\n"
@@ -933,16 +1227,20 @@ def build_deck(output: Path) -> Path:
     )
     index += 1
 
-    weights_artifact_slide(
+    weights_definition_slide(
         prs,
         index,
-        "Everything needed for this example is on the slide. The left panel is a simplified "
-        "snapshot of the local Ollama model listing.\n\n"
-        "27b indicates the model's approximate parameter count: roughly 27 billion learned "
-        "weight values. q4_K_M identifies the quantization recipe used to store many of those "
-        "values with fewer bits. 17 GB is the resulting package size on disk.\n\n"
-        "The package is not a folder containing 27 billion readable facts. It is a large "
-        "collection of values arranged for the model's math.",
+        "Define the terms before moving on. A parameter is any numeric setting learned during "
+        "training. A weight is the most common kind of parameter; it controls how strongly one "
+        "internal signal influences another. People often use 'weights' and 'parameters' almost "
+        "interchangeably because weights make up nearly all of the parameter count.\n\n"
+        "A token is not a parameter. It is a numbered piece of text supplied to or produced by "
+        "the model. Tokens change with each prompt and response; the trained parameters remain "
+        "fixed during ordinary generation.\n\n"
+        "Walk left to right. The architecture is the mathematical machinery or program "
+        "structure. The parameters are the learned settings inside that machinery. Given "
+        "input tokens, the architecture uses those parameters to produce next-token scores.\n\n"
+        "This distinction prepares the vocabulary, temperature, and training slides that follow.",
     )
     index += 1
 
@@ -954,10 +1252,17 @@ def build_deck(output: Path) -> Path:
         "A token is a piece of text; the later token slide expands that definition. The left "
         "panel is the fixed vocabulary mapping between token IDs and text pieces. The vocabulary "
         "says what pieces are available, but it does not contain the fact that Paris is the "
-        "capital of France.\n\n"
+        "capital of France. The integers such as #91 and #4402 are token IDs - addresses in "
+        "that lookup table. They are not weights, parameters, or IDs for parameters.\n\n"
+        "Keep the roles separate: the architecture is the mathematical machinery. The learned "
+        "parameters are billions of settings used by that machinery. Together they calculate "
+        "a score for every possible next-token ID. The vocabulary translates the chosen ID "
+        "back into a text piece.\n\n"
         "The right panel shows the model scoring possible next tokens for the question. The "
         "learned weights make Paris score much higher than London, Lyon, or Nice. The system "
-        "chooses Paris, appends it to the conversation, and repeats the process for the next token.",
+        "chooses Paris, appends it to the conversation, and repeats the process for the next token.\n\n"
+        "Temperature comes after scoring. It changes how strongly selection favors the highest "
+        "scores; it is not where the learned language relationships are stored.",
     )
     index += 1
 
@@ -1072,6 +1377,21 @@ def build_deck(output: Path) -> Path:
     )
     index += 1
 
+    weights_artifact_slide(
+        prs,
+        index,
+        "Connect directly to the previous slide: different recipes, data mixtures, and "
+        "post-training choices produce different packaged models. This is one concrete model "
+        "available locally rather than an abstract example.\n\n"
+        "The left panel is a simplified snapshot of the local Ollama model listing. 27b "
+        "indicates the approximate parameter count. q4_K_M identifies the quantization recipe "
+        "used to store many weights with fewer bits. 17 GB is the resulting package size on disk.\n\n"
+        "The package is not a folder containing 27 billion readable facts. It combines learned "
+        "values and the information needed to run the model's architecture and tokenizer. "
+        "Use q4_K_M as the handoff to the quantization slide that follows.",
+    )
+    index += 1
+
     compare_slide(
         prs,
         index,
@@ -1147,37 +1467,77 @@ def build_deck(output: Path) -> Path:
         "Long context",
         "Bigger window does not mean smarter model",
         [
-            ("CAPACITY", "The maximum number of prompt and output tokens that can fit.", PURPLE),
-            ("COST", "More context consumes memory and takes time to ingest.", AMBER),
-            ("ATTENTION", "Even fitting information may not be used equally well everywhere.", BLUE),
+            (
+                "CAPACITY",
+                "A bigger notebook holds more pages.\n\nBut the prompt and answer must share the available space.",
+                PURPLE,
+            ),
+            (
+                "COST",
+                "Every supplied page still has to be processed.\n\nMore context consumes memory and takes time to ingest.",
+                AMBER,
+            ),
+            (
+                "SIGNAL",
+                "One critical sentence can hide on page 300.\n\nPresent does not always mean prominent.",
+                BLUE,
+            ),
         ],
         PURPLE,
-        "The model window is an upper bound. The harness budget is the real session limit. "
-        "The slide intentionally keeps the concept qualitative; optional measured local "
-        "profiles can be added later as their own self-contained slide.",
+        "Use a larger notebook as the analogy.\n\n"
+        "CAPACITY: a bigger notebook can hold more pages. The context window is the maximum "
+        "combined space for the supplied material and the answer.\n\n"
+        "COST: someone still has to read those pages. More supplied context consumes memory "
+        "and processing time even when much of it is not relevant to the current question.\n\n"
+        "SIGNAL: the important sentence may still be present, but buried on page 300 among "
+        "hundreds of pages of noise. The model may use prominent or nearby details more "
+        "reliably than that buried detail.\n\n"
+        "Contrast this with the previous Bob slide. After lossy compression, the detail may "
+        "be completely gone. On this slide, the detail still fits but may not influence the "
+        "answer strongly enough. The model window is an upper bound; the harness budget is "
+        "the real session limit.",
     )
     index += 1
 
-    compare_slide(
+    current_information_slide(
         prs,
         index,
-        "Current information",
-        "Stale at the core. Fresh at the edges.",
-        ("TRAINED WEIGHTS", "BAKED IN", ["Fixed for that model version", "Can be confidently stale", "Your chat does not rewrite them"]),
-        ("RUNTIME INPUT", "SUPPLIED NOW", ["Your prompt and files", "Search and API results", "Only as trustworthy as the source"]),
-        PURPLE,
-        "A model cannot independently fetch current information without an outside input path. A user can paste it in, or a tool can retrieve it.",
+        "This is the bridge from context into the later harness and MCP sections.\n\n"
+        "Start at the right: the model's trained weights are frozen for that model version. "
+        "The model does not independently browse, call an API, or update those weights.\n\n"
+        "The layout mirrors the headline: the stale model core is on the left and the fresh "
+        "external source is at the far right.\n\n"
+        "Trace the evidence path from right to left. A live source may contain current information. The harness "
+        "retrieves it using a built-in tool or an external capability exposed through something "
+        "such as an MCP server. The returned result is added to runtime context, and the same "
+        "frozen model reads that evidence when producing its answer.\n\n"
+        "A user pasting current information follows the same principle but skips the retrieval "
+        "step. The information changes what the model can see now; it does not retrain the model.\n\n"
+        "The answer is only as current and trustworthy as the supplied source. Act 3 explains "
+        "the harness, tool-call loop, and MCP connection in detail.",
     )
     index += 1
 
-    statement_slide(
+    hallucination_slide(
         prs,
         index,
-        "Hallucination",
-        "Plausible is not the same thing as true.",
-        "A hallucination is false or unsupported content generated because it fits the pattern - not because it was verified.",
-        PURPLE,
-        "Confidence is not required. Fluent uncertainty can still be unsupported, and confident language can still be correct.",
+        "Use plain language: the model generates an answer, but it does not automatically perform "
+        "an independent fact-check before showing that answer. Correct answers and hallucinations "
+        "come out through the same token-by-token generation process.\n\n"
+        "SAME PROCESS: the model does not switch into a visibly different 'hallucination mode.' "
+        "The strongest learned continuation may be correct, incomplete, stale, or false.\n\n"
+        "CHECKS VARY: the surrounding product or harness may add web search, citations, code "
+        "execution, tests, critique, or another review step. Other products and requests simply "
+        "show the first generated answer. Even when a check exists, its quality depends on the "
+        "source and the check being performed.\n\n"
+        "YOUR RULE: if no separate check occurred, treat the answer as unverified. For important "
+        "claims, inspect a trusted source, run the code, test the result, or repeat the calculation. "
+        "The next slide turns this rule into a short checklist.\n\n"
+        "A model can be prompted to critique its own answer, but another generated opinion is not "
+        "the same as independent evidence. Avoid that detour unless someone asks.\n\n"
+        "Temperature can increase variety and sometimes increase error by giving weaker candidates "
+        "more opportunity. It is not the root cause, and low temperature can still select a "
+        "high-scoring answer that is confidently wrong.",
     )
     index += 1
 
@@ -1224,17 +1584,30 @@ def build_deck(output: Path) -> Path:
         prs,
         index,
         "Agentic loop",
-        "Assemble -> call -> act -> repeat",
+        "One common example: assemble -> call -> act -> repeat",
         [
-            ("BUILD", "Instructions + history + relevant files.", PURPLE),
-            ("CALL", "Ask the model what should happen next.", CYAN),
-            ("CHECK", "Apply permissions and guardrails.", AMBER),
-            ("ACT", "Run an approved tool.", CORAL),
-            ("REPEAT", "Feed the result back until done.", GREEN),
+            ("BUILD", "Assemble the information for this turn.", "rules + history + files", PURPLE),
+            ("CALL", "Ask the model what should happen next.", '"run the tests"', CYAN),
+            ("CHECK", "Apply permissions and guardrails.", "allow test; block deploy", AMBER),
+            ("ACT", "Run an approved tool or operation.", "execute test command", CORAL),
+            ("REPEAT", "Feed the result back and continue.", "test failure -> next turn", GREEN),
         ],
         CORAL,
-        "An agent is the configured goal-seeking system. The repeated runtime loop is a common agent pattern.",
-        "Same model + different harness = different behavior.",
+        "This is a conceptual teaching pattern, not a required architecture or industry "
+        "specification. Different harnesses are designed by different teams and may combine, "
+        "split, reorder, parallelize, or omit these stages.\n\n"
+        "Some systems make one model call and stop. Others use planners and executors, call "
+        "multiple models, run tools in parallel, require human approval, or mix deterministic "
+        "code with model decisions.\n\n"
+        "The recurring idea is that software around the model assembles input, invokes the "
+        "model, mediates allowed actions, returns results, and decides what happens next. "
+        "An agent is the configured goal-seeking system; this repeated loop is one common way "
+        "to implement it.\n\n"
+        "The visible sub-examples depict one coding agent running tests. A research assistant, "
+        "travel planner, or chatbot with web access would use different information and tools "
+        "while still potentially following a similar high-level loop.",
+        "Harnesses may combine, split, reorder, or skip these stages.",
+        label="EXAMPLE SCENARIO: A CODING AGENT RUNNING TESTS",
     )
     index += 1
 

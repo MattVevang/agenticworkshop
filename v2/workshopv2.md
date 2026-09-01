@@ -203,15 +203,22 @@ chassis around it.
 - A model = **billions of small numbers (the weights)** arranged inside a particular set of
   math operations (the "architecture"). The learned behavior is encoded in those numbers
   and in how the architecture uses them.
-- The weights *are* the product — and they're physically big: the models in this room are
-  on the order of ~17 GB **even after compression** (LocalLLMCopilot's `ollama list` shows
-  the exact per-model sizes).
+- **Weight vs. parameter:** a **parameter** is any learned numeric setting inside the model.
+  A **weight** is the most common kind of parameter; it controls how strongly one internal
+  signal influences another. Weights make up nearly all of the parameter count, so
+  "27 billion parameters" means roughly 27 billion learned numbers.
+- A **token** is different from both: it is a numbered piece of text the model reads or
+  produces. Tokens are the changing input and output; parameters are the learned settings
+  used to process them.
+- The learned weights are what the training process produces, and they're physically big:
+  the models in this room are on the order of ~17 GB **even after compression**
+  (LocalLLMCopilot's `ollama list` shows the exact per-model sizes).
 - **The exhibit (the "database table" of the LLM world):** Section 2's database was a tidy
   little *display* — rows and columns with static values. The model's display doesn't exist
   as a table because the values aren't structured that way. The closest honest stand-in:
 
   ```
-  qwen3.8:27b-q4_K_M   17 GB   (≈ 27 billion weights as numbers)
+  qwen3.8:27b-q4_K_M   17 GB   (≈ 27 billion learned parameters)
   ```
 
   vs. the LLM's full "display" — **~27 billion numbers**, organized for the model's math but
@@ -286,6 +293,11 @@ vocabulary (fixed, baked into the model)
   token #4401  → "the"      token #4402  → "Paris"
   …            (the total depends on the model)
 ```
+
+Those integers are **token IDs**: stable labels for entries in the vocabulary. They are
+not weights, and they are not parameter IDs. The architecture uses the learned parameters
+to calculate a score for each token ID; the vocabulary lookup then turns the selected ID
+back into text.
 
 Now the whole answer, followable on one slide — a question every student
 already knows the answer to, so nothing here needs checking:
@@ -418,9 +430,11 @@ once per token. That is the useful mental model for how an answer is generated.
   - **What gives, in harnesses:** older turns may be **compressed/summarized**, selectively
     retrieved, or dropped. Compression is lossy - like a high-compression JPEG, not a zipped
     file: details that were not preserved may be unavailable later.
-  - **The "lost in the middle" effect:** many models have more trouble retrieving details from
-    the middle of a long prompt than from the start or end. So "it fit in the window" does not
-    always mean "the model used every detail equally well."
+  - **Important details can be buried:** a fact may still exist somewhere in a very long
+    prompt but be surrounded by so much less-relevant material that it does not influence
+    the answer strongly enough. Researchers often call one version of this the "lost in the
+    middle" effect. So "it fit in the window" does not mean every detail will be used equally
+    well.
 - **How we describe "compression" without lying:** older state becomes a *smaller
   representation* - often compressed text carrying the gist but not every detail, like you'd
   write on a whiteboard for the next shift: "we fixed the PID, still fighting the limelight."
@@ -501,11 +515,21 @@ once per token. That is the useful mental model for how an answer is generated.
   it is the *predicted* answer being
   plausible-but-false, because the engine (Section 5) optimizes for *plausible text,* and
   "sounds right" ≠ "is right."
+- **The novice rule:** the model does not automatically perform an independent fact-check
+  before showing its answer. Some products add search, citations, tests, or review through
+  the harness; others show the generated answer directly. If no separate check occurred,
+  treat important claims as unverified until a trusted source, test, or repeatable
+  calculation supports them.
 - **Why it happens (tie back, don't re-derive):**
   - Knowledge is compressed into weights, so it can be *partially* recalled — like a memory
     that's 90% there and invents the 10%.
   - Training optimized for "keep going fluently," not "stop when you don't know."
   - No fact-checking step exists *inside* the model. (Everything external to it is Section 12.)
+  - This is not normally a mismatch between weights and parameters - weights are themselves
+    parameters. It is the difference between **predicting a plausible continuation** and
+    **running a separate verification step**.
+  - Higher temperature can give weaker candidates more opportunity, but temperature is not
+    the root cause. A low-temperature model can still choose a high-scoring answer that is wrong.
 - **How we catch/handle it (the practical part students keep):**
   - Ask for a **source or cite**, then **check the citation.**
   - Ask for **verifiable work**: code you can run, calculations you can repeat, or claims you
@@ -526,8 +550,12 @@ once per token. That is the useful mental model for how an answer is generated.
 - That "repeats until done" loop is the most common shape of something **agentic**: the
   system pursues a goal across multiple steps, often using tools and deciding what to do next.
   The loop is part of the harness; the configured goal-seeking system is the agent.
+- This is a **conceptual pattern, not a required architecture**. Real harnesses may combine,
+  split, reorder, parallelize, or omit those stages. Some call one model; others use planners,
+  multiple models, deterministic workflows, parallel tools, or human approval gates.
 - The names they'll actually meet: Copilot CLI, Open WebUI, any `aider`/`claude`-style
-  CLI. Different skins, same skeleton: **assemble → call → act → repeat.**
+  CLI. Their implementations differ, but many have a recognizable family resemblance:
+  **assemble → call → act → repeat.**
 - **Why it matters (the thesis):** the *same model* behaves differently in different harnesses
   because the harness decides what the model sees, what it can do, and when it stops.
   "Model X is dumb" is often really "harness Y didn't give it the context/tools it needed."
