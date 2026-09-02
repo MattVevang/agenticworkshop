@@ -1027,7 +1027,7 @@ def bob_slide(prs, index, notes):
 
 def current_information_slide(prs, index, notes):
     slide = new_slide(prs, PURPLE, index)
-    add_kicker(slide, "Current information", PURPLE, str(index))
+    add_kicker(slide, "Fresh evidence", PURPLE, str(index))
     add_title(slide, "Stale at the core. Fresh at the edges.")
 
     stages = [
@@ -1476,23 +1476,23 @@ def build_deck(output: Path) -> Path:
         "PRESENTER LEGEND - THE FOUR ACTS\n\n"
         "These act names are an editorial teaching structure for this workshop, not a "
         "standard industry taxonomy. Each act depends on concepts introduced earlier.\n\n"
-        "ACT 1 - THE MODEL (slides 5-18)\n"
+        "ACT 1 - THE MODEL (slides 5-17)\n"
         "What happens inside the language model: databases as a contrast, prediction, "
         "weights, vocabulary and scoring, temperature, training, quantization, tokens, "
         "inference, and generation.\n\n"
-        "ACT 2 - CONTEXT + TRUTH (slides 19-25)\n"
+        "ACT 2 - CONTEXT + TRUTH (slides 18-24)\n"
         "What information the model receives at runtime, why it appears to remember, how "
         "context is lost, how current information reaches it, and why hallucinations require "
         "verification.\n\n"
-        "ACT 3 - AGENTIC SYSTEMS (slides 26-36)\n"
+        "ACT 3 - AGENTIC SYSTEMS (slides 25-35)\n"
         "What surrounds the model: the harness, repeated agent loop, tools, file boundaries, "
         "MCP, instruction layers, system prompts, and reusable skills.\n\n"
-        "ACT 4 - TRUST + CONTROL (slides 37-40)\n"
+        "ACT 4 - TRUST + CONTROL (slides 36-39)\n"
         "This is an editorial umbrella for operating capable systems responsibly. It covers "
         "failure modes, prompt injection, permissions, stopping limits, verification, and "
         "human accountability. 'Trust + Control' is not a named protocol or product feature.\n\n"
-        "FINALE (slides 41-42)\n"
-        "Slide 41 brings the four teaching acts back together. Act 3 intentionally groups "
+        "FINALE (slides 40-41)\n"
+        "Slide 40 brings the four teaching acts back together. Act 3 intentionally groups "
         "the harness with its tools, while Act 4 includes the accountable human who sets "
         "boundaries and verifies consequential results.\n\n"
         "Use this slide as your navigation legend throughout the presentation.",
@@ -1742,38 +1742,21 @@ def build_deck(output: Path) -> Path:
     flow_slide(
         prs,
         index,
-        "Inference",
-        "What happens when you type a prompt",
-        [
-            ("TOKENS", "Text becomes token IDs.", PURPLE),
-            ("RUN THE MATH", "The architecture applies the learned weights.", CYAN),
-            ("SCORE", "Every possible next token receives a score.", AMBER),
-            ("CHOOSE", "The system selects one token.", CORAL),
-            ("LOOP", "Append it and repeat.", GREEN),
-        ],
-        CYAN,
-        "This is inference: using fixed trained weights. The prompt and surrounding context "
-        "are the changing inputs. Connect SCORE and CHOOSE back to the earlier vocabulary "
-        "example, then use the next slide to summarize the repeated generation loop.",
-        "One answer is built one token at a time.",
-    )
-    index += 1
-
-    flow_slide(
-        prs,
-        index,
-        "Generation",
+        "Inference + generation",
         "How one answer gets built",
         [
-            ("CONTEXT IN", "Take the conversation so far.", PURPLE),
-            ("SCORES OUT", "Produce a score for every token.", CYAN),
-            ("CHOOSE ONE", "Use decoding rules to select a token.", AMBER),
-            ("FEED IT BACK", "Add the token to the context.", CORAL),
+            ("CONTEXT IN", "The prompt, instructions, history, and evidence become tokens.", PURPLE),
+            ("RUN THE MODEL", "The architecture applies its fixed learned parameters.", CYAN),
+            ("SCORES OUT", "Every possible next token receives a score.", AMBER),
+            ("CHOOSE + REPEAT", "Select one token, append it to the context, and run again.", CORAL),
             ("STOP", "End when a stop condition is reached.", GREEN),
         ],
         CYAN,
-        "Use the capital-of-France example. Paris wins, feeds back in, then punctuation and an end condition follow.",
-        "Learned numbers + token vocabulary + repeated prediction.",
+        "Inference means running the trained model with fixed learned parameters. Generation "
+        "is the repeated token-by-token process that produces the answer during inference. "
+        "Use the capital-of-France example: Paris receives the strongest useful score, feeds "
+        "back into the context, punctuation follows, and then an end condition stops the loop.",
+        "Fixed learned parameters + changing context + repeated prediction.",
     )
     index += 1
 
@@ -1781,7 +1764,7 @@ def build_deck(output: Path) -> Path:
         prs,
         2,
         "Context and truth",
-        "What the model can see, what it cannot know, and why fluent can still be wrong",
+        "What the model can see, how fresh evidence reaches it, and why fluent is not the same as verified",
         PURPLE,
         "Transition from how tokens are generated to what information is available while generating them.",
     )
@@ -2019,8 +2002,8 @@ def build_deck(output: Path) -> Path:
     statement_slide(
         prs,
         index,
-        "Why MCP?",
-        "MCP is a standard connection to external capabilities.",
+        "Model Context Protocol",
+        "MCP creates a standard connection to external capabilities.",
         "A local or remote MCP server exposes only the tools, resources, and prompts it was built to provide. An AI host discovers and uses them through an MCP client.",
         CORAL,
         "Keep the protocol, server, and exposed capabilities distinct.\n\n"
