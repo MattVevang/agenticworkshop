@@ -244,7 +244,7 @@ chassis around it.
   cooking thousands of recipes. The patterns are in your head, and you can improvise new
   dishes, but you cannot point to the exact cookbook page. Models can memorize occasional
   examples, but they still have no reliable fact lookup. That's why they can be stale
-  ([Section 9](#9-why-isnt-ai-currentdraft)) and hallucinate
+  ([Section 9](#9-how-does-fresh-information-reach-a-model-draft)) and hallucinate
   ([Section 10](#10-whats-a-hallucination-draft)).
 
 ### 4c. Same ingredients, different kitchens _(draft)_
@@ -482,7 +482,7 @@ once per token. That is the useful mental model for how an answer is generated.
 > same one, so anyone who goes home and opens it themselves sees exactly what we did. Place
 > that screenshot as a static exhibit on the **next slide**.
 
-### 9. Why isn't AI current? _(draft)_
+### 9. How does fresh information reach a model? _(draft)_
 
 - **Because a deployed model's weights are trained, then fixed.** Your conversation does not
   rewrite them. It changes what the model can *see now*, not what is baked into that model version.
